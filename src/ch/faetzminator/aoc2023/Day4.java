@@ -12,46 +12,46 @@ import java.util.regex.Pattern;
 
 public class Day4 {
 
-	public static void main(String[] args) {
-		Day4 puzzle = new Day4();
+    public static void main(String[] args) {
+        Day4 puzzle = new Day4();
 
-		List<String> input = new ArrayList<>();
-		try (Scanner scanner = new Scanner(System.in)) {
-			String line;
-			while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-				input.add(line);
-			}
-			scanner.close();
-		}
+        List<String> input = new ArrayList<>();
+        try (Scanner scanner = new Scanner(System.in)) {
+            String line;
+            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
+                input.add(line);
+            }
+            scanner.close();
+        }
 
-		System.out.println("Calculating...");
-		for (String line : input) {
-			puzzle.addScratchcard(line);
-		}
-		System.out.println("Solution: " + puzzle.getWinningSum());
-	}
+        System.out.println("Calculating...");
+        for (String line : input) {
+            puzzle.addScratchcard(line);
+        }
+        System.out.println("Solution: " + puzzle.getWinningSum());
+    }
 
-	private long winningSum;
+    private long winningSum;
 
-	private static final Pattern LINE_PATTERN = Pattern.compile("Card +(\\d+): +(.*?) \\| +(.*?)");
+    private static final Pattern LINE_PATTERN = Pattern.compile("Card +(\\d+): +(.*?) \\| +(.*?)");
 
-	public void addScratchcard(String str) {
-		Matcher matcher = LINE_PATTERN.matcher(str);
-		if (!matcher.matches()) {
-			throw new IllegalArgumentException("line: " + str);
-		}
+    public void addScratchcard(String str) {
+        Matcher matcher = LINE_PATTERN.matcher(str);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("line: " + str);
+        }
 
-		Set<String> winningNumbers = new LinkedHashSet<>(Arrays.asList(matcher.group(2).split(" +")));
-		Set<String> numbers = new HashSet<>(Arrays.asList(matcher.group(3).split(" +")));
+        Set<String> winningNumbers = new LinkedHashSet<>(Arrays.asList(matcher.group(2).split(" +")));
+        Set<String> numbers = new HashSet<>(Arrays.asList(matcher.group(3).split(" +")));
 
-		winningNumbers.retainAll(numbers);
-		int hits = winningNumbers.size();
-		if (hits > 0) {
-			winningSum += (int) Math.pow(2, hits - 1);
-		}
-	}
+        winningNumbers.retainAll(numbers);
+        int hits = winningNumbers.size();
+        if (hits > 0) {
+            winningSum += (int) Math.pow(2, hits - 1);
+        }
+    }
 
-	public long getWinningSum() {
-		return winningSum;
-	}
+    public long getWinningSum() {
+        return winningSum;
+    }
 }
