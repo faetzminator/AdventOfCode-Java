@@ -104,8 +104,11 @@ public class Day8b {
         } while (!atEnd(loop));
 
         BigInteger currentLcm = BigInteger.ONE;
-        for (int value : loop) {
-            currentLcm = lcm(currentLcm, BigInteger.valueOf(value));
+        for (int i = 0; i < loop.length; i++) {
+            if (loop[i] != shift[i]) {
+                throw new IllegalArgumentException("basic LCM won't work for given input");
+            }
+            currentLcm = lcm(currentLcm, BigInteger.valueOf(loop[i]));
         }
 
         return currentLcm.longValueExact();
