@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-public class Day6b {
+public class Day06b {
 
     public static void main(String[] args) {
-        Day6b puzzle = new Day6b();
+        Day06b puzzle = new Day06b();
 
         String time, distance;
         try (Scanner scanner = new Scanner(System.in)) {

@@ -8,10 +8,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Day5b {
+public class Day05b {
 
     public static void main(String[] args) {
-        Day5b puzzle = new Day5b();
+        Day05b puzzle = new Day05b();
 
         List<List<String>> input = new ArrayList<>();
         String seeds;

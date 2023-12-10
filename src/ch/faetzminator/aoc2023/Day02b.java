@@ -6,10 +6,10 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Day2b {
+public class Day02b {
 
     public static void main(String[] args) {
-        Day2b puzzle = new Day2b();
+        Day02b puzzle = new Day02b();
 
         List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {

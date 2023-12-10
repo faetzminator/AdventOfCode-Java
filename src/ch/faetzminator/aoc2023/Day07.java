@@ -3,17 +3,15 @@ package ch.faetzminator.aoc2023;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.function.Function;
 
-public class Day7b {
+public class Day07 {
 
     public static void main(String[] args) {
-        Day7b puzzle = new Day7b();
+        Day07 puzzle = new Day07();
 
         List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
@@ -103,7 +101,7 @@ public class Day7b {
 
     public enum Strength {
 
-        A, K, Q, T, N9, N8, N7, N6, N5, N4, N3, N2, J;
+        A, K, Q, J, T, N9, N8, N7, N6, N5, N4, N3, N2;
 
         private final char label;
 
@@ -159,33 +157,13 @@ public class Day7b {
             this.countNeeded = count;
         }
 
-        private final Character jokerChar = 'J';
-
-        private Map.Entry<Character, Integer> findEntry(Map<Character, Integer> chars, int count, int jokersUsed) {
-            int jokers = chars.containsKey(jokerChar) ? chars.get(jokerChar) - jokersUsed : 0;
+        private Map.Entry<Character, Integer> findEntry(Map<Character, Integer> chars, int count) {
             for (Map.Entry<Character, Integer> entry : chars.entrySet()) {
-                if (entry.getKey() != jokerChar && (entry.getValue() + jokers) >= count) {
+                if (entry.getValue() >= count) {
                     return entry;
                 }
             }
-            if (chars.size() == 1) {
-                // for 5x joker
-                return chars.entrySet().iterator().next();
-            }
             return null;
-        }
-
-        private static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
-            List<Entry<K, V>> list = new ArrayList<>(map.entrySet());
-            list.sort(Entry.comparingByValue());
-            Collections.reverse(list);
-
-            Map<K, V> result = new LinkedHashMap<>();
-            for (Entry<K, V> entry : list) {
-                result.put(entry.getKey(), entry.getValue());
-            }
-
-            return result;
         }
 
         @Override
@@ -197,16 +175,11 @@ public class Day7b {
                 }
                 chars.put(c, chars.get(c) + 1);
             }
-            // sort for full house and two pairs
-            chars = sortByValue(chars);
-            int jokersUsed = 0;
             for (int count : countNeeded) {
-                Map.Entry<Character, Integer> entry = findEntry(chars, count, jokersUsed);
+                Map.Entry<Character, Integer> entry = findEntry(chars, count);
                 if (entry == null) {
                     return false;
                 }
-                // don't reuse jokers for full house and two pairs
-                jokersUsed += count - entry.getValue();
                 chars.remove(entry.getKey());
             }
             return true;

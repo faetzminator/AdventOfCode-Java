@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
 
-public class Day9b {
+public class Day09b {
 
     public static void main(String[] args) {
-        Day9b puzzle = new Day9b();
+        Day09b puzzle = new Day09b();
 
         List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {

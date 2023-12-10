@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Day1b {
+public class Day01b {
 
     public static void main(String[] args) {
-        Day1b puzzle = new Day1b();
+        Day01b puzzle = new Day01b();
 
         List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {

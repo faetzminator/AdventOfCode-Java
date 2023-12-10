@@ -2,10 +2,10 @@ package ch.faetzminator.aoc2023;
 
 import java.util.Scanner;
 
-public class Day1 {
+public class Day01 {
 
     public static void main(String[] args) {
-        Day1 puzzle = new Day1();
+        Day01 puzzle = new Day01();
 
         try (Scanner scanner = new Scanner(System.in)) {
             String line;

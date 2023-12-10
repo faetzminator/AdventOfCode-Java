@@ -1,13 +1,15 @@
 package ch.faetzminator.aoc2023;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
-public class Day3b {
+public class Day03 {
 
     public static void main(String[] args) {
-        Day3b puzzle = new Day3b();
+        Day03 puzzle = new Day03();
 
         List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
@@ -45,7 +47,7 @@ public class Day3b {
                     numbers.add(new Number(number, x - count, y, count));
                     count = 0;
                 }
-                if (c == '*') {
+                if (c != '.') {
                     symbols.add(new Symbol(x, y));
                 }
             }
@@ -57,22 +59,18 @@ public class Day3b {
 
     public long calculatePartsSum() {
         long sum = 0;
+        Set<Number> alreadyUsed = new HashSet<>();
 
         for (Symbol symbol : symbols) {
-            List<Number> matchingNumbers = new ArrayList<>();
             for (Number number : numbers) {
-                boolean yMatch = number.getY() <= symbol.getY() + 1 && number.getY() >= symbol.getY() - 1;
-                boolean xMatch = number.getX() <= symbol.getX() + 1 && number.getEndX() >= symbol.getX() - 1;
-                if (yMatch && xMatch) {
-                    matchingNumbers.add(number);
+                if (!alreadyUsed.contains(number)) {
+                    boolean yMatch = number.getY() <= symbol.getY() + 1 && number.getY() >= symbol.getY() - 1;
+                    boolean xMatch = number.getX() <= symbol.getX() + 1 && number.getEndX() >= symbol.getX() - 1;
+                    if (yMatch && xMatch) {
+                        alreadyUsed.add(number);
+                        sum += number.getNumber();
+                    }
                 }
-            }
-            if (matchingNumbers.size() >= 2) {
-                long product = 1;
-                for (Number number : matchingNumbers) {
-                    product *= number.getNumber();
-                }
-                sum += product;
             }
         }
         return sum;

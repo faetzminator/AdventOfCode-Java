@@ -358,6 +358,7 @@ public class Day10b {
                     && position.getY() < map.length;
         }
 
+        @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
             for (int y = 0; y < map.length; y++) {

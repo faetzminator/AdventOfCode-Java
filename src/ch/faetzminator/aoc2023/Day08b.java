@@ -9,10 +9,10 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Day8b {
+public class Day08b {
 
     public static void main(String[] args) {
-        Day8b puzzle = new Day8b();
+        Day08b puzzle = new Day08b();
 
         List<String> input = new ArrayList<>();
         String instructions;
