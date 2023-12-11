@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
 
-public class Day11 {
+public class Day11b {
 
     public static void main(String[] args) {
-        Day11 puzzle = new Day11();
+        Day11b puzzle = new Day11b();
 
         List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
@@ -27,46 +27,29 @@ public class Day11 {
     }
 
     private static final char GALAXY = '#';
+    private static final int EXPANSION = 1000000 - 1;
 
     private boolean[][] map;
+    private boolean[] expandX;
+    private boolean[] expandY;
     private long distanceSum;
 
     public void parseMap(List<String> lines) {
-        boolean[] hasGalaxy = new boolean[lines.get(0).length()];
-        int expandXBy = 0, expandYBy = 0;
-        for (String line : lines) {
-            boolean galaxyInLine = false;
-            for (int i = 0; i < line.length(); i++) {
-                if (line.charAt(i) == GALAXY) {
-                    hasGalaxy[i] = true;
-                    galaxyInLine = true;
-                }
-            }
-            if (!galaxyInLine) {
-                expandYBy++;
-            }
+        map = new boolean[lines.size()][];
+        expandX = new boolean[lines.get(0).length()];
+        expandY = new boolean[lines.size()];
+        for (int x = 0; x < expandX.length; x++) {
+            expandX[x] = true;
         }
-        for (boolean b : hasGalaxy) {
-            if (!b) {
-                expandXBy++;
-            }
-        }
-        map = new boolean[lines.size() + expandYBy][];
-        for (int l = 0, lo = 0; l < lines.size(); l++, lo++) {
-            String line = lines.get(l);
-            map[lo] = new boolean[line.length() + expandXBy];
-            boolean galaxyInLine = false;
-            for (int i = 0, o = 0; i < line.length(); i++, o++) {
-                if (line.charAt(i) == GALAXY) {
-                    map[lo][o] = true;
-                    galaxyInLine = true;
+        for (int y = 0; y < lines.size(); y++) {
+            String line = lines.get(y);
+            map[y] = new boolean[line.length()];
+            expandY[y] = true;
+            for (int x = 0; x < line.length(); x++) {
+                if (line.charAt(x) == GALAXY) {
+                    map[y][x] = true;
+                    expandX[x] = expandY[y] = false;
                 }
-                if (!hasGalaxy[i]) {
-                    o++;
-                }
-            }
-            if (!galaxyInLine) {
-                map[++lo] = new boolean[line.length() + expandXBy];
             }
         }
     }
@@ -93,6 +76,7 @@ public class Day11 {
     }
 
     private int[][] getSouthernDistances(int fromX, int fromY) {
+        // I really hoped A* is needed in part B!!1! ;)
         int[][] dist = new int[map.length][map[0].length];
         for (int y = fromY; y < dist.length; y++) {
             for (int x = 0; x < dist[y].length; x++) {
@@ -106,15 +90,15 @@ public class Day11 {
             Position pos = toProcess.poll();
             int value = dist[pos.getY()][pos.getX()] + 1;
             if (pos.getX() > 0 && dist[pos.getY()][pos.getX() - 1] == -1) {
-                dist[pos.getY()][pos.getX() - 1] = value;
+                dist[pos.getY()][pos.getX() - 1] = value + (expandX[pos.getX() - 1] ? EXPANSION : 0);
                 toProcess.add(new Position(pos.getX() - 1, pos.getY()));
             }
             if ((pos.getX() + 1 < dist[pos.getY()].length) && dist[pos.getY()][pos.getX() + 1] == -1) {
-                dist[pos.getY()][pos.getX() + 1] = value;
+                dist[pos.getY()][pos.getX() + 1] = value + (expandX[pos.getX()] ? EXPANSION : 0);
                 toProcess.add(new Position(pos.getX() + 1, pos.getY()));
             }
             if ((pos.getY() + 1 < dist.length) && dist[pos.getY() + 1][pos.getX()] == -1) {
-                dist[pos.getY() + 1][pos.getX()] = value;
+                dist[pos.getY() + 1][pos.getX()] = value + (expandY[pos.getY()] ? EXPANSION : 0);
                 toProcess.add(new Position(pos.getX(), pos.getY() + 1));
             }
         }
