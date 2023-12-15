@@ -20,7 +20,6 @@ public class Day10b {
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
                 input.add(line);
             }
-            scanner.close();
         }
 
         System.out.println("Calculating...");

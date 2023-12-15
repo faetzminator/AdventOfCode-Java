@@ -17,7 +17,6 @@ public class Day02b {
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
                 input.add(line);
             }
-            scanner.close();
         }
 
         System.out.println("Calculating...");

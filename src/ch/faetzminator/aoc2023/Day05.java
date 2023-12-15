@@ -38,7 +38,6 @@ public class Day05 {
                     }
                 }
             }
-            scanner.close();
         }
 
         System.out.println("Calculating...");

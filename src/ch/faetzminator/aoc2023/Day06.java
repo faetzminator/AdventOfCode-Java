@@ -15,7 +15,6 @@ public class Day06 {
         try (Scanner scanner = new Scanner(System.in)) {
             time = scanner.nextLine();
             distance = scanner.nextLine();
-            scanner.close();
         }
 
         System.out.println("Calculating...");

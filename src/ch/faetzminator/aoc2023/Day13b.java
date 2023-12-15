@@ -34,7 +34,6 @@ public class Day13b {
                     throw new IllegalArgumentException("line: " + line);
                 }
             }
-            scanner.close();
         }
 
         System.out.println("Calculating...");

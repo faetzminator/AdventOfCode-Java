@@ -41,7 +41,6 @@ public class Day05b {
                     break;
                 }
             }
-            scanner.close();
         }
 
         System.out.println("Calculating...");
