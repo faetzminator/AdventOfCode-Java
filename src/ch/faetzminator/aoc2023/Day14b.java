@@ -29,7 +29,6 @@ public class Day14b {
 
     private static final Pattern LINE_PATTERN = Pattern.compile("[#.O]+");
     private static final char ROUNDED_ROCK = 'O';
-    private static final char CUBE_SHAPED_ROCK = '#';
     private static final char EMPTY_SPACE = '.';
 
     private char[][] platform;
@@ -53,30 +52,18 @@ public class Day14b {
         for (int i = 0; i < loops; i++) {
             String checksum = getChecksum();
             if (seen.containsKey(checksum)) {
-                int originalI = i;
-                System.out.println(checksum);
-                System.out.println("Rep " + i + " from " + seen.get(checksum));
-                int diff = i - seen.get(checksum);
-                do {
-                    i += diff;
-                } while (i < loops);
-                i -= diff;
+                int loopLen = i - seen.get(checksum);
+                int offset = i % loopLen;
+                // thanks to int the below works well
+                i = loopLen * ((loops - offset) / loopLen) + offset;
                 seen.clear();
-                if (originalI < i) {
-                    System.out.println("jumped " + originalI + " to " + i + " with step " + diff);
-                }
-            } else {
-                tiltNorth();
-                tiltWest();
-                tiltSouth();
-                tiltEast();
-                seen.put(checksum, i);
             }
-
-//            for (char[] line : platform) {
-//                System.out.println(String.copyValueOf(line));
-//            }
-//            System.out.println();
+            seen.put(checksum, i);
+            // the below can be done better for sure
+            tiltNorth();
+            tiltWest();
+            tiltSouth();
+            tiltEast();
         }
     }
 
