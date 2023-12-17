@@ -7,10 +7,10 @@ import java.util.regex.Pattern;
 
 public class Day14 {
 
-    public static void main(String[] args) {
-        Day14 puzzle = new Day14();
+    public static void main(final String[] args) {
+        final Day14 puzzle = new Day14();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -30,11 +30,11 @@ public class Day14 {
 
     private char[][] platform;
 
-    public void parseLines(List<String> lines) {
+    public void parseLines(final List<String> lines) {
         platform = new char[lines.size()][];
 
         for (int y = 0; y < lines.size(); y++) {
-            String line = lines.get(y);
+            final String line = lines.get(y);
             if (!LINE_PATTERN.matcher(line).matches()) {
                 throw new IllegalArgumentException("line: " + line);
             }

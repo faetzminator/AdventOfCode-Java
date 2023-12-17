@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 
 public class Day15b {
 
-    public static void main(String[] args) {
-        Day15b puzzle = new Day15b();
+    public static void main(final String[] args) {
+        final Day15b puzzle = new Day15b();
 
         String input;
         try (Scanner scanner = new Scanner(System.in)) {
@@ -25,16 +25,16 @@ public class Day15b {
     private static final Pattern LABEL_PATTERN = Pattern.compile("(\\w+)(?:-|=(\\d+))");
 
     @SuppressWarnings("unchecked")
-    private Map<String, Integer>[] boxes = new Map[256];
+    private final Map<String, Integer>[] boxes = new Map[256];
 
-    public void parseInput(String str) {
-        for (String value : str.split(",")) {
-            Matcher matcher = LABEL_PATTERN.matcher(value);
+    public void parseInput(final String str) {
+        for (final String value : str.split(",")) {
+            final Matcher matcher = LABEL_PATTERN.matcher(value);
             if (!matcher.matches()) {
                 throw new IllegalArgumentException("value: " + value);
             }
-            String key = matcher.group(1);
-            int box = calculateHash(key);
+            final String key = matcher.group(1);
+            final int box = calculateHash(key);
             if (boxes[box] == null) {
                 boxes[box] = new LinkedHashMap<>();
             }
@@ -46,9 +46,9 @@ public class Day15b {
         }
     }
 
-    public int calculateHash(String str) {
+    private int calculateHash(final String str) {
         int hash = 0;
-        for (char c : str.toCharArray()) {
+        for (final char c : str.toCharArray()) {
             hash += c;
             hash *= 17;
             hash = hash % 256;
@@ -61,7 +61,7 @@ public class Day15b {
         for (int i = 0; i < boxes.length; i++) {
             if (boxes[i] != null) {
                 int slot = 1;
-                for (Entry<String, Integer> entry : boxes[i].entrySet()) {
+                for (final Entry<String, Integer> entry : boxes[i].entrySet()) {
                     focusingPower += (i + 1) * (slot++) * entry.getValue();
                 }
             }

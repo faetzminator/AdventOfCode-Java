@@ -11,10 +11,10 @@ import java.util.regex.Pattern;
 
 public class Day08b {
 
-    public static void main(String[] args) {
-        Day08b puzzle = new Day08b();
+    public static void main(final String[] args) {
+        final Day08b puzzle = new Day08b();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         String instructions;
 
         try (Scanner scanner = new Scanner(System.in)) {
@@ -31,16 +31,16 @@ public class Day08b {
 
         System.out.println("Calculating...");
         puzzle.parseInstructions(instructions);
-        for (String line : input) {
+        for (final String line : input) {
             puzzle.addNode(line);
         }
         System.out.println("Solution: " + puzzle.calculateSteps());
     }
 
     private char[] instructions;
-    private Map<String, Node> nodes = new HashMap<>();
+    private final Map<String, Node> nodes = new HashMap<>();
 
-    public void parseInstructions(String str) {
+    public void parseInstructions(final String str) {
         if (!str.matches("[LR]+")) {
             throw new IllegalArgumentException("instructions: " + str);
         }
@@ -49,8 +49,8 @@ public class Day08b {
 
     private static final Pattern LINE_PATTERN = Pattern.compile("(\\w+) = \\((\\w+), (\\w+)\\)");
 
-    public void addNode(String line) {
-        Matcher matcher = LINE_PATTERN.matcher(line);
+    public void addNode(final String line) {
+        final Matcher matcher = LINE_PATTERN.matcher(line);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("line: " + line);
         }
@@ -58,8 +58,8 @@ public class Day08b {
     }
 
     private String[] findStartKeys() {
-        List<String> keys = new ArrayList<>();
-        for (String key : nodes.keySet()) {
+        final List<String> keys = new ArrayList<>();
+        for (final String key : nodes.keySet()) {
             if (key.endsWith("A")) {
                 keys.add(key);
             }
@@ -67,8 +67,8 @@ public class Day08b {
         return keys.toArray(new String[keys.size()]);
     }
 
-    private boolean atEnd(int[] data) {
-        for (int value : data) {
+    private boolean atEnd(final int[] data) {
+        for (final int value : data) {
             if (value == 0) {
                 return false;
             }
@@ -78,14 +78,14 @@ public class Day08b {
 
     public long calculateSteps() {
         int steps = 0;
-        String[] next = findStartKeys();
+        final String[] next = findStartKeys();
 
-        int[] shift = new int[next.length];
-        int[] loop = new int[next.length];
+        final int[] shift = new int[next.length];
+        final int[] loop = new int[next.length];
 
         do {
             for (int i = 0; i < next.length; i++) {
-                Node node = nodes.get(next[i]);
+                final Node node = nodes.get(next[i]);
                 if (instructions[steps % instructions.length] == 'L') {
                     next[i] = node.getLeft();
                 } else {
@@ -113,18 +113,18 @@ public class Day08b {
         return currentLcm.longValueExact();
     }
 
-    public static BigInteger lcm(BigInteger number1, BigInteger number2) {
-        BigInteger gcd = number1.gcd(number2);
-        BigInteger absProduct = number1.multiply(number2).abs();
+    private static BigInteger lcm(final BigInteger number1, final BigInteger number2) {
+        final BigInteger gcd = number1.gcd(number2);
+        final BigInteger absProduct = number1.multiply(number2).abs();
         return absProduct.divide(gcd);
     }
 
-    public class Node {
+    private static class Node {
 
         private final String left;
         private final String right;
 
-        public Node(String left, String right) {
+        public Node(final String left, final String right) {
             this.left = left;
             this.right = right;
         }

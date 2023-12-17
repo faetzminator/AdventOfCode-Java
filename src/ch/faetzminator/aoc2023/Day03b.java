@@ -6,10 +6,10 @@ import java.util.Scanner;
 
 public class Day03b {
 
-    public static void main(String[] args) {
-        Day03b puzzle = new Day03b();
+    public static void main(final String[] args) {
+        final Day03b puzzle = new Day03b();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -18,21 +18,22 @@ public class Day03b {
         }
 
         System.out.println("Calculating...");
-        for (String line : input) {
+        for (final String line : input) {
             puzzle.addLine(line);
         }
         System.out.println("Solution: " + puzzle.calculatePartsSum());
     }
 
-    private List<Number> numbers = new ArrayList<>();
-    private List<Symbol> symbols = new ArrayList<>();
-    private int lineNumber = 0;
+    private final List<Number> numbers = new ArrayList<>();
+    private final List<Symbol> symbols = new ArrayList<>();
+    private int lineNumber;
 
-    public void addLine(String str) {
-        int y = lineNumber++, x;
+    public void addLine(final String str) {
+        final int y = lineNumber++;
+        int x;
         int number = 0, count = 0;
         for (x = 0; x < str.length(); x++) {
-            char c = str.charAt(x);
+            final char c = str.charAt(x);
             if (c >= '0' && c <= '9') {
                 if (count == 0) {
                     number = 0;
@@ -57,18 +58,18 @@ public class Day03b {
     public long calculatePartsSum() {
         long sum = 0;
 
-        for (Symbol symbol : symbols) {
-            List<Number> matchingNumbers = new ArrayList<>();
-            for (Number number : numbers) {
-                boolean yMatch = number.getY() <= symbol.getY() + 1 && number.getY() >= symbol.getY() - 1;
-                boolean xMatch = number.getX() <= symbol.getX() + 1 && number.getEndX() >= symbol.getX() - 1;
+        for (final Symbol symbol : symbols) {
+            final List<Number> matchingNumbers = new ArrayList<>();
+            for (final Number number : numbers) {
+                final boolean yMatch = number.getY() <= symbol.getY() + 1 && number.getY() >= symbol.getY() - 1;
+                final boolean xMatch = number.getX() <= symbol.getX() + 1 && number.getEndX() >= symbol.getX() - 1;
                 if (yMatch && xMatch) {
                     matchingNumbers.add(number);
                 }
             }
             if (matchingNumbers.size() >= 2) {
                 long product = 1;
-                for (Number number : matchingNumbers) {
+                for (final Number number : matchingNumbers) {
                     product *= number.getNumber();
                 }
                 sum += product;
@@ -77,15 +78,14 @@ public class Day03b {
         return sum;
     }
 
-    class Number {
+    private static class Number {
 
-        final int number;
+        private final int number;
+        private final int x;
+        private final int y;
+        private final int length;
 
-        final int x;
-        final int y;
-        final int length;
-
-        public Number(int number, int x, int y, int length) {
+        public Number(final int number, final int x, final int y, final int length) {
             this.number = number;
             this.x = x;
             this.y = y;
@@ -109,12 +109,12 @@ public class Day03b {
         }
     }
 
-    class Symbol {
+    private static class Symbol {
 
-        final int x;
-        final int y;
+        private final int x;
+        private final int y;
 
-        public Symbol(int x, int y) {
+        public Symbol(final int x, final int y) {
             this.x = x;
             this.y = y;
         }

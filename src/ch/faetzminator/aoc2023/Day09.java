@@ -7,10 +7,10 @@ import java.util.Stack;
 
 public class Day09 {
 
-    public static void main(String[] args) {
-        Day09 puzzle = new Day09();
+    public static void main(final String[] args) {
+        final Day09 puzzle = new Day09();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -19,16 +19,16 @@ public class Day09 {
         }
 
         System.out.println("Calculating...");
-        for (String line : input) {
+        for (final String line : input) {
             puzzle.addSequence(line);
         }
         System.out.println("Solution: " + puzzle.getExtrapolationSum());
     }
 
-    private long extrapolationSum = 0;
+    private long extrapolationSum;
 
-    private boolean atEnd(List<Value> values) {
-        for (Value value : values) {
+    private boolean atEnd(final List<Value> values) {
+        for (final Value value : values) {
             if (value.getValue() != 0) {
                 return false;
             }
@@ -36,17 +36,17 @@ public class Day09 {
         return true;
     }
 
-    public void addSequence(String str) {
-        List<Stack<Value>> numbers = new ArrayList<>();
-        Stack<Value> firstLine = new Stack<>();
+    public void addSequence(final String str) {
+        final List<Stack<Value>> numbers = new ArrayList<>();
+        final Stack<Value> firstLine = new Stack<>();
         numbers.add(firstLine);
-        for (String number : str.split(" ")) {
+        for (final String number : str.split(" ")) {
             firstLine.add(new Value(Long.parseLong(number)));
         }
 
         Stack<Value> lastLine;
         while (!atEnd(lastLine = numbers.get(numbers.size() - 1))) {
-            Stack<Value> newLine = new Stack<>();
+            final Stack<Value> newLine = new Stack<>();
             numbers.add(newLine);
             for (int i = 1; i < lastLine.size(); i++) {
                 newLine.add(child(lastLine.get(i - 1), lastLine.get(i)));
@@ -55,8 +55,8 @@ public class Day09 {
 
         lastLine.add(new Value(0));
         for (int i = numbers.size() - 2; i >= 0; i--) {
-            Stack<Value> currentLine = numbers.get(i);
-            Stack<Value> lowerLine = numbers.get(i + 1);
+            final Stack<Value> currentLine = numbers.get(i);
+            final Stack<Value> lowerLine = numbers.get(i + 1);
             currentLine.add(parent(currentLine.lastElement(), lowerLine.lastElement()));
         }
 
@@ -67,11 +67,11 @@ public class Day09 {
         return extrapolationSum;
     }
 
-    class Value {
+    private static class Value {
 
-        long value;
+        private final long value;
 
-        public Value(long value) {
+        public Value(final long value) {
             this.value = value;
         }
 
@@ -80,11 +80,11 @@ public class Day09 {
         }
     }
 
-    public Value child(Value leftParent, Value rightParent) {
+    private static Value child(final Value leftParent, final Value rightParent) {
         return new Value(rightParent.getValue() - leftParent.getValue());
     }
 
-    public Value parent(Value leftParent, Value child) {
+    private static Value parent(final Value leftParent, final Value child) {
         return new Value(leftParent.getValue() + child.getValue());
     }
 }

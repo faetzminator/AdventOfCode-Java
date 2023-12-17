@@ -10,17 +10,17 @@ import java.util.regex.Pattern;
 
 public class Day05 {
 
-    public static void main(String[] args) {
-        Day05 puzzle = new Day05();
+    public static void main(final String[] args) {
+        final Day05 puzzle = new Day05();
 
-        List<List<String>> input = new ArrayList<>();
+        final List<List<String>> input = new ArrayList<>();
         String seeds;
 
         try (Scanner scanner = new Scanner(System.in)) {
             seeds = scanner.nextLine(); // special handling
 
             String line;
-            Pattern numericStart = Pattern.compile("^\\d");
+            final Pattern numericStart = Pattern.compile("^\\d");
             boolean newNeeded = true;
             List<String> subInput = new ArrayList<>();
             while (scanner.hasNextLine()) {
@@ -42,8 +42,8 @@ public class Day05 {
 
         System.out.println("Calculating...");
         puzzle.addSeeds(seeds);
-        for (List<String> lines : input) {
-            for (String line : lines) {
+        for (final List<String> lines : input) {
+            for (final String line : lines) {
                 puzzle.move(line);
             }
             puzzle.clear();
@@ -51,22 +51,22 @@ public class Day05 {
         System.out.println("Solution: " + puzzle.getSeedWithLowestLocation().getLocation());
     }
 
-    private Set<Seed> seeds = new HashSet<>();
-    private Set<Seed> processedSeeds = new HashSet<>();
+    private final Set<Seed> seeds = new HashSet<>();
+    private final Set<Seed> processedSeeds = new HashSet<>();
 
-    public void addSeeds(String line) {
-        Matcher matcher = Pattern.compile("seeds: (\\d+.*\\d+)").matcher(line);
+    public void addSeeds(final String line) {
+        final Matcher matcher = Pattern.compile("seeds: (\\d+.*\\d+)").matcher(line);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("line: " + line);
         }
-        for (String number : matcher.group(1).split(" ")) {
+        for (final String number : matcher.group(1).split(" ")) {
             seeds.add(new Seed(Long.parseLong(number)));
         }
     }
 
     public Seed getSeedWithLowestLocation() {
         Seed lowest = seeds.iterator().next();
-        for (Seed seed : seeds) {
+        for (final Seed seed : seeds) {
             if (seed.getLocation() < lowest.getLocation()) {
                 lowest = seed;
             }
@@ -81,17 +81,17 @@ public class Day05 {
 
     private static final Pattern LINE_PATTERN = Pattern.compile("(\\d+) (\\d+) (\\d+)");
 
-    public void move(String line) {
-        Matcher matcher = LINE_PATTERN.matcher(line);
+    public void move(final String line) {
+        final Matcher matcher = LINE_PATTERN.matcher(line);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("line: " + line);
         }
-        long destStart = Long.parseLong(matcher.group(1));
-        long sourceStart = Long.parseLong(matcher.group(2));
-        long sourceEnd = sourceStart + Long.parseLong(matcher.group(3)) - 1;
+        final long destStart = Long.parseLong(matcher.group(1));
+        final long sourceStart = Long.parseLong(matcher.group(2));
+        final long sourceEnd = sourceStart + Long.parseLong(matcher.group(3)) - 1;
 
-        List<Seed> processed = new ArrayList<>();
-        for (Seed seed : seeds) {
+        final List<Seed> processed = new ArrayList<>();
+        for (final Seed seed : seeds) {
             if (seed.getLocation() >= sourceStart && seed.getLocation() <= sourceEnd) {
                 seed.move(destStart - sourceStart);
                 processed.add(seed);
@@ -101,26 +101,20 @@ public class Day05 {
         seeds.removeAll(processed);
     }
 
-    public class Seed {
+    private static class Seed {
 
-        final long number;
-        // as learned in part B, location not necessary at all, jaja
-        long location;
+        // as learned in part B, location not necessary at all
+        private long location;
 
-        public Seed(long number) {
-            this.number = number;
+        public Seed(final long number) {
             location = number;
-        }
-
-        public long getNumber() {
-            return number;
         }
 
         public long getLocation() {
             return location;
         }
 
-        public void move(long by) {
+        public void move(final long by) {
             location += by;
         }
     }

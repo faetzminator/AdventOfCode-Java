@@ -11,10 +11,10 @@ import java.util.regex.Pattern;
 
 public class Day12b {
 
-    public static void main(String[] args) {
-        Day12b puzzle = new Day12b();
+    public static void main(final String[] args) {
+        final Day12b puzzle = new Day12b();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -23,7 +23,7 @@ public class Day12b {
         }
 
         System.out.println("Calculating...");
-        for (String line : input) {
+        for (final String line : input) {
             puzzle.parseConditionRecord(line);
         }
         System.out.println("Solution: " + puzzle.getArrangementSum());
@@ -31,16 +31,16 @@ public class Day12b {
 
     private long arrangementSum;
 
-    private Pattern linePattern = Pattern.compile("([.?#]+) ((\\d+,)+\\d+)");
+    private final Pattern linePattern = Pattern.compile("([.?#]+) ((\\d+,)+\\d+)");
 
-    public void parseConditionRecord(String line) {
-        Matcher matcher = linePattern.matcher(line);
+    public void parseConditionRecord(final String line) {
+        final Matcher matcher = linePattern.matcher(line);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("line: " + line);
         }
-        String record = matcher.group(1);
-        String[] partsStr = matcher.group(2).split(",");
-        int[] parts = new int[partsStr.length];
+        final String record = matcher.group(1);
+        final String[] partsStr = matcher.group(2).split(",");
+        final int[] parts = new int[partsStr.length];
         for (int i = 0; i < partsStr.length; i++) {
             parts[i] = Integer.parseInt(partsStr[i]);
         }
@@ -49,27 +49,27 @@ public class Day12b {
 
     private Map<CacheKey, Long> cache;
 
-    private long calculateArrangementsBy5(String record, int[] parts) {
+    private long calculateArrangementsBy5(final String record, final int[] parts) {
         cache = new HashMap<>();
-        String recordBy5 = record + '?' + record + '?' + record + '?' + record + '?' + record;
-        int[] partsBy5 = new int[parts.length * 5];
+        final String recordBy5 = record + '?' + record + '?' + record + '?' + record + '?' + record;
+        final int[] partsBy5 = new int[parts.length * 5];
         for (int i = 0; i < 5; i++) {
             System.arraycopy(parts, 0, partsBy5, parts.length * i, parts.length);
         }
         return calculateArrangements(recordBy5, partsBy5);
     }
 
-    private long calculateArrangements(String record, int[] parts) {
+    private long calculateArrangements(final String record, final int[] parts) {
         int partsLength = parts.length - 1;
-        for (int part : parts) {
+        for (final int part : parts) {
             partsLength += part;
         }
         return calculateArrangements(record, parts, 0, partsLength, 0);
     }
 
-    private boolean substrDoesNotContain(String record, int pos, int len, char c) {
+    private boolean substrDoesNotContain(final String record, final int pos, final int len, final char c) {
         for (int i = 0; i < len; i++) {
-            int x = pos + i;
+            final int x = pos + i;
             if (x >= 0 && x < record.length() && record.charAt(x) == c) {
                 return false;
             }
@@ -77,18 +77,18 @@ public class Day12b {
         return true;
     }
 
-    private long calculateArrangements(String record, int[] parts, int atPart, int partsLength, int startIndex) {
+    private long calculateArrangements(final String record, final int[] parts, final int atPart, final int partsLength, final int startIndex) {
         long arrangements = 0;
-        int partsLen = partsLength - parts[atPart] - 1;
+        final int partsLen = partsLength - parts[atPart] - 1;
         for (int pos = startIndex; pos < record.length() - partsLength + 1; pos++) {
             if (substrDoesNotContain(record, startIndex - 1, pos - startIndex + 1, '#')
                     && substrDoesNotContain(record, pos, parts[atPart], '.')
                     && substrDoesNotContain(record, pos + parts[atPart], 1, '#')) {
 
                 long combo = 1;
-                int nextStartIndex = pos + parts[atPart] + 1;
+                final int nextStartIndex = pos + parts[atPart] + 1;
                 if (atPart < parts.length - 1) {
-                    CacheKey cacheKey = new CacheKey(atPart + 1, nextStartIndex);
+                    final CacheKey cacheKey = new CacheKey(atPart + 1, nextStartIndex);
                     if (cache.containsKey(cacheKey)) {
                         combo = cache.get(cacheKey);
                     } else {
@@ -108,12 +108,12 @@ public class Day12b {
         return arrangementSum;
     }
 
-    public final class CacheKey {
+    private static class CacheKey {
 
         private final int atPart;
         private final int startIndex;
 
-        public CacheKey(int atPart, int startIndex) {
+        public CacheKey(final int atPart, final int startIndex) {
             super();
             this.atPart = atPart;
             this.startIndex = startIndex;
@@ -121,18 +121,18 @@ public class Day12b {
 
         @Override
         public int hashCode() {
-            return 31 + Objects.hash(atPart, startIndex);
+            return Objects.hash(atPart, startIndex);
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
+            if ((obj == null) || (getClass() != obj.getClass())) {
                 return false;
             }
-            CacheKey other = (CacheKey) obj;
+            final CacheKey other = (CacheKey) obj;
             return atPart == other.atPart && startIndex == other.startIndex;
         }
     }

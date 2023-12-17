@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 public class Day01 {
 
-    public static void main(String[] args) {
-        Day01 puzzle = new Day01();
+    public static void main(final String[] args) {
+        final Day01 puzzle = new Day01();
 
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
@@ -18,14 +18,14 @@ public class Day01 {
 
     private long calibrationSum;
 
-    public void addLine(String str) {
+    public void addLine(final String str) {
         calibrationSum += parseCalibration(str);
     }
 
-    public int parseCalibration(String str) {
+    private int parseCalibration(final String str) {
         char first = 0, last = 0;
         boolean firstSet = false;
-        for (char c : str.toCharArray()) {
+        for (final char c : str.toCharArray()) {
             if (c >= '0' && c <= '9') {
                 if (!firstSet) {
                     first = c;

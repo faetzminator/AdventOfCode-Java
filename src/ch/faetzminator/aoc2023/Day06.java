@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 
 public class Day06 {
 
-    public static void main(String[] args) {
-        Day06 puzzle = new Day06();
+    public static void main(final String[] args) {
+        final Day06 puzzle = new Day06();
 
         String time, distance;
         try (Scanner scanner = new Scanner(System.in)) {
@@ -19,21 +19,21 @@ public class Day06 {
 
         System.out.println("Calculating...");
         puzzle.parseInput(time, distance);
-        long product = puzzle.calculate();
+        final long product = puzzle.calculate();
         System.out.println("Solution: " + product);
     }
 
     private List<Race> races;
 
-    public void parseInput(String time, String distance) {
-        Pattern linePattern = Pattern.compile(".*?: +(.*)");
-        Matcher timeMatcher = linePattern.matcher(time);
-        Matcher distanceMatcher = linePattern.matcher(distance);
+    public void parseInput(final String time, final String distance) {
+        final Pattern linePattern = Pattern.compile(".*?: +(.*)");
+        final Matcher timeMatcher = linePattern.matcher(time);
+        final Matcher distanceMatcher = linePattern.matcher(distance);
         if (!timeMatcher.matches() || !distanceMatcher.matches()) {
             throw new IllegalArgumentException();
         }
-        String[] times = timeMatcher.group(1).split(" +");
-        String[] distances = distanceMatcher.group(1).split(" +");
+        final String[] times = timeMatcher.group(1).split(" +");
+        final String[] distances = distanceMatcher.group(1).split(" +");
 
         races = new ArrayList<>(times.length);
         for (int i = 0; i < times.length; i++) {
@@ -43,15 +43,15 @@ public class Day06 {
 
     public long calculate() {
         long product = 1;
-        for (Race race : races) {
+        for (final Race race : races) {
             product *= calculateWays(race);
         }
         return product;
     }
 
-    public static long calculateWays(Race race) {
+    private long calculateWays(final Race race) {
         long ways = 0;
-        long startTimeToPress = (long) Math.sqrt(race.getRecordDistance());
+        final long startTimeToPress = (long) Math.sqrt(race.getRecordDistance());
         for (long timeToPress = startTimeToPress; timeToPress < race.getTime(); timeToPress++) {
             if (timeToPress * (race.getTime() - timeToPress) > race.getRecordDistance()) {
                 ways++;
@@ -69,12 +69,12 @@ public class Day06 {
         return ways;
     }
 
-    public class Race {
+    private static class Race {
 
-        final long time;
-        final long recordDistance;
+        private final long time;
+        private final long recordDistance;
 
-        public Race(long time, long recordDistance) {
+        public Race(final long time, final long recordDistance) {
             this.time = time;
             this.recordDistance = recordDistance;
         }

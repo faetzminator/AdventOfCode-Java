@@ -8,14 +8,14 @@ import java.util.regex.Pattern;
 
 public class Day13 {
 
-    public static void main(String[] args) {
-        Day13 puzzle = new Day13();
+    public static void main(final String[] args) {
+        final Day13 puzzle = new Day13();
 
-        List<List<String>> input = new ArrayList<>();
+        final List<List<String>> input = new ArrayList<>();
 
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
-            Pattern linePattern = Pattern.compile("[#.]+");
+            final Pattern linePattern = Pattern.compile("[#.]+");
             boolean newNeeded = true;
             List<String> subInput = new ArrayList<>();
             while (scanner.hasNextLine()) {
@@ -38,7 +38,7 @@ public class Day13 {
         }
 
         System.out.println("Calculating...");
-        for (List<String> lines : input) {
+        for (final List<String> lines : input) {
             puzzle.parsePattern(lines);
         }
         System.out.println("Solution: " + puzzle.getSummary());
@@ -46,18 +46,18 @@ public class Day13 {
 
     private long summary;
 
-    public void parsePattern(List<String> lines) {
-        boolean[][] pattern = new boolean[lines.size()][];
+    public void parsePattern(final List<String> lines) {
+        final boolean[][] pattern = new boolean[lines.size()][];
         for (int y = 0; y < lines.size(); y++) {
-            String line = lines.get(y);
+            final String line = lines.get(y);
             pattern[y] = new boolean[line.length()];
             for (int x = 0; x < line.length(); x++) {
                 pattern[y][x] = line.charAt(x) == '#';
             }
         }
 
-        int vMatch = getVerticalMatch(pattern);
-        int hMatch = getHorizontalMatch(pattern);
+        final int vMatch = getVerticalMatch(pattern);
+        final int hMatch = getHorizontalMatch(pattern);
         if (vMatch >= 0) {
             summary += vMatch + 1;
         }
@@ -66,9 +66,9 @@ public class Day13 {
         }
     }
 
-    private int getHorizontalMatch(boolean[][] pattern) {
+    private int getHorizontalMatch(final boolean[][] pattern) {
         for (int mirrorAfter = 0; mirrorAfter < pattern.length - 1; mirrorAfter++) {
-            int checks = Math.min(mirrorAfter + 1, pattern.length - mirrorAfter - 1);
+            final int checks = Math.min(mirrorAfter + 1, pattern.length - mirrorAfter - 1);
             boolean matches = true;
             for (int i = 0; i < checks && matches; i++) {
                 matches = Arrays.equals(pattern[mirrorAfter - i], pattern[mirrorAfter + i + 1]);
@@ -80,9 +80,9 @@ public class Day13 {
         return -1;
     }
 
-    private int getVerticalMatch(boolean[][] pattern) {
+    private int getVerticalMatch(final boolean[][] pattern) {
         for (int mirrorAfter = 0; mirrorAfter < pattern[0].length - 1; mirrorAfter++) {
-            int checks = Math.min(mirrorAfter + 1, pattern[0].length - mirrorAfter - 1);
+            final int checks = Math.min(mirrorAfter + 1, pattern[0].length - mirrorAfter - 1);
             boolean matches = true;
             for (int i = 0; i < checks && matches; i++) {
                 for (int y = 0; y < pattern.length && matches; y++) {

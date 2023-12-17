@@ -8,10 +8,10 @@ import java.util.Set;
 
 public class Day03 {
 
-    public static void main(String[] args) {
-        Day03 puzzle = new Day03();
+    public static void main(final String[] args) {
+        final Day03 puzzle = new Day03();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -20,21 +20,22 @@ public class Day03 {
         }
 
         System.out.println("Calculating...");
-        for (String line : input) {
+        for (final String line : input) {
             puzzle.addLine(line);
         }
         System.out.println("Solution: " + puzzle.calculatePartsSum());
     }
 
-    private List<Number> numbers = new ArrayList<>();
-    private List<Symbol> symbols = new ArrayList<>();
-    private int lineNumber = 0;
+    private final List<Number> numbers = new ArrayList<>();
+    private final List<Symbol> symbols = new ArrayList<>();
+    private int lineNumber;
 
-    public void addLine(String str) {
-        int y = lineNumber++, x;
+    public void addLine(final String str) {
+        final int y = lineNumber++;
+        int x;
         int number = 0, count = 0;
         for (x = 0; x < str.length(); x++) {
-            char c = str.charAt(x);
+            final char c = str.charAt(x);
             if (c >= '0' && c <= '9') {
                 if (count == 0) {
                     number = 0;
@@ -58,13 +59,13 @@ public class Day03 {
 
     public long calculatePartsSum() {
         long sum = 0;
-        Set<Number> alreadyUsed = new HashSet<>();
+        final Set<Number> alreadyUsed = new HashSet<>();
 
-        for (Symbol symbol : symbols) {
-            for (Number number : numbers) {
+        for (final Symbol symbol : symbols) {
+            for (final Number number : numbers) {
                 if (!alreadyUsed.contains(number)) {
-                    boolean yMatch = number.getY() <= symbol.getY() + 1 && number.getY() >= symbol.getY() - 1;
-                    boolean xMatch = number.getX() <= symbol.getX() + 1 && number.getEndX() >= symbol.getX() - 1;
+                    final boolean yMatch = number.getY() <= symbol.getY() + 1 && number.getY() >= symbol.getY() - 1;
+                    final boolean xMatch = number.getX() <= symbol.getX() + 1 && number.getEndX() >= symbol.getX() - 1;
                     if (yMatch && xMatch) {
                         alreadyUsed.add(number);
                         sum += number.getNumber();
@@ -75,7 +76,7 @@ public class Day03 {
         return sum;
     }
 
-    class Number {
+    private static class Number {
 
         final int number;
 
@@ -83,7 +84,7 @@ public class Day03 {
         final int y;
         final int length;
 
-        public Number(int number, int x, int y, int length) {
+        public Number(final int number, final int x, final int y, final int length) {
             this.number = number;
             this.x = x;
             this.y = y;
@@ -107,12 +108,12 @@ public class Day03 {
         }
     }
 
-    class Symbol {
+    private static class Symbol {
 
         final int x;
         final int y;
 
-        public Symbol(int x, int y) {
+        public Symbol(final int x, final int y) {
             this.x = x;
             this.y = y;
         }

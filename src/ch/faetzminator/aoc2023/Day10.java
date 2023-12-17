@@ -9,10 +9,10 @@ import java.util.Set;
 
 public class Day10 {
 
-    public static void main(String[] args) {
-        Day10 puzzle = new Day10();
+    public static void main(final String[] args) {
+        final Day10 puzzle = new Day10();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -27,11 +27,11 @@ public class Day10 {
 
     private PipeMap pipeMap;
 
-    public void parseLines(List<String> input) {
+    public void parseLines(final List<String> input) {
         pipeMap = new PipeMap(input.get(0).length(), input.size());
 
         for (int y = 0; y < input.size(); y++) {
-            String line = input.get(y);
+            final String line = input.get(y);
             for (int x = 0; x < line.length(); x++) {
                 pipeMap.setPipeAt(new Position(x, y), Pipe.byChar(line.charAt(x)));
             }
@@ -40,10 +40,10 @@ public class Day10 {
 
     public int calculateLoopSteps() {
 
-        Position current = pipeMap.getStartPosition();
-        Pipe startPipe = pipeMap.getPipeAt(current);
-        for (Direction direction : startPipe.getDirections()) {
-            int steps = calculateLoopSteps(current, startPipe, direction);
+        final Position current = pipeMap.getStartPosition();
+        final Pipe startPipe = pipeMap.getPipeAt(current);
+        for (final Direction direction : startPipe.getDirections()) {
+            final int steps = calculateLoopSteps(current, startPipe, direction);
             // we should get twice -1 and twice the same number
             if (steps >= 0) {
                 return steps / 2;
@@ -55,20 +55,20 @@ public class Day10 {
     private int calculateLoopSteps(Position currentPos, Pipe currentPipe, Direction direction) {
         int steps = 0;
         while (true) { // don't we love infinite loops?
-            Position nextPos = currentPos.move(direction);
+            final Position nextPos = currentPos.move(direction);
             if (!pipeMap.isInBounds(nextPos)) {
                 return -1;
             }
-            Pipe nextPipe = pipeMap.getPipeAt(nextPos);
+            final Pipe nextPipe = pipeMap.getPipeAt(nextPos);
             if (nextPipe == Pipe.START) {
                 return steps + 1;
             }
-            Direction inverseDirection = direction.getOpposite();
-            Set<Direction> nextDirections = nextPipe.getDirections();
+            final Direction inverseDirection = direction.getOpposite();
+            final Set<Direction> nextDirections = nextPipe.getDirections();
             if (!nextDirections.contains(inverseDirection)) {
                 return -1;
             }
-            for (Direction nextDirection : nextDirections) {
+            for (final Direction nextDirection : nextDirections) {
                 if (nextDirection != inverseDirection) {
                     // we know there can only be one other direction (apart from START)
                     steps++;
@@ -80,12 +80,12 @@ public class Day10 {
         }
     }
 
-    public class Position {
+    private static class Position {
 
         private final int x;
         private final int y;
 
-        public Position(int x, int y) {
+        public Position(final int x, final int y) {
             this.x = x;
             this.y = y;
         }
@@ -98,7 +98,7 @@ public class Day10 {
             return y;
         }
 
-        public Position move(Direction direction) {
+        public Position move(final Direction direction) {
             switch (direction) {
             case NORTH:
                 return new Position(x, y - 1);
@@ -113,26 +113,26 @@ public class Day10 {
         }
     }
 
-    public class PipeMap {
+    private static class PipeMap {
 
         private final Pipe[][] map;
         private Position startPosition;
 
-        public PipeMap(int xSize, int ySize) {
+        public PipeMap(final int xSize, final int ySize) {
             map = new Pipe[ySize][xSize];
         }
 
-        public void setPipeAt(Position position, Pipe pipe) {
+        public void setPipeAt(final Position position, final Pipe pipe) {
             map[position.getY()][position.getX()] = pipe;
             if (pipe == Pipe.START) {
                 if (startPosition != null) {
                     throw new IllegalArgumentException("duplicate start");
                 }
-                this.startPosition = position;
+                startPosition = position;
             }
         }
 
-        public Pipe getPipeAt(Position position) {
+        public Pipe getPipeAt(final Position position) {
             return map[position.getY()][position.getX()];
         }
 
@@ -143,13 +143,13 @@ public class Day10 {
             return startPosition;
         }
 
-        public boolean isInBounds(Position position) {
+        public boolean isInBounds(final Position position) {
             return position.getX() >= 0 && position.getY() >= 0 && position.getX() < map[0].length
                     && position.getY() < map.length;
         }
     }
 
-    public enum Direction {
+    private static enum Direction {
         NORTH, EAST, SOUTH, WEST;
 
         public Direction getOpposite() {
@@ -167,7 +167,7 @@ public class Day10 {
         }
     }
 
-    public enum Pipe {
+    private static enum Pipe {
 
         VERTICAL('|', Direction.NORTH, Direction.SOUTH), HORIZONTAL('-', Direction.EAST, Direction.WEST),
         BEND1('L', Direction.NORTH, Direction.EAST), BEND2('J', Direction.NORTH, Direction.WEST),
@@ -177,7 +177,7 @@ public class Day10 {
         private final char character;
         private final Set<Direction> directions;
 
-        private Pipe(char character, Direction... directions) {
+        private Pipe(final char character, final Direction... directions) {
             this.character = character;
             this.directions = new LinkedHashSet<>(Arrays.asList(directions));
         }
@@ -190,8 +190,8 @@ public class Day10 {
             return directions;
         }
 
-        public static Pipe byChar(char c) {
-            for (Pipe pipe : values()) {
+        public static Pipe byChar(final char c) {
+            for (final Pipe pipe : values()) {
                 if (pipe.getCharacter() == c) {
                     return pipe;
                 }

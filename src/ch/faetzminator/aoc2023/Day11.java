@@ -8,10 +8,10 @@ import java.util.Scanner;
 
 public class Day11 {
 
-    public static void main(String[] args) {
-        Day11 puzzle = new Day11();
+    public static void main(final String[] args) {
+        final Day11 puzzle = new Day11();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -30,10 +30,10 @@ public class Day11 {
     private boolean[][] map;
     private long distanceSum;
 
-    public void parseMap(List<String> lines) {
-        boolean[] hasGalaxy = new boolean[lines.get(0).length()];
+    public void parseMap(final List<String> lines) {
+        final boolean[] hasGalaxy = new boolean[lines.get(0).length()];
         int expandXBy = 0, expandYBy = 0;
-        for (String line : lines) {
+        for (final String line : lines) {
             boolean galaxyInLine = false;
             for (int i = 0; i < line.length(); i++) {
                 if (line.charAt(i) == GALAXY) {
@@ -45,14 +45,14 @@ public class Day11 {
                 expandYBy++;
             }
         }
-        for (boolean b : hasGalaxy) {
+        for (final boolean b : hasGalaxy) {
             if (!b) {
                 expandXBy++;
             }
         }
         map = new boolean[lines.size() + expandYBy][];
         for (int l = 0, lo = 0; l < lines.size(); l++, lo++) {
-            String line = lines.get(l);
+            final String line = lines.get(l);
             map[lo] = new boolean[line.length() + expandXBy];
             boolean galaxyInLine = false;
             for (int i = 0, o = 0; i < line.length(); i++, o++) {
@@ -80,8 +80,8 @@ public class Day11 {
         }
     }
 
-    private void addDistances(int fromX, int fromY) {
-        int[][] distances = getSouthernDistances(fromX, fromY);
+    private void addDistances(final int fromX, final int fromY) {
+        final int[][] distances = getSouthernDistances(fromX, fromY);
         for (int y = fromY; y < map.length; y++) {
             for (int x = y == fromY ? fromX + 1 : 0; x < map[y].length; x++) {
                 if (map[y][x]) {
@@ -91,19 +91,19 @@ public class Day11 {
         }
     }
 
-    private int[][] getSouthernDistances(int fromX, int fromY) {
-        int[][] dist = new int[map.length][map[0].length];
+    private int[][] getSouthernDistances(final int fromX, final int fromY) {
+        final int[][] dist = new int[map.length][map[0].length];
         for (int y = fromY; y < dist.length; y++) {
             for (int x = 0; x < dist[y].length; x++) {
                 dist[y][x] = -1;
             }
         }
         dist[fromY][fromX] = 0;
-        Queue<Position> toProcess = new LinkedList<>();
+        final Queue<Position> toProcess = new LinkedList<>();
         toProcess.add(new Position(fromX, fromY));
         while (!toProcess.isEmpty()) {
-            Position pos = toProcess.poll();
-            int value = dist[pos.getY()][pos.getX()] + 1;
+            final Position pos = toProcess.poll();
+            final int value = dist[pos.getY()][pos.getX()] + 1;
             if (pos.getX() > 0 && dist[pos.getY()][pos.getX() - 1] == -1) {
                 dist[pos.getY()][pos.getX() - 1] = value;
                 toProcess.add(new Position(pos.getX() - 1, pos.getY()));
@@ -124,11 +124,11 @@ public class Day11 {
         return distanceSum;
     }
 
-    public class Position {
-        final int x;
-        final int y;
+    private static class Position {
+        private final int x;
+        private final int y;
 
-        public Position(int x, int y) {
+        public Position(final int x, final int y) {
             this.x = x;
             this.y = y;
         }

@@ -8,10 +8,10 @@ import java.util.regex.Pattern;
 
 public class Day02 {
 
-    public static void main(String[] args) {
-        Day02 puzzle = new Day02();
+    public static void main(final String[] args) {
+        final Day02 puzzle = new Day02();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -20,7 +20,7 @@ public class Day02 {
         }
 
         System.out.println("Calculating...");
-        for (String line : input) {
+        for (final String line : input) {
             puzzle.playGame(line);
         }
         System.out.println("Solution: " + puzzle.getGameSum());
@@ -28,8 +28,8 @@ public class Day02 {
 
     private long gameSum;
 
-    public void playGame(String str) {
-        Game game = parseGame(str);
+    public void playGame(final String str) {
+        final Game game = parseGame(str);
         if (game.getRed() <= 12 && game.getGreen() <= 13 && game.getBlue() <= 14) {
             gameSum += game.getNumber();
         }
@@ -39,21 +39,21 @@ public class Day02 {
         return gameSum;
     }
 
-    Pattern linePattern = Pattern.compile("Game (\\d+): (.*)");
+    private final static Pattern LINE_PATTERN = Pattern.compile("Game (\\d+): (.*)");
 
-    public Game parseGame(String line) {
-        Matcher matcher = linePattern.matcher(line);
+    private Game parseGame(final String line) {
+        final Matcher matcher = LINE_PATTERN.matcher(line);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("line: " + line);
         }
 
-        Game game = new Game(Integer.parseInt(matcher.group(1)));
-        String[] games = matcher.group(2).split("; ");
-        for (String single : games) {
-            String[] colors = single.split(", ");
-            for (String color : colors) {
-                String[] values = color.split(" ");
-                int value = Integer.parseInt(values[0]);
+        final Game game = new Game(Integer.parseInt(matcher.group(1)));
+        final String[] games = matcher.group(2).split("; ");
+        for (final String single : games) {
+            final String[] colors = single.split(", ");
+            for (final String color : colors) {
+                final String[] values = color.split(" ");
+                final int value = Integer.parseInt(values[0]);
                 switch (values[1]) {
                 case "red":
                     game.setMaxRed(value);
@@ -73,7 +73,7 @@ public class Day02 {
         return game;
     }
 
-    class Game {
+    private static class Game {
 
         final int number;
 
@@ -81,7 +81,7 @@ public class Day02 {
         int green = 0;
         int blue = 0;
 
-        public Game(int number) {
+        public Game(final int number) {
             this.number = number;
         }
 
@@ -89,19 +89,19 @@ public class Day02 {
             return number;
         }
 
-        public void setMaxRed(int r) {
+        public void setMaxRed(final int r) {
             if (red < r) {
                 red = r;
             }
         }
 
-        public void setMaxGreen(int g) {
+        public void setMaxGreen(final int g) {
             if (green < g) {
                 green = g;
             }
         }
 
-        public void setMaxBlue(int b) {
+        public void setMaxBlue(final int b) {
             if (blue < b) {
                 blue = b;
             }

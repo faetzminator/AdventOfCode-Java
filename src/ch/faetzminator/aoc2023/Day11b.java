@@ -8,10 +8,10 @@ import java.util.Scanner;
 
 public class Day11b {
 
-    public static void main(String[] args) {
-        Day11b puzzle = new Day11b();
+    public static void main(final String[] args) {
+        final Day11b puzzle = new Day11b();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -33,7 +33,7 @@ public class Day11b {
     private boolean[] expandY;
     private long distanceSum;
 
-    public void parseMap(List<String> lines) {
+    public void parseMap(final List<String> lines) {
         map = new boolean[lines.size()][];
         expandX = new boolean[lines.get(0).length()];
         expandY = new boolean[lines.size()];
@@ -41,7 +41,7 @@ public class Day11b {
             expandX[x] = true;
         }
         for (int y = 0; y < lines.size(); y++) {
-            String line = lines.get(y);
+            final String line = lines.get(y);
             map[y] = new boolean[line.length()];
             expandY[y] = true;
             for (int x = 0; x < line.length(); x++) {
@@ -63,8 +63,8 @@ public class Day11b {
         }
     }
 
-    private void addDistances(int fromX, int fromY) {
-        int[][] distances = getSouthernDistances(fromX, fromY);
+    private void addDistances(final int fromX, final int fromY) {
+        final int[][] distances = getSouthernDistances(fromX, fromY);
         for (int y = fromY; y < map.length; y++) {
             for (int x = y == fromY ? fromX + 1 : 0; x < map[y].length; x++) {
                 if (map[y][x]) {
@@ -74,20 +74,20 @@ public class Day11b {
         }
     }
 
-    private int[][] getSouthernDistances(int fromX, int fromY) {
+    private int[][] getSouthernDistances(final int fromX, final int fromY) {
         // I really hoped A* is needed in part B!!1! ;)
-        int[][] dist = new int[map.length][map[0].length];
+        final int[][] dist = new int[map.length][map[0].length];
         for (int y = fromY; y < dist.length; y++) {
             for (int x = 0; x < dist[y].length; x++) {
                 dist[y][x] = -1;
             }
         }
         dist[fromY][fromX] = 0;
-        Queue<Position> toProcess = new LinkedList<>();
+        final Queue<Position> toProcess = new LinkedList<>();
         toProcess.add(new Position(fromX, fromY));
         while (!toProcess.isEmpty()) {
-            Position pos = toProcess.poll();
-            int value = dist[pos.getY()][pos.getX()] + 1;
+            final Position pos = toProcess.poll();
+            final int value = dist[pos.getY()][pos.getX()] + 1;
             if (pos.getX() > 0 && dist[pos.getY()][pos.getX() - 1] == -1) {
                 dist[pos.getY()][pos.getX() - 1] = value + (expandX[pos.getX() - 1] ? EXPANSION : 0);
                 toProcess.add(new Position(pos.getX() - 1, pos.getY()));
@@ -108,11 +108,11 @@ public class Day11b {
         return distanceSum;
     }
 
-    public class Position {
-        final int x;
-        final int y;
+    private static class Position {
+        private final int x;
+        private final int y;
 
-        public Position(int x, int y) {
+        public Position(final int x, final int y) {
             this.x = x;
             this.y = y;
         }

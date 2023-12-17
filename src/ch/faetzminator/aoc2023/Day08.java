@@ -10,10 +10,10 @@ import java.util.regex.Pattern;
 
 public class Day08 {
 
-    public static void main(String[] args) {
-        Day08 puzzle = new Day08();
+    public static void main(final String[] args) {
+        final Day08 puzzle = new Day08();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         String instructions;
 
         try (Scanner scanner = new Scanner(System.in)) {
@@ -30,16 +30,16 @@ public class Day08 {
 
         System.out.println("Calculating...");
         puzzle.parseInstructions(instructions);
-        for (String line : input) {
+        for (final String line : input) {
             puzzle.addNode(line);
         }
         System.out.println("Solution: " + puzzle.calculateSteps());
     }
 
     private char[] instructions;
-    private Map<String, Node> nodes = new HashMap<>();
+    private final Map<String, Node> nodes = new HashMap<>();
 
-    public void parseInstructions(String str) {
+    public void parseInstructions(final String str) {
         if (!str.matches("[LR]+")) {
             throw new IllegalArgumentException("instructions: " + str);
         }
@@ -48,8 +48,8 @@ public class Day08 {
 
     private static final Pattern LINE_PATTERN = Pattern.compile("(\\w+) = \\((\\w+), (\\w+)\\)");
 
-    public void addNode(String line) {
-        Matcher matcher = LINE_PATTERN.matcher(line);
+    public void addNode(final String line) {
+        final Matcher matcher = LINE_PATTERN.matcher(line);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("line: " + line);
         }
@@ -60,7 +60,7 @@ public class Day08 {
         int steps = 0;
         String next = "AAA";
         do {
-            Node node = nodes.get(next);
+            final Node node = nodes.get(next);
             if (instructions[steps++ % instructions.length] == 'L') {
                 next = node.getLeft();
             } else {
@@ -70,12 +70,12 @@ public class Day08 {
         return steps;
     }
 
-    public class Node {
+    private static class Node {
 
         private final String left;
         private final String right;
 
-        public Node(String left, String right) {
+        public Node(final String left, final String right) {
             this.left = left;
             this.right = right;
         }

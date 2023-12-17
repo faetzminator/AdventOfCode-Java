@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 public class Day15 {
 
-    public static void main(String[] args) {
-        Day15 puzzle = new Day15();
+    public static void main(final String[] args) {
+        final Day15 puzzle = new Day15();
 
         String input;
         try (Scanner scanner = new Scanner(System.in)) {
@@ -19,15 +19,15 @@ public class Day15 {
 
     private long hashSum;
 
-    public void parseInput(String str) {
-        for (String value : str.split(",")) {
+    public void parseInput(final String str) {
+        for (final String value : str.split(",")) {
             hashSum += calculateHash(value);
         }
     }
 
-    public int calculateHash(String str) {
+    private int calculateHash(final String str) {
         int hash = 0;
-        for (char c : str.toCharArray()) {
+        for (final char c : str.toCharArray()) {
             hash += c;
             hash *= 17;
             hash = hash % 256;

@@ -11,10 +11,10 @@ import java.util.Set;
 
 public class Day16 {
 
-    public static void main(String[] args) {
-        Day16 puzzle = new Day16();
+    public static void main(final String[] args) {
+        final Day16 puzzle = new Day16();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -30,11 +30,11 @@ public class Day16 {
 
     private Contraption contraption;
 
-    public void parseLines(List<String> input) {
+    public void parseLines(final List<String> input) {
         contraption = new Contraption(input.get(0).length(), input.size());
 
         for (int y = 0; y < input.size(); y++) {
-            String line = input.get(y);
+            final String line = input.get(y);
             for (int x = 0; x < line.length(); x++) {
                 contraption.setPartAt(new Position(x, y), Part.byChar(line.charAt(x)));
             }
@@ -46,20 +46,20 @@ public class Day16 {
     }
 
     private void beam(PartAtPosition current, Direction direction) {
-        Set<PartAtPositionWithDirection> processed = new HashSet<>();
-        Queue<PartAtPositionWithDirection> queue = new LinkedList<>();
+        final Set<PartAtPositionWithDirection> processed = new HashSet<>();
+        final Queue<PartAtPositionWithDirection> queue = new LinkedList<>();
         queue.add(new PartAtPositionWithDirection(current, direction));
 
         while (!queue.isEmpty()) {
-            PartAtPositionWithDirection x = queue.poll();
+            final PartAtPositionWithDirection x = queue.poll();
             processed.add(x);
             current = x.getPartAtPosition();
             direction = x.getDirection();
             current.setEnergized();
-            for (Direction newDirection : current.getPart().getDirections(direction)) {
-                PartAtPosition next = contraption.getPartAt(current.getPosition().move(newDirection));
+            for (final Direction newDirection : current.getPart().getDirections(direction)) {
+                final PartAtPosition next = contraption.getPartAt(current.getPosition().move(newDirection));
                 if (next != null) {
-                    PartAtPositionWithDirection y = new PartAtPositionWithDirection(next, newDirection);
+                    final PartAtPositionWithDirection y = new PartAtPositionWithDirection(next, newDirection);
                     if (!processed.contains(y)) {
                         queue.add(y);
                     }
@@ -80,12 +80,12 @@ public class Day16 {
         return sum;
     }
 
-    public class Position {
+    private static class Position {
 
         private final int x;
         private final int y;
 
-        public Position(int x, int y) {
+        public Position(final int x, final int y) {
             this.x = x;
             this.y = y;
         }
@@ -98,7 +98,7 @@ public class Day16 {
             return y;
         }
 
-        public Position move(Direction direction) {
+        public Position move(final Direction direction) {
             switch (direction) {
             case NORTH:
                 return new Position(x, y - 1);
@@ -111,13 +111,30 @@ public class Day16 {
             }
             throw new IllegalArgumentException();
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if ((obj == null) || (getClass() != obj.getClass())) {
+                return false;
+            }
+            final Position other = (Position) obj;
+            return x == other.x && y == other.y;
+        }
     }
 
-    public class PartAtPositionWithDirection {
+    private static class PartAtPositionWithDirection {
         private final PartAtPosition partAtPosition;
         private final Direction direction;
 
-        public PartAtPositionWithDirection(PartAtPosition partAtPosition, Direction direction) {
+        public PartAtPositionWithDirection(final PartAtPosition partAtPosition, final Direction direction) {
             this.partAtPosition = partAtPosition;
             this.direction = direction;
         }
@@ -132,29 +149,29 @@ public class Day16 {
 
         @Override
         public int hashCode() {
-            return 31 + Objects.hash(direction, partAtPosition);
+            return Objects.hash(direction, partAtPosition);
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
+            if ((obj == null) || (getClass() != obj.getClass())) {
                 return false;
             }
-            PartAtPositionWithDirection other = (PartAtPositionWithDirection) obj;
+            final PartAtPositionWithDirection other = (PartAtPositionWithDirection) obj;
             return direction == other.direction && Objects.equals(partAtPosition, other.partAtPosition);
         }
     }
 
-    public class PartAtPosition {
+    private static class PartAtPosition {
         private final Part part;
         private final Position position;
 
         private boolean energized;
 
-        public PartAtPosition(Part part, Position position) {
+        public PartAtPosition(final Part part, final Position position) {
             this.part = part;
             this.position = position;
         }
@@ -168,7 +185,7 @@ public class Day16 {
         }
 
         public void setEnergized() {
-            this.energized = true;
+            energized = true;
         }
 
         public boolean isEnergized() {
@@ -178,35 +195,52 @@ public class Day16 {
         public char getCharacter() {
             return part == Part.EMPTY && isEnergized() ? '#' : part.getCharacter();
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(energized, part, position);
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if ((obj == null) || (getClass() != obj.getClass())) {
+                return false;
+            }
+            final PartAtPosition other = (PartAtPosition) obj;
+            return energized == other.energized && part == other.part && Objects.equals(position, other.position);
+        }
     }
 
-    public class Contraption {
+    private static class Contraption {
 
         private final PartAtPosition[][] map;
 
-        public Contraption(int xSize, int ySize) {
+        public Contraption(final int xSize, final int ySize) {
             map = new PartAtPosition[ySize][xSize];
         }
 
-        public void setPartAt(Position position, Part part) {
+        public void setPartAt(final Position position, final Part part) {
             map[position.getY()][position.getX()] = new PartAtPosition(part, position);
         }
 
-        public PartAtPosition getPartAt(Position position) {
+        public PartAtPosition getPartAt(final Position position) {
             return isInBounds(position) ? map[position.getY()][position.getX()] : null;
         }
 
-        public boolean isInBounds(Position position) {
+        public boolean isInBounds(final Position position) {
             return position.getX() >= 0 && position.getY() >= 0 && position.getX() < map[0].length
                     && position.getY() < map.length;
         }
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
-            for (int y = 0; y < map.length; y++) {
-                for (int x = 0; x < map[y].length; x++) {
-                    builder.append(map[y][x].getCharacter());
+            final StringBuilder builder = new StringBuilder();
+            for (final PartAtPosition[] element : map) {
+                for (final PartAtPosition element2 : element) {
+                    builder.append(element2.getCharacter());
                 }
                 builder.append('\n');
             }
@@ -223,21 +257,21 @@ public class Day16 {
         }
     }
 
-    public enum Direction {
+    private static enum Direction {
         NORTH, EAST, SOUTH, WEST;
     }
 
-    public enum Part {
+    private static enum Part {
 
         EMPTY('.') {
             @Override
-            public Set<Direction> getDirections(Direction direction) {
+            public Set<Direction> getDirections(final Direction direction) {
                 return Set.of(direction);
             }
         },
         MIRROR1('/') {
             @Override
-            public Set<Direction> getDirections(Direction direction) {
+            public Set<Direction> getDirections(final Direction direction) {
                 switch (direction) {
                 case NORTH:
                     return Set.of(Direction.EAST);
@@ -254,7 +288,7 @@ public class Day16 {
         },
         MIRROR2('\\') {
             @Override
-            public Set<Direction> getDirections(Direction direction) {
+            public Set<Direction> getDirections(final Direction direction) {
                 switch (direction) {
                 case NORTH:
                     return Set.of(Direction.WEST);
@@ -271,7 +305,7 @@ public class Day16 {
         },
         SPLITTER1('|') {
             @Override
-            public Set<Direction> getDirections(Direction direction) {
+            public Set<Direction> getDirections(final Direction direction) {
                 switch (direction) {
                 case NORTH:
                 case SOUTH:
@@ -286,7 +320,7 @@ public class Day16 {
         },
         SPLITTER2('-') {
             @Override
-            public Set<Direction> getDirections(Direction direction) {
+            public Set<Direction> getDirections(final Direction direction) {
                 switch (direction) {
                 case EAST:
                 case WEST:
@@ -302,7 +336,7 @@ public class Day16 {
 
         private final char character;
 
-        private Part(char character, Direction... directions) {
+        private Part(final char character, final Direction... directions) {
             this.character = character;
         }
 
@@ -310,8 +344,8 @@ public class Day16 {
             return character;
         }
 
-        public static Part byChar(char c) {
-            for (Part part : values()) {
+        public static Part byChar(final char c) {
+            for (final Part part : values()) {
                 if (part.getCharacter() == c) {
                     return part;
                 }

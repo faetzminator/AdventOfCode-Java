@@ -9,10 +9,10 @@ import java.util.regex.Pattern;
 
 public class Day14b {
 
-    public static void main(String[] args) {
-        Day14b puzzle = new Day14b();
+    public static void main(final String[] args) {
+        final Day14b puzzle = new Day14b();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -32,11 +32,11 @@ public class Day14b {
 
     private char[][] platform;
 
-    public void parseLines(List<String> lines) {
+    public void parseLines(final List<String> lines) {
         platform = new char[lines.size()][];
 
         for (int y = 0; y < lines.size(); y++) {
-            String line = lines.get(y);
+            final String line = lines.get(y);
             if (!LINE_PATTERN.matcher(line).matches()) {
                 throw new IllegalArgumentException("line: " + line);
             }
@@ -44,15 +44,15 @@ public class Day14b {
         }
     }
 
-    private Map<String, Integer> seen = new HashMap<>();
+    private final Map<String, Integer> seen = new HashMap<>();
 
     public void tiltManyTimes() {
         final int loops = 1000000000;
         for (int i = 0; i < loops; i++) {
-            String checksum = getChecksum();
+            final String checksum = getChecksum();
             if (seen.containsKey(checksum)) {
-                int loopLen = i - seen.get(checksum);
-                int offset = i % loopLen;
+                final int loopLen = i - seen.get(checksum);
+                final int offset = i % loopLen;
                 // thanks to int the below works well
                 i = loopLen * ((loops - offset) / loopLen) + offset;
                 seen.clear();
@@ -67,8 +67,8 @@ public class Day14b {
     }
 
     private String getChecksum() {
-        StringBuilder builder = new StringBuilder();
-        for (char[] line : platform) {
+        final StringBuilder builder = new StringBuilder();
+        for (final char[] line : platform) {
             builder.append(line);
         }
         return builder.toString();

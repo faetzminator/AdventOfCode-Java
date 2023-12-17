@@ -12,10 +12,10 @@ import java.util.regex.Pattern;
 
 public class Day04 {
 
-    public static void main(String[] args) {
-        Day04 puzzle = new Day04();
+    public static void main(final String[] args) {
+        final Day04 puzzle = new Day04();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -24,7 +24,7 @@ public class Day04 {
         }
 
         System.out.println("Calculating...");
-        for (String line : input) {
+        for (final String line : input) {
             puzzle.addScratchcard(line);
         }
         System.out.println("Solution: " + puzzle.getWinningSum());
@@ -34,17 +34,17 @@ public class Day04 {
 
     private static final Pattern LINE_PATTERN = Pattern.compile("Card +(\\d+): +(.*?) \\| +(.*?)");
 
-    public void addScratchcard(String str) {
-        Matcher matcher = LINE_PATTERN.matcher(str);
+    public void addScratchcard(final String str) {
+        final Matcher matcher = LINE_PATTERN.matcher(str);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("line: " + str);
         }
 
-        Set<String> winningNumbers = new LinkedHashSet<>(Arrays.asList(matcher.group(2).split(" +")));
-        Set<String> numbers = new HashSet<>(Arrays.asList(matcher.group(3).split(" +")));
+        final Set<String> winningNumbers = new LinkedHashSet<>(Arrays.asList(matcher.group(2).split(" +")));
+        final Set<String> numbers = new HashSet<>(Arrays.asList(matcher.group(3).split(" +")));
 
         winningNumbers.retainAll(numbers);
-        int hits = winningNumbers.size();
+        final int hits = winningNumbers.size();
         if (hits > 0) {
             winningSum += (int) Math.pow(2, hits - 1);
         }

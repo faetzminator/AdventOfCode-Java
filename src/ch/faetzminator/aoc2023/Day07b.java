@@ -12,10 +12,10 @@ import java.util.function.Function;
 
 public class Day07b {
 
-    public static void main(String[] args) {
-        Day07b puzzle = new Day07b();
+    public static void main(final String[] args) {
+        final Day07b puzzle = new Day07b();
 
-        List<String> input = new ArrayList<>();
+        final List<String> input = new ArrayList<>();
         try (Scanner scanner = new Scanner(System.in)) {
             String line;
             while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
@@ -24,20 +24,20 @@ public class Day07b {
         }
 
         System.out.println("Calculating...");
-        for (String line : input) {
+        for (final String line : input) {
             puzzle.parseHand(line);
         }
         System.out.println("Solution: " + puzzle.calculateSum());
     }
 
-    private List<Hand> hands = new ArrayList<>();
+    private final List<Hand> hands = new ArrayList<>();
 
-    public void parseHand(String line) {
-        String[] parts = line.split(" ");
+    public void parseHand(final String line) {
+        final String[] parts = line.split(" ");
 
-        Type type = Type.findType(parts[0]);
-        List<Strength> cards = new ArrayList<>();
-        for (char c : parts[0].toCharArray()) {
+        final Type type = Type.findType(parts[0]);
+        final List<Strength> cards = new ArrayList<>();
+        for (final char c : parts[0].toCharArray()) {
             cards.add(Strength.toStrength(c));
         }
         hands.add(new Hand(parts[0], type, cards, Long.parseLong(parts[1])));
@@ -47,20 +47,20 @@ public class Day07b {
         long sum = 0;
         Collections.sort(hands);
         int rank = hands.size();
-        for (Hand hand : hands) {
+        for (final Hand hand : hands) {
             sum += hand.getBid() * rank--;
         }
         return sum;
     }
 
-    public class Hand implements Comparable<Hand> {
+    private static class Hand implements Comparable<Hand> {
 
         private final String cardsRaw;
         private final Type type;
         private final List<Strength> cards;
         private final long bid;
 
-        public Hand(String cardsRaw, Type type, List<Strength> cards, long bid) {
+        public Hand(final String cardsRaw, final Type type, final List<Strength> cards, final long bid) {
             this.cardsRaw = cardsRaw;
             this.type = type;
             this.cards = cards;
@@ -80,7 +80,7 @@ public class Day07b {
         }
 
         @Override
-        public int compareTo(Hand o) {
+        public int compareTo(final Hand o) {
             int ordinal = getType().ordinal() - o.getType().ordinal();
             if (ordinal != 0) {
                 return ordinal;
@@ -100,7 +100,7 @@ public class Day07b {
         }
     }
 
-    public enum Strength {
+    private static enum Strength {
 
         A, K, Q, T, N9, N8, N7, N6, N5, N4, N3, N2, J;
 
@@ -114,8 +114,8 @@ public class Day07b {
             return label;
         }
 
-        public static Strength toStrength(char c) {
-            for (Strength strength : values()) {
+        public static Strength toStrength(final char c) {
+            for (final Strength strength : values()) {
                 if (strength.getLabel() == c) {
                     return strength;
                 }
@@ -124,7 +124,7 @@ public class Day07b {
         }
     }
 
-    public enum Type {
+    private static enum Type {
 
         FIVE_OF_A_KIND(new CountMatcher(5)), FOUR_OF_A_KIND(new CountMatcher(4)), FULL_HOUSE(new CountMatcher(3, 2)),
         THREE_OF_A_KIND(new CountMatcher(3)), TWO_PAIR(new CountMatcher(2, 2)), ONE_PAIR(new CountMatcher(2)),
@@ -132,7 +132,7 @@ public class Day07b {
 
         private final Function<String, Boolean> matcher;
 
-        private Type(Function<String, Boolean> matcher) {
+        private Type(final Function<String, Boolean> matcher) {
             this.matcher = matcher;
         }
 
@@ -140,8 +140,8 @@ public class Day07b {
             return matcher;
         }
 
-        public static Type findType(String str) {
-            for (Type type : values()) {
+        public static Type findType(final String str) {
+            for (final Type type : values()) {
                 if (type.getMatcher().apply(str)) {
                     return type;
                 }
@@ -150,19 +150,19 @@ public class Day07b {
         }
     }
 
-    public static class CountMatcher implements Function<String, Boolean> {
+    private static class CountMatcher implements Function<String, Boolean> {
 
         private final int[] countNeeded;
 
-        public CountMatcher(int... count) {
-            this.countNeeded = count;
+        public CountMatcher(final int... count) {
+            countNeeded = count;
         }
 
         private final Character jokerChar = 'J';
 
-        private Map.Entry<Character, Integer> findEntry(Map<Character, Integer> chars, int count, int jokersUsed) {
-            int jokers = chars.containsKey(jokerChar) ? chars.get(jokerChar) - jokersUsed : 0;
-            for (Map.Entry<Character, Integer> entry : chars.entrySet()) {
+        private Map.Entry<Character, Integer> findEntry(final Map<Character, Integer> chars, final int count, final int jokersUsed) {
+            final int jokers = chars.containsKey(jokerChar) ? chars.get(jokerChar) - jokersUsed : 0;
+            for (final Map.Entry<Character, Integer> entry : chars.entrySet()) {
                 if (entry.getKey() != jokerChar && (entry.getValue() + jokers) >= count) {
                     return entry;
                 }
@@ -174,13 +174,13 @@ public class Day07b {
             return null;
         }
 
-        private static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
-            List<Entry<K, V>> list = new ArrayList<>(map.entrySet());
+        private static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(final Map<K, V> map) {
+            final List<Entry<K, V>> list = new ArrayList<>(map.entrySet());
             list.sort(Entry.comparingByValue());
             Collections.reverse(list);
 
-            Map<K, V> result = new LinkedHashMap<>();
-            for (Entry<K, V> entry : list) {
+            final Map<K, V> result = new LinkedHashMap<>();
+            for (final Entry<K, V> entry : list) {
                 result.put(entry.getKey(), entry.getValue());
             }
 
@@ -188,9 +188,9 @@ public class Day07b {
         }
 
         @Override
-        public Boolean apply(String t) {
+        public Boolean apply(final String t) {
             Map<Character, Integer> chars = new HashMap<>();
-            for (char c : t.toCharArray()) {
+            for (final char c : t.toCharArray()) {
                 if (!chars.containsKey(c)) {
                     chars.put(c, 0);
                 }
@@ -199,8 +199,8 @@ public class Day07b {
             // sort for full house and two pairs
             chars = sortByValue(chars);
             int jokersUsed = 0;
-            for (int count : countNeeded) {
-                Map.Entry<Character, Integer> entry = findEntry(chars, count, jokersUsed);
+            for (final int count : countNeeded) {
+                final Map.Entry<Character, Integer> entry = findEntry(chars, count, jokersUsed);
                 if (entry == null) {
                     return false;
                 }
