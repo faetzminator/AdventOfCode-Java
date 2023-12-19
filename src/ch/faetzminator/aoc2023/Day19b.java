@@ -311,6 +311,9 @@ public class Day19b {
         private int end;
 
         public Range(final int start, final int end) {
+            if (end < start) {
+                throw new IllegalArgumentException("start " + start + " > end " + end);
+            }
             this.start = start;
             this.end = end;
         }
