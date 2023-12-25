@@ -19,4 +19,9 @@ public class Position extends Point {
         }
         throw new IllegalArgumentException();
     }
+
+    @Override
+    public String toString() {
+        return "Position [x=" + getX() + ", y=" + getY() + "]";
+    }
 }

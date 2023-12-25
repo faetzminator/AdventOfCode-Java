@@ -9,6 +9,12 @@ import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
 
+import ch.faetzminator.aocutil.CharPrintable;
+import ch.faetzminator.aocutil.Direction;
+import ch.faetzminator.aocutil.ElementAtPosition;
+import ch.faetzminator.aocutil.PMap;
+import ch.faetzminator.aocutil.Position;
+
 public class Day16 {
 
     public static void main(final String[] args) {
@@ -28,21 +34,22 @@ public class Day16 {
         System.out.println("Solution: " + puzzle.getEnergizedSum());
     }
 
-    private Contraption contraption;
+    private PMap<PartAtPosition> contraption;
 
     public void parseLines(final List<String> input) {
-        contraption = new Contraption(input.get(0).length(), input.size());
+        contraption = new PMap<>(PartAtPosition.class, input.get(0).length(), input.size());
 
         for (int y = 0; y < input.size(); y++) {
             final String line = input.get(y);
             for (int x = 0; x < line.length(); x++) {
-                contraption.setPartAt(new Position(x, y), Part.byChar(line.charAt(x)));
+                final PartAtPosition part = new PartAtPosition(Part.byChar(line.charAt(x)), new Position(x, y));
+                contraption.setElementAt(part.getPosition(), part);
             }
         }
     }
 
     public void beam() {
-        beam(contraption.getPartAt(new Position(0, 0)), Direction.EAST);
+        beam(contraption.getElementAt(new Position(0, 0)), Direction.EAST);
     }
 
     private void beam(PartAtPosition current, Direction direction) {
@@ -53,11 +60,11 @@ public class Day16 {
         while (!queue.isEmpty()) {
             final PartAtPositionWithDirection x = queue.poll();
             processed.add(x);
-            current = x.getPartAtPosition();
+            current = x.getElementAtPosition();
             direction = x.getDirection();
             current.setEnergized();
-            for (final Direction newDirection : current.getPart().getDirections(direction)) {
-                final PartAtPosition next = contraption.getPartAt(current.getPosition().move(newDirection));
+            for (final Direction newDirection : current.getElement().getDirections(direction)) {
+                final PartAtPosition next = contraption.getElementAt(current.getPosition().move(newDirection));
                 if (next != null) {
                     final PartAtPositionWithDirection y = new PartAtPositionWithDirection(next, newDirection);
                     if (!processed.contains(y)) {
@@ -72,62 +79,12 @@ public class Day16 {
         long sum = 0;
         for (int y = 0; y < contraption.getYSize(); y++) {
             for (int x = 0; x < contraption.getXSize(); x++) {
-                if (contraption.getPartAt(new Position(x, y)).isEnergized()) {
+                if (contraption.getElementAt(new Position(x, y)).isEnergized()) {
                     sum++;
                 }
             }
         }
         return sum;
-    }
-
-    private static class Position {
-
-        private final int x;
-        private final int y;
-
-        public Position(final int x, final int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public Position move(final Direction direction) {
-            switch (direction) {
-            case NORTH:
-                return new Position(x, y - 1);
-            case EAST:
-                return new Position(x + 1, y);
-            case SOUTH:
-                return new Position(x, y + 1);
-            case WEST:
-                return new Position(x - 1, y);
-            }
-            throw new IllegalArgumentException();
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(x, y);
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if ((obj == null) || (getClass() != obj.getClass())) {
-                return false;
-            }
-            final Position other = (Position) obj;
-            return x == other.x && y == other.y;
-        }
     }
 
     private static class PartAtPositionWithDirection {
@@ -139,7 +96,7 @@ public class Day16 {
             this.direction = direction;
         }
 
-        public PartAtPosition getPartAtPosition() {
+        public PartAtPosition getElementAtPosition() {
             return partAtPosition;
         }
 
@@ -165,23 +122,12 @@ public class Day16 {
         }
     }
 
-    private static class PartAtPosition {
-        private final Part part;
-        private final Position position;
+    private static class PartAtPosition extends ElementAtPosition<Part> {
 
         private boolean energized;
 
         public PartAtPosition(final Part part, final Position position) {
-            this.part = part;
-            this.position = position;
-        }
-
-        public Part getPart() {
-            return part;
-        }
-
-        public Position getPosition() {
-            return position;
+            super(part, position);
         }
 
         public void setEnergized() {
@@ -192,76 +138,13 @@ public class Day16 {
             return energized;
         }
 
-        public char getCharacter() {
-            return part == Part.EMPTY && isEnergized() ? '#' : part.getCharacter();
-        }
-
         @Override
-        public int hashCode() {
-            return Objects.hash(energized, part, position);
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if ((obj == null) || (getClass() != obj.getClass())) {
-                return false;
-            }
-            final PartAtPosition other = (PartAtPosition) obj;
-            return energized == other.energized && part == other.part && Objects.equals(position, other.position);
+        public char toPrintableChar() {
+            return getElement() == Part.EMPTY && isEnergized() ? '#' : super.toPrintableChar();
         }
     }
 
-    private static class Contraption {
-
-        private final PartAtPosition[][] map;
-
-        public Contraption(final int xSize, final int ySize) {
-            map = new PartAtPosition[ySize][xSize];
-        }
-
-        public void setPartAt(final Position position, final Part part) {
-            map[position.getY()][position.getX()] = new PartAtPosition(part, position);
-        }
-
-        public PartAtPosition getPartAt(final Position position) {
-            return isInBounds(position) ? map[position.getY()][position.getX()] : null;
-        }
-
-        public boolean isInBounds(final Position position) {
-            return position.getX() >= 0 && position.getY() >= 0 && position.getX() < map[0].length
-                    && position.getY() < map.length;
-        }
-
-        @Override
-        public String toString() {
-            final StringBuilder builder = new StringBuilder();
-            for (final PartAtPosition[] element : map) {
-                for (final PartAtPosition element2 : element) {
-                    builder.append(element2.getCharacter());
-                }
-                builder.append('\n');
-            }
-            builder.setLength(builder.length() - 1);
-            return builder.toString();
-        }
-
-        public int getXSize() {
-            return map[0].length;
-        }
-
-        public int getYSize() {
-            return map.length;
-        }
-    }
-
-    private static enum Direction {
-        NORTH, EAST, SOUTH, WEST;
-    }
-
-    private static enum Part {
+    private static enum Part implements CharPrintable {
 
         EMPTY('.') {
             @Override
@@ -354,5 +237,10 @@ public class Day16 {
         }
 
         public abstract Set<Direction> getDirections(Direction direction);
+
+        @Override
+        public char toPrintableChar() {
+            return character;
+        }
     }
 }

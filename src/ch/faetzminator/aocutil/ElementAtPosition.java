@@ -1,5 +1,7 @@
 package ch.faetzminator.aocutil;
 
+import java.util.Objects;
+
 public class ElementAtPosition<T extends CharPrintable> implements CharPrintable {
 
     private final T element;
@@ -21,6 +23,29 @@ public class ElementAtPosition<T extends CharPrintable> implements CharPrintable
     @Override
     public char toPrintableChar() {
         return element.toPrintableChar();
+    }
+
+    /**
+     * Note <code>T element</code> needs to implement hashCode and equals properly!
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(element, position);
+    }
+
+    /**
+     * Note <code>T element</code> needs to implement hashCode and equals properly!
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((obj == null) || (getClass() != obj.getClass())) {
+            return false;
+        }
+        final ElementAtPosition<?> other = (ElementAtPosition<?>) obj;
+        return Objects.equals(element, other.element) && Objects.equals(position, other.position);
     }
 
     @Override

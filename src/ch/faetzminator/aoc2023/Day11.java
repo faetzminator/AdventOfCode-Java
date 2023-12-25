@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
 
+import ch.faetzminator.aocutil.Position;
+
 public class Day11 {
 
     public static void main(final String[] args) {
@@ -122,23 +124,5 @@ public class Day11 {
 
     public long getDistanceSum() {
         return distanceSum;
-    }
-
-    private static class Position {
-        private final int x;
-        private final int y;
-
-        public Position(final int x, final int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
     }
 }
