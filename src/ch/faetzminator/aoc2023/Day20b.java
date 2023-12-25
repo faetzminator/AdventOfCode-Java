@@ -1,6 +1,5 @@
 package ch.faetzminator.aoc2023;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -12,6 +11,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import ch.faetzminator.aocutil.MathUtil;
 
 public class Day20b {
 
@@ -243,7 +244,7 @@ public class Day20b {
             if (loopLengths.size() == states.size()) {
                 buttonCount = 1L;
                 for (final Long value : loopLengths.values()) {
-                    buttonCount = lcm(buttonCount, value);
+                    buttonCount = MathUtil.lcm(buttonCount, value);
                 }
             }
         }
@@ -294,15 +295,5 @@ public class Day20b {
             state = event.isHighPulse();
             return List.of();
         }
-    }
-
-    private static long lcm(final long number1, final long number2) {
-        return lcm(BigInteger.valueOf(number1), BigInteger.valueOf(number2)).longValueExact();
-    }
-
-    private static BigInteger lcm(final BigInteger number1, final BigInteger number2) {
-        final BigInteger gcd = number1.gcd(number2);
-        final BigInteger absProduct = number1.multiply(number2).abs();
-        return absProduct.divide(gcd);
     }
 }

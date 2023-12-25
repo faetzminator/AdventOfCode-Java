@@ -1,6 +1,5 @@
 package ch.faetzminator.aoc2023;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +7,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import ch.faetzminator.aocutil.MathUtil;
 
 public class Day08b {
 
@@ -102,21 +103,14 @@ public class Day08b {
             steps++;
         } while (!atEnd(loop));
 
-        BigInteger currentLcm = BigInteger.ONE;
+        long solution = 1L;
         for (int i = 0; i < loop.length; i++) {
             if (loop[i] != shift[i]) {
                 throw new IllegalArgumentException("basic LCM won't work for given input");
             }
-            currentLcm = lcm(currentLcm, BigInteger.valueOf(loop[i]));
+            solution = MathUtil.lcm(solution, loop[i]);
         }
-
-        return currentLcm.longValueExact();
-    }
-
-    private static BigInteger lcm(final BigInteger number1, final BigInteger number2) {
-        final BigInteger gcd = number1.gcd(number2);
-        final BigInteger absProduct = number1.multiply(number2).abs();
-        return absProduct.divide(gcd);
+        return solution;
     }
 
     private static class Node {
