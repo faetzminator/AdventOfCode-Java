@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.faetzminator.aocutil.LRNode;
 import ch.faetzminator.aocutil.MathUtil;
 
 public class Day08b {
@@ -39,7 +40,7 @@ public class Day08b {
     }
 
     private char[] instructions;
-    private final Map<String, Node> nodes = new HashMap<>();
+    private final Map<String, LRNode<String>> nodes = new HashMap<>();
 
     public void parseInstructions(final String str) {
         if (!str.matches("[LR]+")) {
@@ -55,7 +56,7 @@ public class Day08b {
         if (!matcher.matches()) {
             throw new IllegalArgumentException("line: " + line);
         }
-        nodes.put(matcher.group(1), new Node(matcher.group(2), matcher.group(3)));
+        nodes.put(matcher.group(1), new LRNode<>(matcher.group(2), matcher.group(3)));
     }
 
     private String[] findStartKeys() {
@@ -86,7 +87,7 @@ public class Day08b {
 
         do {
             for (int i = 0; i < next.length; i++) {
-                final Node node = nodes.get(next[i]);
+                final LRNode<String> node = nodes.get(next[i]);
                 if (instructions[steps % instructions.length] == 'L') {
                     next[i] = node.getLeft();
                 } else {
@@ -111,24 +112,5 @@ public class Day08b {
             solution = MathUtil.lcm(solution, loop[i]);
         }
         return solution;
-    }
-
-    private static class Node {
-
-        private final String left;
-        private final String right;
-
-        public Node(final String left, final String right) {
-            this.left = left;
-            this.right = right;
-        }
-
-        public String getLeft() {
-            return left;
-        }
-
-        public String getRight() {
-            return right;
-        }
     }
 }

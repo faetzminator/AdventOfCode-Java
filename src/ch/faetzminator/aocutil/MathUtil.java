@@ -8,7 +8,7 @@ public final class MathUtil {
 
     }
 
-    public static long lcm(long one, long another) {
+    public static long lcm(final long one, final long another) {
         return lcm(BigInteger.valueOf(one), BigInteger.valueOf(another)).longValueExact();
     }
 

@@ -8,6 +8,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.faetzminator.aocutil.LRNode;
+
 public class Day08 {
 
     public static void main(final String[] args) {
@@ -37,7 +39,7 @@ public class Day08 {
     }
 
     private char[] instructions;
-    private final Map<String, Node> nodes = new HashMap<>();
+    private final Map<String, LRNode<String>> nodes = new HashMap<>();
 
     public void parseInstructions(final String str) {
         if (!str.matches("[LR]+")) {
@@ -53,14 +55,14 @@ public class Day08 {
         if (!matcher.matches()) {
             throw new IllegalArgumentException("line: " + line);
         }
-        nodes.put(matcher.group(1), new Node(matcher.group(2), matcher.group(3)));
+        nodes.put(matcher.group(1), new LRNode<>(matcher.group(2), matcher.group(3)));
     }
 
     public int calculateSteps() {
         int steps = 0;
         String next = "AAA";
         do {
-            final Node node = nodes.get(next);
+            final LRNode<String> node = nodes.get(next);
             if (instructions[steps++ % instructions.length] == 'L') {
                 next = node.getLeft();
             } else {
@@ -68,24 +70,5 @@ public class Day08 {
             }
         } while (!next.equals("ZZZ"));
         return steps;
-    }
-
-    private static class Node {
-
-        private final String left;
-        private final String right;
-
-        public Node(final String left, final String right) {
-            this.left = left;
-            this.right = right;
-        }
-
-        public String getLeft() {
-            return left;
-        }
-
-        public String getRight() {
-            return right;
-        }
     }
 }

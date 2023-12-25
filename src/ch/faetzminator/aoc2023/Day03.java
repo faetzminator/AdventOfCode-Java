@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
+import ch.faetzminator.aocutil.Point;
+
 public class Day03 {
 
     public static void main(final String[] args) {
@@ -27,7 +29,7 @@ public class Day03 {
     }
 
     private final List<Number> numbers = new ArrayList<>();
-    private final List<Symbol> symbols = new ArrayList<>();
+    private final List<Point> symbols = new ArrayList<>();
     private int lineNumber;
 
     public void addLine(final String str) {
@@ -48,7 +50,7 @@ public class Day03 {
                     count = 0;
                 }
                 if (c != '.') {
-                    symbols.add(new Symbol(x, y));
+                    symbols.add(new Point(x, y));
                 }
             }
         }
@@ -61,7 +63,7 @@ public class Day03 {
         long sum = 0;
         final Set<Number> alreadyUsed = new HashSet<>();
 
-        for (final Symbol symbol : symbols) {
+        for (final Point symbol : symbols) {
             for (final Number number : numbers) {
                 if (!alreadyUsed.contains(number)) {
                     final boolean yMatch = number.getY() <= symbol.getY() + 1 && number.getY() >= symbol.getY() - 1;
@@ -105,25 +107,6 @@ public class Day03 {
 
         public int getEndX() {
             return x + length - 1;
-        }
-    }
-
-    private static class Symbol {
-
-        final int x;
-        final int y;
-
-        public Symbol(final int x, final int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
         }
     }
 }

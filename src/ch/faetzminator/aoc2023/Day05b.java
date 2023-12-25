@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.faetzminator.aocutil.Range;
+
 public class Day05b {
 
     public static void main(final String[] args) {
@@ -54,8 +56,8 @@ public class Day05b {
         System.out.println("Solution: " + puzzle.getSeedRangeWithLowestLocation().getStart());
     }
 
-    private final Set<SeedRange> seedRanges = new HashSet<>();
-    private final Set<SeedRange> processedSeedRanges = new HashSet<>();
+    private final Set<Range> seedRanges = new HashSet<>();
+    private final Set<Range> processedSeedRanges = new HashSet<>();
 
     public void addSeeds(final String line) {
         final Matcher matcher = Pattern.compile("seeds: (\\d+.*\\d+)").matcher(line);
@@ -66,13 +68,13 @@ public class Day05b {
         for (int i = 0; i < numbers.length; i += 2) {
             final long start = Long.parseLong(numbers[i]);
             final long end = start + Long.parseLong(numbers[i + 1]) - 1;
-            seedRanges.add(new SeedRange(start, end));
+            seedRanges.add(new Range(start, end));
         }
     }
 
-    public SeedRange getSeedRangeWithLowestLocation() {
-        SeedRange lowest = seedRanges.iterator().next();
-        for (final SeedRange seedRange : seedRanges) {
+    public Range getSeedRangeWithLowestLocation() {
+        Range lowest = seedRanges.iterator().next();
+        for (final Range seedRange : seedRanges) {
             if (seedRange.getStart() < lowest.getStart()) {
                 lowest = seedRange;
             }
@@ -96,9 +98,9 @@ public class Day05b {
         final long sourceStart = Long.parseLong(matcher.group(2));
         final long sourceEnd = sourceStart + Long.parseLong(matcher.group(3)) - 1;
 
-        final List<SeedRange> processed = new ArrayList<>();
-        final List<SeedRange> newItems = new ArrayList<>();
-        for (SeedRange seedRange : seedRanges) {
+        final List<Range> processed = new ArrayList<>();
+        final List<Range> newItems = new ArrayList<>();
+        for (Range seedRange : seedRanges) {
             final long start = seedRange.getStart();
             final long end = seedRange.getEnd();
 
@@ -126,38 +128,5 @@ public class Day05b {
         // the below doesn't make sense as per the puzzle, does it? I would rather put
         // it into the seedRanges for further processing
         processedSeedRanges.addAll(processed);
-    }
-
-    private static class SeedRange {
-
-        private long start;
-        private long end;
-
-        public SeedRange(final long start, final long end) {
-            if (end < start) {
-                throw new IllegalArgumentException("start " + start + " > end " + end);
-            }
-            this.start = start;
-            this.end = end;
-        }
-
-        public long getStart() {
-            return start;
-        }
-
-        public long getEnd() {
-            return end;
-        }
-
-        public void move(final long by) {
-            start += by;
-            end += by;
-        }
-
-        public SeedRange split(final long upperStart) {
-            final SeedRange upperRange = new SeedRange(upperStart, end);
-            end = upperStart - 1;
-            return upperRange;
-        }
     }
 }

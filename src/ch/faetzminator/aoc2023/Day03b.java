@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import ch.faetzminator.aocutil.Point;
+
 public class Day03b {
 
     public static void main(final String[] args) {
@@ -25,7 +27,7 @@ public class Day03b {
     }
 
     private final List<Number> numbers = new ArrayList<>();
-    private final List<Symbol> symbols = new ArrayList<>();
+    private final List<Point> symbols = new ArrayList<>();
     private int lineNumber;
 
     public void addLine(final String str) {
@@ -46,7 +48,7 @@ public class Day03b {
                     count = 0;
                 }
                 if (c == '*') {
-                    symbols.add(new Symbol(x, y));
+                    symbols.add(new Point(x, y));
                 }
             }
         }
@@ -58,7 +60,7 @@ public class Day03b {
     public long calculatePartsSum() {
         long sum = 0;
 
-        for (final Symbol symbol : symbols) {
+        for (final Point symbol : symbols) {
             final List<Number> matchingNumbers = new ArrayList<>();
             for (final Number number : numbers) {
                 final boolean yMatch = number.getY() <= symbol.getY() + 1 && number.getY() >= symbol.getY() - 1;
@@ -106,25 +108,6 @@ public class Day03b {
 
         public int getEndX() {
             return x + length - 1;
-        }
-    }
-
-    private static class Symbol {
-
-        private final int x;
-        private final int y;
-
-        public Symbol(final int x, final int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
         }
     }
 }

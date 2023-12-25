@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
+import ch.faetzminator.aocutil.CharPrintable;
+import ch.faetzminator.aocutil.Direction;
+import ch.faetzminator.aocutil.PMapWithStart;
+import ch.faetzminator.aocutil.Position;
+
 public class Day10 {
 
     public static void main(final String[] args) {
@@ -25,15 +30,16 @@ public class Day10 {
         System.out.println("Solution: " + puzzle.calculateLoopSteps());
     }
 
-    private PipeMap pipeMap;
+    private PMapWithStart<Pipe> pipeMap;
 
     public void parseLines(final List<String> input) {
-        pipeMap = new PipeMap(input.get(0).length(), input.size());
+        pipeMap = new PMapWithStart<>(Pipe.class, input.get(0).length(), input.size(),
+                element -> element == Pipe.START);
 
         for (int y = 0; y < input.size(); y++) {
             final String line = input.get(y);
             for (int x = 0; x < line.length(); x++) {
-                pipeMap.setPipeAt(new Position(x, y), Pipe.byChar(line.charAt(x)));
+                pipeMap.setElementAt(new Position(x, y), Pipe.byChar(line.charAt(x)));
             }
         }
     }
@@ -41,7 +47,7 @@ public class Day10 {
     public int calculateLoopSteps() {
 
         final Position current = pipeMap.getStartPosition();
-        final Pipe startPipe = pipeMap.getPipeAt(current);
+        final Pipe startPipe = pipeMap.getElementAt(current);
         for (final Direction direction : startPipe.getDirections()) {
             final int steps = calculateLoopSteps(current, startPipe, direction);
             // we should get twice -1 and twice the same number
@@ -59,7 +65,7 @@ public class Day10 {
             if (!pipeMap.isInBounds(nextPos)) {
                 return -1;
             }
-            final Pipe nextPipe = pipeMap.getPipeAt(nextPos);
+            final Pipe nextPipe = pipeMap.getElementAt(nextPos);
             if (nextPipe == Pipe.START) {
                 return steps + 1;
             }
@@ -80,94 +86,7 @@ public class Day10 {
         }
     }
 
-    private static class Position {
-
-        private final int x;
-        private final int y;
-
-        public Position(final int x, final int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public Position move(final Direction direction) {
-            switch (direction) {
-            case NORTH:
-                return new Position(x, y - 1);
-            case EAST:
-                return new Position(x + 1, y);
-            case SOUTH:
-                return new Position(x, y + 1);
-            case WEST:
-                return new Position(x - 1, y);
-            }
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private static class PipeMap {
-
-        private final Pipe[][] map;
-        private Position startPosition;
-
-        public PipeMap(final int xSize, final int ySize) {
-            map = new Pipe[ySize][xSize];
-        }
-
-        public void setPipeAt(final Position position, final Pipe pipe) {
-            map[position.getY()][position.getX()] = pipe;
-            if (pipe == Pipe.START) {
-                if (startPosition != null) {
-                    throw new IllegalArgumentException("duplicate start");
-                }
-                startPosition = position;
-            }
-        }
-
-        public Pipe getPipeAt(final Position position) {
-            return map[position.getY()][position.getX()];
-        }
-
-        public Position getStartPosition() {
-            if (startPosition == null) {
-                throw new IllegalArgumentException("start not set");
-            }
-            return startPosition;
-        }
-
-        public boolean isInBounds(final Position position) {
-            return position.getX() >= 0 && position.getY() >= 0 && position.getX() < map[0].length
-                    && position.getY() < map.length;
-        }
-    }
-
-    private static enum Direction {
-        NORTH, EAST, SOUTH, WEST;
-
-        public Direction getOpposite() {
-            switch (this) {
-            case NORTH:
-                return SOUTH;
-            case EAST:
-                return WEST;
-            case SOUTH:
-                return NORTH;
-            case WEST:
-                return EAST;
-            }
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private static enum Pipe {
+    private static enum Pipe implements CharPrintable {
 
         VERTICAL('|', Direction.NORTH, Direction.SOUTH), HORIZONTAL('-', Direction.EAST, Direction.WEST),
         BEND1('L', Direction.NORTH, Direction.EAST), BEND2('J', Direction.NORTH, Direction.WEST),
@@ -197,6 +116,11 @@ public class Day10 {
                 }
             }
             throw new IllegalArgumentException("pipe not found for " + c);
+        }
+
+        @Override
+        public char toPrintableChar() {
+            return character;
         }
     }
 }
