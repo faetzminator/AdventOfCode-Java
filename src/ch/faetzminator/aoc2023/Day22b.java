@@ -28,7 +28,7 @@ public class Day22b {
         for (final String line : input) {
             puzzle.parseBrick(line);
         }
-        final long solution = puzzle.calculateDisintegratbleBlocks();
+        final long solution = puzzle.calculateDisintegrableBlocks();
         System.out.println("Solution: " + solution);
     }
 
@@ -54,7 +54,7 @@ public class Day22b {
         bricks.add(new Brick(from, to));
     }
 
-    public long calculateDisintegratbleBlocks() {
+    public long calculateDisintegrableBlocks() {
         long sum = 0;
 
         Collections.sort(bricks, (o1, o2) -> {

@@ -6,6 +6,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.faetzminator.aocutil.MovingPosition;
+
 public class Day24 {
 
     public static void main(final String[] args) {
@@ -27,7 +29,7 @@ public class Day24 {
         System.out.println("Solution: " + solution);
     }
 
-    private final List<Hailstone> hailstones = new ArrayList<>();
+    private final List<MovingPosition> hailstones = new ArrayList<>();
 
     private static final Pattern LINE_PATTERN = Pattern
             .compile("(-?\\d+), +(-?\\d+), +(-?\\d+) +@ +(-?\\d+), +(-?\\d+), +(-?\\d+)");
@@ -41,7 +43,7 @@ public class Day24 {
         final long py = Long.parseLong(matcher.group(2));
         final long vx = Long.parseLong(matcher.group(4));
         final long vy = Long.parseLong(matcher.group(5));
-        final Hailstone hailstone = new Hailstone(px, py, vx, vy);
+        final MovingPosition hailstone = new MovingPosition(px, py, vx, vy);
         hailstones.add(hailstone);
     }
 
@@ -52,9 +54,9 @@ public class Day24 {
         long sum = 0;
 
         for (int i = 0; i < hailstones.size(); i++) {
-            final Hailstone one = hailstones.get(i);
+            final MovingPosition one = hailstones.get(i);
             for (int j = i + 1; j < hailstones.size(); j++) {
-                final Hailstone another = hailstones.get(j);
+                final MovingPosition another = hailstones.get(j);
                 if (one.getM() != another.getM()) {
                     final double x = one.getCollisionX(another);
                     final double y = one.getY(x);
@@ -66,42 +68,5 @@ public class Day24 {
         }
 
         return sum;
-    }
-
-    private static class Hailstone {
-
-        private final long px;
-        private final long vx;
-
-        private final double m;
-        private final double b;
-
-        public Hailstone(final long px, final long py, final long vx, final long vy) {
-            this.px = px;
-            this.vx = vx;
-
-            m = ((double) vy) / ((double) vx);
-            b = -(m * px) + py;
-        }
-
-        public double getM() {
-            return m;
-        }
-
-        public double getB() {
-            return b;
-        }
-
-        public double getCollisionX(final Hailstone other) {
-            return (other.getB() - b) / (m - other.getM());
-        }
-
-        public double getY(final double x) {
-            return m * x + b;
-        }
-
-        public boolean inPast(final double x) {
-            return vx > 0 ? x < px : x > px;
-        }
     }
 }

@@ -8,6 +8,12 @@ import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
 
+import ch.faetzminator.aocutil.CharEnum;
+import ch.faetzminator.aocutil.Direction;
+import ch.faetzminator.aocutil.ElementAtPosition;
+import ch.faetzminator.aocutil.PMap;
+import ch.faetzminator.aocutil.Position;
+
 public class Day23 {
 
     public static void main(final String[] args) {
@@ -27,21 +33,22 @@ public class Day23 {
         System.out.println("Solution: " + solution);
     }
 
-    private Map map;
+    private PMap<BlockAtPosition> map;
 
     public void parseLines(final List<String> input) {
-        map = new Map(input.get(0).length(), input.size());
+        map = new PMap<>(BlockAtPosition.class, input.get(0).length(), input.size());
 
         for (int y = 0; y < input.size(); y++) {
             final String line = input.get(y);
             for (int x = 0; x < line.length(); x++) {
-                map.setBlockAt(new Position(x, y), Block.byChar(line.charAt(x)));
+                final BlockAtPosition block = new BlockAtPosition(new Position(x, y), Block.byChar(line.charAt(x)));
+                map.setElementAt(block.getPosition(), block);
             }
         }
     }
 
     public long findLongestPath() {
-        final BlockAtPosition startBlock = map.getBlockAt(new Position(1, 0));
+        final BlockAtPosition startBlock = map.getElementAt(new Position(1, 0));
         final Position endPos = new Position(map.getXSize() - 2, map.getYSize() - 1);
 
         final Queue<BlockAtPositionWithDirection> queue = new LinkedList<>();
@@ -50,11 +57,11 @@ public class Day23 {
 
         while (!queue.isEmpty()) {
             final BlockAtPositionWithDirection lastMove = queue.poll();
-            for (final Direction direction : lastMove.getBlockAtPosition().getBlock().getExits()) {
+            for (final Direction direction : lastMove.getBlockAtPosition().getElement().getExits()) {
                 if (direction != lastMove.getDirection().getOpposite()) {
                     final Position nextPos = lastMove.getBlockAtPosition().getPosition().move(direction);
-                    final BlockAtPosition nextBlock = map.getBlockAt(nextPos);
-                    if (nextBlock != null && nextBlock.getBlock().canEnter(direction.getOpposite())) {
+                    final BlockAtPosition nextBlock = map.getElementAt(nextPos);
+                    if (nextBlock != null && nextBlock.getElement().canEnter(direction.getOpposite())) {
                         nextBlock.setDistance(lastMove.getBlockAtPosition().getDistance() + 1);
                         queue.add(new BlockAtPositionWithDirection(nextBlock, direction));
                     }
@@ -62,40 +69,7 @@ public class Day23 {
             }
         }
 
-        return map.getBlockAt(endPos).getDistance();
-    }
-
-    private static class Position {
-
-        private final int x;
-        private final int y;
-
-        public Position(final int x, final int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public Position move(final Direction direction) {
-            switch (direction) {
-            case NORTH:
-                return new Position(x, y - 1);
-            case EAST:
-                return new Position(x + 1, y);
-            case SOUTH:
-                return new Position(x, y + 1);
-            case WEST:
-                return new Position(x - 1, y);
-            }
-            throw new IllegalArgumentException();
-        }
+        return map.getElementAt(endPos).getDistance();
     }
 
     private static class BlockAtPositionWithDirection {
@@ -116,23 +90,12 @@ public class Day23 {
         }
     }
 
-    private static class BlockAtPosition {
+    private static class BlockAtPosition extends ElementAtPosition<Block> {
 
-        private final Position position;
-        private final Block block;
         private int distance = -1;
 
         public BlockAtPosition(final Position position, final Block block) {
-            this.position = position;
-            this.block = block;
-        }
-
-        public Position getPosition() {
-            return position;
-        }
-
-        public Block getBlock() {
-            return block;
+            super(block, position);
         }
 
         public void setDistance(final int distance) {
@@ -144,64 +107,17 @@ public class Day23 {
         public int getDistance() {
             return distance;
         }
-    }
-
-    private static class Map {
-
-        private final BlockAtPosition[][] map;
-
-        public Map(final int xSize, final int ySize) {
-            map = new BlockAtPosition[ySize][xSize];
-        }
-
-        public void setBlockAt(final Position position, final Block block) {
-            map[position.getY()][position.getX()] = new BlockAtPosition(position, block);
-        }
-
-        public BlockAtPosition getBlockAt(final Position position) {
-            return isInBounds(position) ? map[position.getY()][position.getX()] : null;
-        }
-
-        public boolean isInBounds(final Position position) {
-            return position.getX() >= 0 && position.getY() >= 0 && position.getX() < map[0].length
-                    && position.getY() < map.length;
-        }
-
-        public int getXSize() {
-            return map[0].length;
-        }
-
-        public int getYSize() {
-            return map.length;
-        }
 
         @Override
-        public String toString() {
-            final StringBuilder builder = new StringBuilder();
-            for (final BlockAtPosition[] element : map) {
-                for (final BlockAtPosition element2 : element) {
-                    if (element2.getDistance() > 0) {
-                        builder.append(element2.getDistance() % 10);
-                    } else {
-                        builder.append(element2.getBlock().getCharacter());
-                    }
-                }
-                builder.append('\n');
+        public char toPrintableChar() {
+            if (distance > 0) {
+                return (char) (distance % 10 + '0');
             }
-            builder.setLength(builder.length() - 1);
-            return builder.toString();
+            return super.toPrintableChar();
         }
     }
 
-    private static enum Direction {
-        NORTH, EAST, SOUTH, WEST;
-
-        public Direction getOpposite() {
-            return values()[(ordinal() + 2) % 4];
-        }
-    }
-
-    private static enum Block {
+    private static enum Block implements CharEnum {
 
         PATH('.', false, Direction.values()), ROCK('#', false), SLOPE_UP('^', true, Direction.NORTH),
         SLOW_RIGHT('>', true, Direction.EAST), SLOPE_DOWN('v', true, Direction.SOUTH),
@@ -223,17 +139,13 @@ public class Day23 {
             }
         }
 
+        @Override
         public char getCharacter() {
             return character;
         }
 
         public static Block byChar(final char c) {
-            for (final Block block : values()) {
-                if (block.getCharacter() == c) {
-                    return block;
-                }
-            }
-            throw new IllegalArgumentException("char: " + c);
+            return CharEnum.byChar(Block.class, c);
         }
 
         public boolean canEnter(final Direction fromDirection) {
