@@ -21,15 +21,35 @@ public class Range {
         return end;
     }
 
+    public long getLength() {
+        return end - start + 1;
+    }
+
     public void move(final long by) {
         start += by;
         end += by;
     }
 
-    public Range split(final long upperStart) {
+    public Range splitUpper(final long upperStart) {
+        if (upperStart > end) {
+            return null;
+        }
         final Range upperRange = new Range(upperStart, end);
         end = upperStart - 1;
         return upperRange;
+    }
+
+    public Range splitLower(final long lowerEnd) {
+        if (lowerEnd < start) {
+            return null;
+        }
+        final Range lowerRange = new Range(start, lowerEnd);
+        start = lowerEnd + 1;
+        return lowerRange;
+    }
+
+    public Range copy() {
+        return new Range(start, end);
     }
 
     @Override

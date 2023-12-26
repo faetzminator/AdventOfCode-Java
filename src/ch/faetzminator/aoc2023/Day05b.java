@@ -111,13 +111,13 @@ public class Day05b {
             } else if (sourceStart >= start && sourceStart <= end) {
                 if (sourceStart > start) {
                     newItems.add(seedRange);
-                    seedRange = seedRange.split(sourceStart);
+                    seedRange = seedRange.splitUpper(sourceStart);
                 }
                 seedRange.move(destStart - sourceStart);
                 processed.add(seedRange);
             } else if (sourceEnd <= end && sourceEnd >= start) {
                 if (sourceEnd < end) {
-                    newItems.add(seedRange.split(sourceEnd + 1));
+                    newItems.add(seedRange.splitUpper(sourceEnd + 1));
                 }
                 seedRange.move(destStart - sourceStart);
                 processed.add(seedRange);

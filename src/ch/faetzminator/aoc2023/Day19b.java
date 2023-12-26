@@ -12,6 +12,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.faetzminator.aocutil.Range;
+
 public class Day19b {
 
     public static void main(final String[] args) {
@@ -255,9 +257,9 @@ public class Day19b {
         }
 
         public long getCount() {
-            long product = 1;
+            long product = 1L;
             for (final Range range : ranges.values()) {
-                product *= range.getCount();
+                product *= range.getLength();
             }
             return product;
         }
@@ -303,53 +305,5 @@ public class Day19b {
             return EMPTY;
         }
 
-    }
-
-    private static class Range {
-
-        private int start;
-        private int end;
-
-        public Range(final int start, final int end) {
-            if (end < start) {
-                throw new IllegalArgumentException("start " + start + " > end " + end);
-            }
-            this.start = start;
-            this.end = end;
-        }
-
-        public Range splitUpper(final int upperStart) {
-            if (upperStart > end) {
-                return null;
-            }
-            final Range upper = new Range(upperStart, end);
-            end = upperStart - 1;
-            return upper;
-        }
-
-        public Range splitLower(final int lowerEnd) {
-            if (lowerEnd < start) {
-                return null;
-            }
-            final Range lower = new Range(start, lowerEnd);
-            start = lowerEnd + 1;
-            return lower;
-        }
-
-        public int getStart() {
-            return start;
-        }
-
-        public int getEnd() {
-            return end;
-        }
-
-        public int getCount() {
-            return end - start + 1;
-        }
-
-        public Range copy() {
-            return new Range(start, end);
-        }
     }
 }

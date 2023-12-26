@@ -6,6 +6,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.faetzminator.aocutil.Point;
+
 public class Day18 {
 
     public static void main(final String[] args) {
@@ -71,32 +73,5 @@ public class Day18 {
             throw new IllegalArgumentException();
         }
         return new Point(lastPoint.getX() + x, lastPoint.getY() + y);
-    }
-
-    private static class Point {
-
-        private final int x;
-        private final int y;
-
-        public Point(final int x, final int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public double getXD() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public double getYD() {
-            return y;
-        }
     }
 }

@@ -16,7 +16,15 @@ public class Point {
         return x;
     }
 
+    public double getXD() {
+        return x;
+    }
+
     public int getY() {
+        return y;
+    }
+
+    public double getYD() {
         return y;
     }
 
