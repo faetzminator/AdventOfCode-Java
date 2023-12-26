@@ -1,29 +1,24 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day02b {
 
     public static void main(final String[] args) {
         final Day02b puzzle = new Day02b();
-
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        System.out.println("Calculating...");
-        for (final String line : input) {
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        for (final String line : lines) {
             puzzle.playGame(line);
         }
-        System.out.println("Solution: " + puzzle.getGamePower());
+        final long solution = puzzle.getGamePower();
+        PuzzleUtil.end(solution, timer);
     }
 
     private long gamePower;

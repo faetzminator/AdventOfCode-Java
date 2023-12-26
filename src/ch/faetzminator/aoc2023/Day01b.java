@@ -10,7 +10,7 @@ public class Day01b {
 
     public static void main(final String[] args) {
         final Day01b puzzle = new Day01b();
-        final List<String> lines = ScannerUtil.readNonEmptyLines();
+        final List<String> lines = ScannerUtil.readNonBlankLines();
         final Timer timer = PuzzleUtil.start();
         for (final String line : lines) {
             puzzle.addLine(line);

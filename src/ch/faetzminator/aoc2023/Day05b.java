@@ -8,52 +8,36 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.Range;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day05b {
 
     public static void main(final String[] args) {
         final Day05b puzzle = new Day05b();
 
-        final List<List<String>> input = new ArrayList<>();
-        String seeds;
+        final String seeds;
+        final List<List<String>> input;
 
         try (Scanner scanner = new Scanner(System.in)) {
-            seeds = scanner.nextLine(); // special handling
-
-            String line;
-            final Pattern numericStart = Pattern.compile("^\\d");
-            boolean newNeeded = true;
-            List<String> subInput = new ArrayList<>();
-            while (scanner.hasNextLine()) {
-                line = scanner.nextLine();
-                if (!line.isEmpty()) {
-                    if (numericStart.matcher(line).find()) {
-                        if (newNeeded) {
-                            subInput = new ArrayList<>();
-                            input.add(subInput);
-                            newNeeded = false;
-                        }
-                        subInput.add(line);
-                    } else {
-                        newNeeded = true;
-                    }
-                }
-                if ("EOF".equals(line)) {
-                    break;
-                }
-            }
+            seeds = ScannerUtil.readNonBlankLine(scanner);
+            ScannerUtil.readBlankLine(scanner);
+            input = ScannerUtil.readNonBlankLinesBlocks(scanner);
         }
 
-        System.out.println("Calculating...");
+        final Timer timer = PuzzleUtil.start();
         puzzle.addSeeds(seeds);
         for (final List<String> lines : input) {
-            for (final String line : lines) {
-                puzzle.move(line);
+            // ignore line 0 (header string)
+            for (int i = 1; i < lines.size(); i++) {
+                puzzle.move(lines.get(i));
             }
             puzzle.clear();
         }
-        System.out.println("Solution: " + puzzle.getSeedRangeWithLowestLocation().getStart());
+        final long solution = puzzle.getSeedRangeWithLowestLocation().getStart();
+        PuzzleUtil.end(solution, timer);
     }
 
     private final Set<Range> seedRanges = new HashSet<>();
