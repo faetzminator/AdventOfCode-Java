@@ -1,6 +1,6 @@
 package ch.faetzminator.aocutil;
 
-public enum Direction implements CharPrintable {
+public enum Direction implements CharEnum {
 
     NORTH('N'), EAST('E'), SOUTH('S'), WEST('W');
 
@@ -25,7 +25,11 @@ public enum Direction implements CharPrintable {
     }
 
     @Override
-    public char toPrintableChar() {
+    public char getCharacter() {
         return c;
+    }
+
+    public static Direction byChar(final char c) {
+        return CharEnum.byChar(Direction.class, c);
     }
 }

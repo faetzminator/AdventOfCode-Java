@@ -9,7 +9,7 @@ import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
 
-import ch.faetzminator.aocutil.CharPrintable;
+import ch.faetzminator.aocutil.CharEnum;
 import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.ElementAtPosition;
 import ch.faetzminator.aocutil.PMap;
@@ -168,7 +168,7 @@ public class Day16b {
         }
     }
 
-    private static enum Part implements CharPrintable {
+    private static enum Part implements CharEnum {
 
         EMPTY('.') {
             @Override
@@ -243,28 +243,19 @@ public class Day16b {
 
         private final char character;
 
-        private Part(final char character, final Direction... directions) {
+        private Part(final char character) {
             this.character = character;
         }
 
+        @Override
         public char getCharacter() {
             return character;
         }
 
         public static Part byChar(final char c) {
-            for (final Part part : values()) {
-                if (part.getCharacter() == c) {
-                    return part;
-                }
-            }
-            throw new IllegalArgumentException("part not found for " + c);
+            return CharEnum.byChar(Part.class, c);
         }
 
         public abstract Set<Direction> getDirections(Direction direction);
-
-        @Override
-        public char toPrintableChar() {
-            return character;
-        }
     }
 }

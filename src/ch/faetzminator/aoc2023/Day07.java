@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
 
+import ch.faetzminator.aocutil.CharEnum;
+
 public class Day07 {
 
     public static void main(final String[] args) {
@@ -36,7 +38,7 @@ public class Day07 {
         final Type type = Type.findType(parts[0]);
         final List<Strength> cards = new ArrayList<>();
         for (final char c : parts[0].toCharArray()) {
-            cards.add(Strength.toStrength(c));
+            cards.add(Strength.byChar(c));
         }
         hands.add(new Hand(parts[0], type, cards, Long.parseLong(parts[1])));
     }
@@ -98,7 +100,7 @@ public class Day07 {
         }
     }
 
-    private static enum Strength {
+    private static enum Strength implements CharEnum {
 
         A, K, Q, J, T, N9, N8, N7, N6, N5, N4, N3, N2;
 
@@ -108,17 +110,13 @@ public class Day07 {
             label = name().replaceFirst("^N", "").charAt(0);
         }
 
-        public char getLabel() {
+        @Override
+        public char getCharacter() {
             return label;
         }
 
-        public static Strength toStrength(final char c) {
-            for (final Strength strength : values()) {
-                if (strength.getLabel() == c) {
-                    return strength;
-                }
-            }
-            throw new IllegalArgumentException("char: " + c);
+        public static Strength byChar(final char c) {
+            return CharEnum.byChar(Strength.class, c);
         }
     }
 

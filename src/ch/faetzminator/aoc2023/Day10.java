@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
-import ch.faetzminator.aocutil.CharPrintable;
+import ch.faetzminator.aocutil.CharEnum;
 import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PMapWithStart;
 import ch.faetzminator.aocutil.Position;
@@ -86,7 +86,7 @@ public class Day10 {
         }
     }
 
-    private static enum Pipe implements CharPrintable {
+    private static enum Pipe implements CharEnum {
 
         VERTICAL('|', Direction.NORTH, Direction.SOUTH), HORIZONTAL('-', Direction.EAST, Direction.WEST),
         BEND1('L', Direction.NORTH, Direction.EAST), BEND2('J', Direction.NORTH, Direction.WEST),
@@ -101,6 +101,7 @@ public class Day10 {
             this.directions = new LinkedHashSet<>(Arrays.asList(directions));
         }
 
+        @Override
         public char getCharacter() {
             return character;
         }
@@ -110,17 +111,7 @@ public class Day10 {
         }
 
         public static Pipe byChar(final char c) {
-            for (final Pipe pipe : values()) {
-                if (pipe.getCharacter() == c) {
-                    return pipe;
-                }
-            }
-            throw new IllegalArgumentException("pipe not found for " + c);
-        }
-
-        @Override
-        public char toPrintableChar() {
-            return character;
+            return CharEnum.byChar(Pipe.class, c);
         }
     }
 }

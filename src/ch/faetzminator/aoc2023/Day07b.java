@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.function.Function;
 
+import ch.faetzminator.aocutil.CharEnum;
+
 public class Day07b {
 
     public static void main(final String[] args) {
@@ -38,7 +40,7 @@ public class Day07b {
         final Type type = Type.findType(parts[0]);
         final List<Strength> cards = new ArrayList<>();
         for (final char c : parts[0].toCharArray()) {
-            cards.add(Strength.toStrength(c));
+            cards.add(Strength.byChar(c));
         }
         hands.add(new Hand(parts[0], type, cards, Long.parseLong(parts[1])));
     }
@@ -100,7 +102,7 @@ public class Day07b {
         }
     }
 
-    private static enum Strength {
+    private static enum Strength implements CharEnum {
 
         A, K, Q, T, N9, N8, N7, N6, N5, N4, N3, N2, J;
 
@@ -110,17 +112,13 @@ public class Day07b {
             label = name().replaceFirst("^N", "").charAt(0);
         }
 
-        public char getLabel() {
+        @Override
+        public char getCharacter() {
             return label;
         }
 
-        public static Strength toStrength(final char c) {
-            for (final Strength strength : values()) {
-                if (strength.getLabel() == c) {
-                    return strength;
-                }
-            }
-            throw new IllegalArgumentException("char: " + c);
+        public static Strength byChar(final char c) {
+            return CharEnum.byChar(Strength.class, c);
         }
     }
 
@@ -160,7 +158,8 @@ public class Day07b {
 
         private final Character jokerChar = 'J';
 
-        private Map.Entry<Character, Integer> findEntry(final Map<Character, Integer> chars, final int count, final int jokersUsed) {
+        private Map.Entry<Character, Integer> findEntry(final Map<Character, Integer> chars, final int count,
+                final int jokersUsed) {
             final int jokers = chars.containsKey(jokerChar) ? chars.get(jokerChar) - jokersUsed : 0;
             for (final Map.Entry<Character, Integer> entry : chars.entrySet()) {
                 if (entry.getKey() != jokerChar && (entry.getValue() + jokers) >= count) {
