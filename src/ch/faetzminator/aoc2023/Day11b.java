@@ -1,30 +1,25 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Scanner;
 
 import ch.faetzminator.aocutil.Position;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day11b {
 
     public static void main(final String[] args) {
         final Day11b puzzle = new Day11b();
 
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        System.out.println("Calculating...");
-        puzzle.parseMap(input);
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        puzzle.parseMap(lines);
         puzzle.calculateDistance();
-        System.out.println("Solution: " + puzzle.getDistanceSum());
+        final long solution = puzzle.getDistanceSum();
+        PuzzleUtil.end(solution, timer);
     }
 
     private static final char GALAXY = '#';

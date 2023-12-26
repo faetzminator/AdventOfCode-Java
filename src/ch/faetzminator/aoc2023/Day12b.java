@@ -1,32 +1,28 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day12b {
 
     public static void main(final String[] args) {
         final Day12b puzzle = new Day12b();
 
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        System.out.println("Calculating...");
-        for (final String line : input) {
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        for (final String line : lines) {
             puzzle.parseConditionRecord(line);
         }
-        System.out.println("Solution: " + puzzle.getArrangementSum());
+        final long solution = puzzle.getArrangementSum();
+        PuzzleUtil.end(solution, timer);
     }
 
     private long arrangementSum;
@@ -77,7 +73,8 @@ public class Day12b {
         return true;
     }
 
-    private long calculateArrangements(final String record, final int[] parts, final int atPart, final int partsLength, final int startIndex) {
+    private long calculateArrangements(final String record, final int[] parts, final int atPart, final int partsLength,
+            final int startIndex) {
         long arrangements = 0;
         final int partsLen = partsLength - parts[atPart] - 1;
         for (int pos = startIndex; pos < record.length() - partsLength + 1; pos++) {

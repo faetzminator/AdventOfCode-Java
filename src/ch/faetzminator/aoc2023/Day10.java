@@ -1,33 +1,28 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 
 import ch.faetzminator.aocutil.CharEnum;
 import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PMapWithStart;
 import ch.faetzminator.aocutil.Position;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day10 {
 
     public static void main(final String[] args) {
         final Day10 puzzle = new Day10();
 
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        System.out.println("Calculating...");
-        puzzle.parseLines(input);
-        System.out.println("Solution: " + puzzle.calculateLoopSteps());
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        puzzle.parseLines(lines);
+        final long solution = puzzle.calculateLoopSteps();
+        PuzzleUtil.end(solution, timer);
     }
 
     private PMapWithStart<Pipe> pipeMap;

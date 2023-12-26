@@ -1,47 +1,24 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Pattern;
+
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day13 {
 
     public static void main(final String[] args) {
         final Day13 puzzle = new Day13();
 
-        final List<List<String>> input = new ArrayList<>();
-
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            final Pattern linePattern = Pattern.compile("[#.]+");
-            boolean newNeeded = true;
-            List<String> subInput = new ArrayList<>();
-            while (scanner.hasNextLine()) {
-                line = scanner.nextLine();
-                if (linePattern.matcher(line).matches()) {
-                    if (newNeeded) {
-                        subInput = new ArrayList<>();
-                        input.add(subInput);
-                        newNeeded = false;
-                    }
-                    subInput.add(line);
-                } else if (line.isEmpty()) {
-                    newNeeded = true;
-                } else if ("EOF".equals(line)) {
-                    break;
-                } else {
-                    throw new IllegalArgumentException("line: " + line);
-                }
-            }
-        }
-
-        System.out.println("Calculating...");
+        final List<List<String>> input = ScannerUtil.readNonBlankLinesBlocks();
+        final Timer timer = PuzzleUtil.start();
         for (final List<String> lines : input) {
             puzzle.parsePattern(lines);
         }
-        System.out.println("Solution: " + puzzle.getSummary());
+        final long solution = puzzle.getSummary();
+        PuzzleUtil.end(solution, timer);
     }
 
     private long summary;

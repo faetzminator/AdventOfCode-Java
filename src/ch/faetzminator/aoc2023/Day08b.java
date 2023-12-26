@@ -10,33 +10,29 @@ import java.util.regex.Pattern;
 
 import ch.faetzminator.aocutil.LRNode;
 import ch.faetzminator.aocutil.MathUtil;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day08b {
 
     public static void main(final String[] args) {
         final Day08b puzzle = new Day08b();
 
-        final List<String> input = new ArrayList<>();
-        String instructions;
-
+        final List<String> lines;
+        final String instructions;
         try (Scanner scanner = new Scanner(System.in)) {
-            instructions = scanner.nextLine(); // special handling
-            if (!scanner.nextLine().isEmpty()) {
-                throw new IllegalArgumentException();
-            }
-
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
+            instructions = ScannerUtil.readNonBlankLine(scanner);
+            ScannerUtil.readBlankLine(scanner);
+            lines = ScannerUtil.readNonBlankLines(scanner);
         }
-
-        System.out.println("Calculating...");
+        final Timer timer = PuzzleUtil.start();
         puzzle.parseInstructions(instructions);
-        for (final String line : input) {
+        for (final String line : lines) {
             puzzle.addNode(line);
         }
-        System.out.println("Solution: " + puzzle.calculateSteps());
+        final long solution = puzzle.calculateSteps();
+        PuzzleUtil.end(solution, timer);
     }
 
     private char[] instructions;

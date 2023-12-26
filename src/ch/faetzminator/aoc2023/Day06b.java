@@ -4,21 +4,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
+
 public class Day06b {
 
     public static void main(final String[] args) {
         final Day06b puzzle = new Day06b();
 
-        String time, distance;
+        final String time, distance;
         try (Scanner scanner = new Scanner(System.in)) {
-            time = scanner.nextLine();
-            distance = scanner.nextLine();
+            time = ScannerUtil.readNonBlankLine(scanner);
+            distance = ScannerUtil.readNonBlankLine(scanner);
         }
-
-        System.out.println("Calculating...");
+        final Timer timer = PuzzleUtil.start();
         puzzle.parseInput(time, distance);
-        final long product = puzzle.calculate();
-        System.out.println("Solution: " + product);
+        final long solution = puzzle.calculate();
+        PuzzleUtil.end(solution, timer);
     }
 
     private List<Race> races;

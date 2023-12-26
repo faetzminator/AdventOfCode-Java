@@ -3,23 +3,23 @@ package ch.faetzminator.aoc2023;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day15b {
 
     public static void main(final String[] args) {
         final Day15b puzzle = new Day15b();
 
-        String input;
-        try (Scanner scanner = new Scanner(System.in)) {
-            input = scanner.nextLine();
-        }
-
-        System.out.println("Calculating...");
+        final String input = ScannerUtil.readNonBlankLine();
+        final Timer timer = PuzzleUtil.start();
         puzzle.parseInput(input);
-        System.out.println("Solution: " + puzzle.calculateFocusingPower());
+        final long solution = puzzle.calculateFocusingPower();
+        PuzzleUtil.end(solution, timer);
     }
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("(\\w+)(?:-|=(\\d+))");

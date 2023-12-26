@@ -1,6 +1,5 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,33 +8,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.faetzminator.aocutil.LRNode;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day08 {
 
     public static void main(final String[] args) {
         final Day08 puzzle = new Day08();
 
-        final List<String> input = new ArrayList<>();
-        String instructions;
-
+        final List<String> lines;
+        final String instructions;
         try (Scanner scanner = new Scanner(System.in)) {
-            instructions = scanner.nextLine(); // special handling
-            if (!scanner.nextLine().isEmpty()) {
-                throw new IllegalArgumentException();
-            }
-
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
+            instructions = ScannerUtil.readNonBlankLine(scanner);
+            ScannerUtil.readBlankLine(scanner);
+            lines = ScannerUtil.readNonBlankLines(scanner);
         }
-
-        System.out.println("Calculating...");
+        final Timer timer = PuzzleUtil.start();
         puzzle.parseInstructions(instructions);
-        for (final String line : input) {
+        for (final String line : lines) {
             puzzle.addNode(line);
         }
-        System.out.println("Solution: " + puzzle.calculateSteps());
+        final long solution = puzzle.calculateSteps();
+        PuzzleUtil.end(solution, timer);
     }
 
     private char[] instructions;
@@ -58,7 +53,7 @@ public class Day08 {
         nodes.put(matcher.group(1), new LRNode<>(matcher.group(2), matcher.group(3)));
     }
 
-    public int calculateSteps() {
+    public long calculateSteps() {
         int steps = 0;
         String next = "AAA";
         do {

@@ -1,29 +1,25 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.regex.Pattern;
+
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day14b {
 
     public static void main(final String[] args) {
         final Day14b puzzle = new Day14b();
 
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        System.out.println("Calculating...");
-        puzzle.parseLines(input);
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        puzzle.parseLines(lines);
         puzzle.tiltManyTimes();
-        System.out.println("Solution: " + puzzle.calculateLoadSum());
+        final long solution = puzzle.calculateLoadSum();
+        PuzzleUtil.end(solution, timer);
     }
 
     private static final Pattern LINE_PATTERN = Pattern.compile("[#.O]+");

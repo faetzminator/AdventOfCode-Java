@@ -1,20 +1,19 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.Scanner;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day15 {
 
     public static void main(final String[] args) {
         final Day15 puzzle = new Day15();
 
-        String input;
-        try (Scanner scanner = new Scanner(System.in)) {
-            input = scanner.nextLine();
-        }
-
-        System.out.println("Calculating...");
+        final String input = ScannerUtil.readNonBlankLine();
+        final Timer timer = PuzzleUtil.start();
         puzzle.parseInput(input);
-        System.out.println("Solution: " + puzzle.getHashSum());
+        final long solution = puzzle.getHashSum();
+        PuzzleUtil.end(solution, timer);
     }
 
     private long hashSum;

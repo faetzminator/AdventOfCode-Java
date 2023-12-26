@@ -7,29 +7,25 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Scanner;
 import java.util.function.Function;
 
 import ch.faetzminator.aocutil.CharEnum;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day07b {
 
     public static void main(final String[] args) {
         final Day07b puzzle = new Day07b();
 
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        System.out.println("Calculating...");
-        for (final String line : input) {
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        for (final String line : lines) {
             puzzle.parseHand(line);
         }
-        System.out.println("Solution: " + puzzle.calculateSum());
+        final long solution = puzzle.calculateSum();
+        PuzzleUtil.end(solution, timer);
     }
 
     private final List<Hand> hands = new ArrayList<>();
