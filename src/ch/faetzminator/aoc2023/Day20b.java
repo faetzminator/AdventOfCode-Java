@@ -1,38 +1,32 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import ch.faetzminator.aocutil.MathUtil;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day20b {
 
     public static void main(final String[] args) {
         final Day20b puzzle = new Day20b();
 
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        System.out.println("Calculating...");
-        for (final String line : input) {
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        for (final String line : lines) {
             puzzle.parseModule(line);
         }
-        final long buttonCount = puzzle.pressButtonPlentyTimes();
-        System.out.println("Solution: " + buttonCount);
+        final long solution = puzzle.pressButtonPlentyTimes();
+        PuzzleUtil.end(solution, timer);
     }
 
     private static final Pattern LINE_PATTERN = Pattern.compile("(\\S+) -> (.*)");

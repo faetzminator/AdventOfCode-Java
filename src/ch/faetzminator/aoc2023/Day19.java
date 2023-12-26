@@ -8,32 +8,29 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
+
 public class Day19 {
 
     public static void main(final String[] args) {
         final Day19 puzzle = new Day19();
 
-        final List<String> input1 = new ArrayList<>();
-        final List<String> input2 = new ArrayList<>();
+        final List<String> input1, input2;
         try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input1.add(line);
-            }
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input2.add(line);
-            }
+            input1 = ScannerUtil.readNonBlankLines(scanner);
+            input2 = ScannerUtil.readNonBlankLines(scanner);
         }
-
-        System.out.println("Calculating...");
+        final Timer timer = PuzzleUtil.start();
         for (final String line : input1) {
             puzzle.parseWorkflow(line);
         }
         for (final String line : input2) {
             puzzle.parseData(line);
         }
-        final long sum = puzzle.getAcceptedDataSum();
-        System.out.println("Solution: " + sum);
+        final long solution = puzzle.getAcceptedDataSum();
+        PuzzleUtil.end(solution, timer);
     }
 
     private static final Pattern WORKFLOW_PATTERN = Pattern.compile("(\\w+)\\{(.*?)\\}");

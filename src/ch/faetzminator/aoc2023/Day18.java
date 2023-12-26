@@ -1,29 +1,23 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.faetzminator.aocutil.Point;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day18 {
 
     public static void main(final String[] args) {
         final Day18 puzzle = new Day18();
 
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        System.out.println("Calculating...");
-        final long sum = puzzle.parseLines(input);
-        System.out.println("Solution: " + sum);
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        final long solution = puzzle.parseLines(lines);
+        PuzzleUtil.end(solution, timer);
     }
 
     private static final Pattern LINE_PATTERN = Pattern.compile("([UDLR]) (\\d+) \\(#[0-9a-f]{6}\\)");

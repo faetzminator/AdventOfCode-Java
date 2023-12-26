@@ -1,6 +1,5 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,30 +7,26 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
-import java.util.Scanner;
 import java.util.Set;
 
 import ch.faetzminator.aocutil.CharPrintable;
 import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PMap;
 import ch.faetzminator.aocutil.Position;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day17 {
 
     public static void main(final String[] args) {
         final Day17 puzzle = new Day17();
 
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        System.out.println("Calculating...");
-        puzzle.parseLines(input);
-        System.out.println("Solution: " + puzzle.calculateLeastHeatLoss());
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        puzzle.parseLines(lines);
+        final long solution = puzzle.calculateLeastHeatLoss();
+        PuzzleUtil.end(solution, timer);
     }
 
     private PMap<BlockAtPosition> map;
