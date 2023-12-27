@@ -12,33 +12,27 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Queue;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day25 {
 
     public static void main(final String[] args) {
         final Day25 puzzle = new Day25();
 
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        final long time = System.currentTimeMillis();
-        System.out.println("Calculating...");
-        for (final String line : input) {
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        for (final String line : lines) {
             puzzle.parseConnections(line);
         }
         puzzle.calculateGroups();
         final long solution = puzzle.getGroupsProduct();
-        System.out.println("Solution: " + solution);
-        System.out.println("Time: " + ((System.currentTimeMillis() - time) / 1000) + "s");
+        PuzzleUtil.end(solution, timer);
     }
 
     private final Map<String, Set<String>> connections = new HashMap<>();
@@ -69,6 +63,10 @@ public class Day25 {
             final List<String> nodes = new ArrayList<>(connections.keySet());
 
             for (int i = 0; i < nodes.size(); i++) {
+                if (i > 0 && i % 100 == 0) {
+                    System.out.println(String.format("Sorry, some more time please! %d/%d: %d/%d", count,
+                            CONNECTIONS_TO_REMOVE, i, nodes.size()));
+                }
                 for (int j = i + 1; j < nodes.size(); j++) {
                     findPath(counts, nodes.get(i), nodes.get(j));
                 }

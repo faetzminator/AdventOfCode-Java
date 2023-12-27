@@ -1,34 +1,28 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Scanner;
 
 import ch.faetzminator.aocutil.CharEnum;
 import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.ElementAtPosition;
 import ch.faetzminator.aocutil.PMapWithStart;
 import ch.faetzminator.aocutil.Position;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day21 {
 
     public static void main(final String[] args) {
         final Day21 puzzle = new Day21();
 
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        System.out.println("Calculating...");
-        puzzle.parseLines(input);
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        puzzle.parseLines(lines);
         final long solution = puzzle.countReachableGardenPlots();
-        System.out.println("Solution: " + solution);
+        PuzzleUtil.end(solution, timer);
     }
 
     private PMapWithStart<BlockAtPosition> map;
@@ -49,28 +43,31 @@ public class Day21 {
     private static final int MAX_LENGTH = 64;
 
     private long countReachableGardenPlots() {
-        long sum = 0;
 
+        long sum = 1;
         final Queue<BlockAtPosition> queue = new LinkedList<>();
-        queue.add(map.getElementAt(map.getStartPosition()));
+        final BlockAtPosition startBlock = map.getElementAt(map.getStartPosition());
+        startBlock.setDistance(0);
+        queue.add(startBlock);
 
         while (!queue.isEmpty()) {
             final BlockAtPosition current = queue.poll();
+            final int nextDistance = current.getDistance() + 1;
             for (final Direction direction : Direction.values()) {
                 final Position nextPos = current.getPosition().move(direction);
                 final BlockAtPosition nextBlock = map.getElementAt(nextPos);
-                final int nextDistance = current.getDistance() + 1;
-                if (nextBlock != null && nextBlock.getElement() != Block.ROCK
-                        && nextBlock.getDistance() < nextDistance) {
+                if (nextBlock != null && nextBlock.getElement() != Block.ROCK && nextBlock.getDistance() == -1) {
                     nextBlock.setDistance(nextDistance);
-                    if (nextDistance < MAX_LENGTH) {
+                    if (nextDistance <= MAX_LENGTH) {
                         queue.add(nextBlock);
-                    } else {
-                        sum++;
+                        if (nextDistance % 2 == 0) {
+                            sum++;
+                        }
                     }
                 }
             }
         }
+        System.out.println(map);
 
         return sum;
     }
@@ -93,7 +90,7 @@ public class Day21 {
 
         @Override
         public char toPrintableChar() {
-            if (getElement() == Block.GARDEN_PLOT && distance > 0) {
+            if (getElement() == Block.GARDEN_PLOT && distance % 2 == 0) {
                 return (char) (distance % 10 + '0');
             }
             return super.toPrintableChar();

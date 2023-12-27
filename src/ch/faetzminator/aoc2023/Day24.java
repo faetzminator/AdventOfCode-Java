@@ -2,31 +2,26 @@ package ch.faetzminator.aoc2023;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.faetzminator.aocutil.MovingPosition;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
 
 public class Day24 {
 
     public static void main(final String[] args) {
         final Day24 puzzle = new Day24();
 
-        final List<String> input = new ArrayList<>();
-        try (Scanner scanner = new Scanner(System.in)) {
-            String line;
-            while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
-                input.add(line);
-            }
-        }
-
-        System.out.println("Calculating...");
-        for (final String line : input) {
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        for (final String line : lines) {
             puzzle.parseHailstone(line);
         }
         final long solution = puzzle.calculateIntersections();
-        System.out.println("Solution: " + solution);
+        PuzzleUtil.end(solution, timer);
     }
 
     private final List<MovingPosition> hailstones = new ArrayList<>();
