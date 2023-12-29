@@ -1,6 +1,8 @@
-package ch.faetzminator.aocutil;
+package ch.faetzminator.aocutil.map;
 
 import java.util.function.Function;
+
+import ch.faetzminator.aocutil.CharPrintable;
 
 public class PMapWithStart<T extends CharPrintable> extends PMap<T> {
 

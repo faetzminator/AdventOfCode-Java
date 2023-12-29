@@ -1,4 +1,7 @@
-package ch.faetzminator.aocutil;
+package ch.faetzminator.aocutil.map;
+
+import ch.faetzminator.aocutil.Direction;
+import ch.faetzminator.aocutil.Point;
 
 public class Position extends Point {
 

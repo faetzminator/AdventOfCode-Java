@@ -1,6 +1,8 @@
-package ch.faetzminator.aocutil;
+package ch.faetzminator.aocutil.map;
 
 import java.util.Objects;
+
+import ch.faetzminator.aocutil.CharPrintable;
 
 public class ElementAtPosition<T extends CharPrintable> implements CharPrintable {
 

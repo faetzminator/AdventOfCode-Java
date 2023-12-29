@@ -1,6 +1,8 @@
-package ch.faetzminator.aocutil;
+package ch.faetzminator.aocutil.map;
 
 import java.lang.reflect.Array;
+
+import ch.faetzminator.aocutil.CharPrintable;
 
 /**
  * PMap = <i>Puzzle</i> Map to not conflict with java.util.Map.
