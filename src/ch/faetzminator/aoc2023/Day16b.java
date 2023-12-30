@@ -3,7 +3,6 @@ package ch.faetzminator.aoc2023;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
@@ -13,6 +12,7 @@ import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
 import ch.faetzminator.aocutil.map.ElementAtPosition;
+import ch.faetzminator.aocutil.map.ElementAtPositionWithDirection;
 import ch.faetzminator.aocutil.map.PMap;
 import ch.faetzminator.aocutil.map.Position;
 
@@ -24,6 +24,7 @@ public class Day16b {
         final List<String> lines = ScannerUtil.readNonBlankLines();
         final Timer timer = PuzzleUtil.start();
         puzzle.parseLines(lines);
+        puzzle.beam();
         final long solution = puzzle.getHighestEnergizedSum();
         PuzzleUtil.end(solution, timer);
     }
@@ -59,12 +60,12 @@ public class Day16b {
     }
 
     private void beam(PartAtPosition current, Direction direction) {
-        final Set<PartAtPositionWithDirection> processed = new HashSet<>();
-        final Queue<PartAtPositionWithDirection> queue = new LinkedList<>();
-        queue.add(new PartAtPositionWithDirection(current, direction));
+        final Set<ElementAtPositionWithDirection<PartAtPosition>> processed = new HashSet<>();
+        final Queue<ElementAtPositionWithDirection<PartAtPosition>> queue = new LinkedList<>();
+        queue.add(new ElementAtPositionWithDirection<>(current, direction));
 
         while (!queue.isEmpty()) {
-            final PartAtPositionWithDirection x = queue.poll();
+            final ElementAtPositionWithDirection<PartAtPosition> x = queue.poll();
             processed.add(x);
             current = x.getElementAtPosition();
             direction = x.getDirection();
@@ -72,7 +73,8 @@ public class Day16b {
             for (final Direction newDirection : current.getElement().getDirections(direction)) {
                 final PartAtPosition next = contraption.getElementAt(current.getPosition().move(newDirection));
                 if (next != null) {
-                    final PartAtPositionWithDirection y = new PartAtPositionWithDirection(next, newDirection);
+                    final ElementAtPositionWithDirection<PartAtPosition> y = new ElementAtPositionWithDirection<>(next,
+                            newDirection);
                     if (!processed.contains(y)) {
                         queue.add(y);
                     }
@@ -99,41 +101,6 @@ public class Day16b {
 
     public long getHighestEnergizedSum() {
         return highestEnergizedSum;
-    }
-
-    private static class PartAtPositionWithDirection {
-        private final PartAtPosition partAtPosition;
-        private final Direction direction;
-
-        public PartAtPositionWithDirection(final PartAtPosition partAtPosition, final Direction direction) {
-            this.partAtPosition = partAtPosition;
-            this.direction = direction;
-        }
-
-        public PartAtPosition getElementAtPosition() {
-            return partAtPosition;
-        }
-
-        public Direction getDirection() {
-            return direction;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(direction, partAtPosition);
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if ((obj == null) || (getClass() != obj.getClass())) {
-                return false;
-            }
-            final PartAtPositionWithDirection other = (PartAtPositionWithDirection) obj;
-            return direction == other.direction && Objects.equals(partAtPosition, other.partAtPosition);
-        }
     }
 
     private static class PartAtPosition extends ElementAtPosition<Part> {

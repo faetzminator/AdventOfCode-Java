@@ -12,6 +12,7 @@ import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
 import ch.faetzminator.aocutil.map.ElementAtPosition;
+import ch.faetzminator.aocutil.map.ElementAtPositionWithDirection;
 import ch.faetzminator.aocutil.map.PMap;
 import ch.faetzminator.aocutil.map.Position;
 
@@ -45,43 +46,25 @@ public class Day23 {
         final BlockAtPosition startBlock = map.getElementAt(new Position(1, 0));
         final Position endPos = new Position(map.getXSize() - 2, map.getYSize() - 1);
 
-        final Queue<BlockAtPositionWithDirection> queue = new LinkedList<>();
-        queue.add(new BlockAtPositionWithDirection(startBlock, Direction.SOUTH));
+        final Queue<ElementAtPositionWithDirection<BlockAtPosition>> queue = new LinkedList<>();
+        queue.add(new ElementAtPositionWithDirection<>(startBlock, Direction.SOUTH));
         startBlock.setDistance(0);
 
         while (!queue.isEmpty()) {
-            final BlockAtPositionWithDirection lastMove = queue.poll();
-            for (final Direction direction : lastMove.getBlockAtPosition().getElement().getExits()) {
+            final ElementAtPositionWithDirection<BlockAtPosition> lastMove = queue.poll();
+            for (final Direction direction : lastMove.getElementAtPosition().getElement().getExits()) {
                 if (direction != lastMove.getDirection().getOpposite()) {
-                    final Position nextPos = lastMove.getBlockAtPosition().getPosition().move(direction);
+                    final Position nextPos = lastMove.getElementAtPosition().getPosition().move(direction);
                     final BlockAtPosition nextBlock = map.getElementAt(nextPos);
                     if (nextBlock != null && nextBlock.getElement().canEnter(direction.getOpposite())) {
-                        nextBlock.setDistance(lastMove.getBlockAtPosition().getDistance() + 1);
-                        queue.add(new BlockAtPositionWithDirection(nextBlock, direction));
+                        nextBlock.setDistance(lastMove.getElementAtPosition().getDistance() + 1);
+                        queue.add(new ElementAtPositionWithDirection<>(nextBlock, direction));
                     }
                 }
             }
         }
 
         return map.getElementAt(endPos).getDistance();
-    }
-
-    private static class BlockAtPositionWithDirection {
-        private final BlockAtPosition blockAtPosition;
-        private final Direction direction;
-
-        public BlockAtPositionWithDirection(final BlockAtPosition blockAtPosition, final Direction direction) {
-            this.blockAtPosition = blockAtPosition;
-            this.direction = direction;
-        }
-
-        public BlockAtPosition getBlockAtPosition() {
-            return blockAtPosition;
-        }
-
-        public Direction getDirection() {
-            return direction;
-        }
     }
 
     private static class BlockAtPosition extends ElementAtPosition<Block> {
