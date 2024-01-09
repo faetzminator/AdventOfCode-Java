@@ -31,10 +31,14 @@ public class Timer {
     }
 
     public String getElapsedFormatted() {
-        final long elapsed = getElapsedMs() / 1000L;
-        final int seconds = (int) (elapsed % 60L);
-        final int minutes = (int) (elapsed / 60L % 60L);
-        final long hours = elapsed / 60L / 60L;
+        final long elapsed = getElapsedMs();
+        final int millis = (int) (elapsed % 1000L);
+        final int seconds = (int) (elapsed / 1000L % 60L);
+        final int minutes = (int) (elapsed / 1000L / 60L % 60L);
+        final long hours = elapsed / 1000L / 60L / 60L;
+        if (hours == 0 && minutes == 0) {
+            return String.format("%02d:%02d.%03d", minutes, seconds, millis);
+        }
         return String.format("%d:%02d:%02d", hours, minutes, seconds);
     }
 }
