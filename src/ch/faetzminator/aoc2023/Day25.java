@@ -1,23 +1,27 @@
 package ch.faetzminator.aoc2023;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import ch.faetzminator.aocutil.CollectionsUtil;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
+import ch.faetzminator.aocutil.graph.Node;
+import ch.faetzminator.aocutil.graph.NodeFactory;
+import ch.faetzminator.aocutil.graph.NodeGroup;
+import ch.faetzminator.aocutil.graph.NodeUtil;
 
 public class Day25 {
 
@@ -27,215 +31,136 @@ public class Day25 {
         final List<String> lines = ScannerUtil.readNonBlankLines();
         final Timer timer = PuzzleUtil.start();
         for (final String line : lines) {
-            puzzle.parseConnections(line);
+            puzzle.parseNode(line);
         }
-        puzzle.calculateGroups();
-        final long solution = puzzle.getGroupsProduct();
+        final long solution = puzzle.calculateGroups();
         PuzzleUtil.end(solution, timer);
     }
 
-    private final Map<String, Set<String>> connections = new HashMap<>();
-    private final Map<String, Set<String>> blacklist = new LinkedHashMap<>();
+    private final NodeFactory<String> nodeFactory = new NodeFactory<>();
 
     private static final Pattern LINE_PATTERN = Pattern.compile("(\\w+):\\s+(.*?)");
     private static final Pattern WHITESPACES = Pattern.compile("\\s+");
 
-    public void parseConnections(final String line) {
+    public void parseNode(final String line) {
         final Matcher matcher = LINE_PATTERN.matcher(line);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("line: " + line);
         }
         final String key = matcher.group(1);
         final String[] values = WHITESPACES.split(matcher.group(2));
-        for (final String value : values) {
-            addEntries(connections, key, value);
-        }
+        nodeFactory.addNode(key, Arrays.asList(values), true);
     }
 
     private static final int CONNECTIONS_TO_REMOVE = 3;
 
-    private void calculateGroups() {
-        // TODO faster algo? different algo?
-        int count = 0;
-        while (count++ < CONNECTIONS_TO_REMOVE) {
-            final Map<Connection, Integer> counts = new HashMap<>();
-            final List<String> nodes = new ArrayList<>(connections.keySet());
+    private long calculateGroups() {
+        final Collection<Node<String>> nodes = nodeFactory.build();
 
-            for (int i = 0; i < nodes.size(); i++) {
-                if (i > 0 && i % 100 == 0) {
-                    System.out.println(String.format("Sorry, some more time please! %d/%d: %d/%d", count,
-                            CONNECTIONS_TO_REMOVE, i, nodes.size()));
-                }
-                for (int j = i + 1; j < nodes.size(); j++) {
-                    findPath(counts, nodes.get(i), nodes.get(j));
-                }
+        // the findGroups() works under the assumption the connections between the
+        // groups don't share any node with each other
+
+        // however, we have to find two nodes which are not part of the connections
+        // between the groups, otherwise the connection to the other group would be
+        // added in initial loop
+
+        // using start and end nodes by running twice findFurthest() does not work for
+        // the test data (however, it works for the real data!), so let's just try out
+        // all nodes as a starting point
+        for (final Node<String> node : nodes) {
+            final List<NodeGroup<String>> groups = findGroups(nodes, node, NodeUtil.findFurthest(node));
+            if (groups == null) {
+                // there were some ungrouped nodes left
+                continue;
             }
-
-            final Map<Connection, Integer> sorted = CollectionsUtil.sortByValue(counts, true);
-            final Iterator<Connection> iterator = sorted.keySet().iterator();
-            final Connection connection = iterator.next();
-            addEntries(blacklist, connection.getFrom(), connection.getTo());
+            boolean matches = true;
+            for (final NodeGroup<String> group : groups) {
+                // we test the neighbours on all groups for the right cut
+                matches = matches && group.getNeighbours().size() == CONNECTIONS_TO_REMOVE;
+            }
+            if (matches) {
+                final NodeGroup<String> group = groups.iterator().next();
+                final long firstSize = group.getNodes().size();
+                return firstSize * (nodes.size() - firstSize);
+            }
         }
+        // in such case findFurthest() was probably not good enough
+        throw new RuntimeException("this didn't work");
     }
 
-    private void findPath(final Map<Connection, Integer> counts, final String fromKey, final String toKey) {
-        final Queue<NodeWithDistance> queue = new LinkedList<>();
-        final NodeWithDistance startPoint = new NodeWithDistance(fromKey);
-        startPoint.setDistance(null, 0);
-        final Map<String, NodeWithDistance> nodes = new HashMap<>();
-        queue.add(startPoint);
+    @SafeVarargs
+    private List<NodeGroup<String>> findGroups(final Collection<Node<String>> allNodes,
+            final Node<String>... startNodes) {
+        return findGroups(allNodes, Arrays.asList(startNodes));
+    }
 
-        while (!queue.isEmpty()) {
-            final NodeWithDistance node = queue.poll();
-            final String key = node.getKey();
-            if (!nodes.containsKey(key)) {
-                nodes.put(key, node);
+    private List<NodeGroup<String>> findGroups(final Collection<Node<String>> allNodes,
+            final Collection<Node<String>> startNodes) {
+
+        final List<NodeGroup<String>> groups = startNodes.stream().map(node -> new NodeGroup<>(node))
+                .collect(Collectors.toList());
+
+        final Set<Node<String>> ungrouped = new HashSet<>(allNodes);
+        ungrouped.removeAll(startNodes);
+
+        int lastSize;
+        do {
+            lastSize = ungrouped.size();
+            // for the neighbours of each group, check how many neighbours they have in the
+            // given group (let's call them friends ;) )
+            final List<Map<Node<String>, Integer>> friends = new ArrayList<>(groups.size());
+            for (int i = 0; i < groups.size(); i++) {
+                friends.add(new HashMap<>());
+                final NodeGroup<String> group = groups.get(i);
+                for (final Node<String> neighbour : group.getNeighbours()) {
+                    if (ungrouped.contains(neighbour)) {
+                        final int size = CollectionsUtil.intersectionCount(group.getNodes(), neighbour.getNeighbours());
+                        friends.get(i).put(neighbour, size);
+                    }
+                }
             }
-            final int newDistance = node.getDistance() + 1;
-            for (final String target : connections.get(key)) {
-                if (blacklist.containsKey(key) && blacklist.get(key).contains(target)) {
+            // find nodes which are equal across two groups
+            final Set<Node<String>> toClean = new HashSet<>();
+            for (int i = 0; i < friends.size(); i++) {
+                for (int j = i + 1; j < friends.size(); j++) {
+                    for (final Entry<Node<String>, Integer> entry : friends.get(i).entrySet()) {
+                        if (entry.getValue().equals(friends.get(j).get(entry.getKey()))) {
+                            toClean.add(entry.getKey());
+                        }
+                    }
+                }
+            }
+            int maxSize = 0;
+            // ... and clean those nodes
+            for (final Map<Node<String>, Integer> map : friends) {
+                for (final Node<String> key : toClean) {
+                    map.remove(key);
+                }
+                if (map.isEmpty()) {
                     continue;
                 }
-                if (!nodes.containsKey(target)) {
-                    nodes.put(target, new NodeWithDistance(target));
+                // then sort the maps and find "maximum friend"
+                CollectionsUtil.sortByValue(map);
+                final int size = map.entrySet().iterator().next().getValue();
+                if (size > maxSize) {
+                    maxSize = size;
                 }
-                final NodeWithDistance targetNode = nodes.get(target);
-                if (targetNode.setDistance(key, newDistance)) {
-                    queue.add(targetNode);
+            }
+            for (int i = 0; i < friends.size(); i++) {
+                final Iterator<Entry<Node<String>, Integer>> it = friends.get(i).entrySet().iterator();
+                Entry<Node<String>, Integer> entry;
+                // within each group, add friends with maxSize to the same
+                while (it.hasNext() && (entry = it.next()).getValue() == maxSize) {
+                    groups.get(i).addNode(entry.getKey());
+                    ungrouped.remove(entry.getKey());
                 }
             }
+        } while (lastSize > ungrouped.size()); // give up if no more nodes were moved into groups
+
+        if (!ungrouped.isEmpty()) {
+            // some ungrouped left
+            return null;
         }
-        if (!nodes.containsKey(toKey)) {
-            throw new IllegalArgumentException("node " + toKey + " unreachable");
-        }
-
-        final Queue<String> queue2 = new LinkedList<>();
-        queue2.add(toKey);
-        while (!queue2.isEmpty()) {
-            final String key = queue2.poll();
-            for (final String from : nodes.get(key).getFrom()) {
-                final Connection connection = new Connection(key, from);
-                if (!counts.containsKey(connection)) {
-                    counts.put(connection, 0);
-                }
-                counts.put(connection, counts.get(connection) + 1);
-                queue2.add(from);
-            }
-        }
-    }
-
-    public long getGroupsProduct() {
-        final int groupSize = getGroupSize();
-        return groupSize * (connections.size() - groupSize);
-    }
-
-    private int getGroupSize() {
-        final Queue<String> queue = new LinkedList<>();
-        final Set<String> group = new HashSet<>();
-        queue.add(connections.entrySet().iterator().next().getKey());
-
-        while (!queue.isEmpty()) {
-            final String key = queue.poll();
-            group.add(key);
-            final Set<String> next = connections.get(key);
-            next.removeAll(group);
-            if (blacklist.containsKey(key)) {
-                next.removeAll(blacklist.get(key));
-            }
-            queue.addAll(next);
-        }
-        return group.size();
-    }
-
-    private static void addEntries(final Map<String, Set<String>> map, final String a, final String b) {
-        addEntry(map, a, b);
-        addEntry(map, b, a);
-    }
-
-    private static void addEntry(final Map<String, Set<String>> map, final String key, final String value) {
-        if (!map.containsKey(key)) {
-            map.put(key, new HashSet<>());
-        }
-        map.get(key).add(value);
-    }
-
-    private static class Connection {
-
-        private final String from;
-        private final String to;
-
-        public Connection(final String a, final String b) {
-            if (a.compareTo(b) < 0) {
-                from = a;
-                to = b;
-            } else {
-                from = b;
-                to = a;
-            }
-        }
-
-        public String getFrom() {
-            return from;
-        }
-
-        public String getTo() {
-            return to;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(from, to);
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if ((obj == null) || (getClass() != obj.getClass())) {
-                return false;
-            }
-            final Connection other = (Connection) obj;
-            return Objects.equals(from, other.from) && Objects.equals(to, other.to);
-        }
-    }
-
-    private static class NodeWithDistance {
-
-        private final String key;
-        private int distance = Integer.MAX_VALUE;
-        private Set<String> from;
-
-        public NodeWithDistance(final String key) {
-            this.key = key;
-        }
-
-        public boolean setDistance(final String from, final int distance) {
-            if (distance > this.distance) {
-                return false;
-            }
-            if (distance < this.distance) {
-                this.from = new HashSet<>();
-                this.distance = distance;
-                if (from != null) {
-                    this.from.add(from);
-                }
-                return true;
-            }
-            this.from.add(from);
-            return false;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public int getDistance() {
-            return distance;
-        }
-
-        public Set<String> getFrom() {
-            return from;
-        }
+        return groups;
     }
 }

@@ -1,6 +1,7 @@
 package ch.faetzminator.aocutil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,7 +17,8 @@ public final class CollectionsUtil {
         return sortByValue(map, false);
     }
 
-    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(final Map<K, V> map, final boolean inverse) {
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(final Map<K, V> map,
+            final boolean inverse) {
         final List<Entry<K, V>> list = new ArrayList<>(map.entrySet());
         list.sort(Entry.comparingByValue());
         if (inverse) {
@@ -29,5 +31,15 @@ public final class CollectionsUtil {
         }
 
         return result;
+    }
+
+    public static <T> int intersectionCount(final Collection<T> someData, final Collection<T> otherData) {
+        int count = 0;
+        for (final T entry : someData) {
+            if (otherData.contains(entry)) {
+                count++;
+            }
+        }
+        return count;
     }
 }
