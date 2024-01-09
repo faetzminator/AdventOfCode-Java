@@ -1,7 +1,6 @@
 package ch.faetzminator.aoc2023;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,13 +8,13 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.faetzminator.aocutil.CollectionsUtil;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
@@ -72,7 +71,7 @@ public class Day25 {
                 }
             }
 
-            final Map<Connection, Integer> sorted = sortByValue(counts);
+            final Map<Connection, Integer> sorted = CollectionsUtil.sortByValue(counts, true);
             final Iterator<Connection> iterator = sorted.keySet().iterator();
             final Connection connection = iterator.next();
             addEntries(blacklist, connection.getFrom(), connection.getTo());
@@ -158,19 +157,6 @@ public class Day25 {
             map.put(key, new HashSet<>());
         }
         map.get(key).add(value);
-    }
-
-    private static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(final Map<K, V> map) {
-        final List<Entry<K, V>> list = new ArrayList<>(map.entrySet());
-        list.sort(Entry.comparingByValue());
-        Collections.reverse(list);
-
-        final Map<K, V> result = new LinkedHashMap<>();
-        for (final Entry<K, V> entry : list) {
-            result.put(entry.getKey(), entry.getValue());
-        }
-
-        return result;
     }
 
     private static class Connection {

@@ -3,13 +3,12 @@ package ch.faetzminator.aoc2023;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Function;
 
 import ch.faetzminator.aocutil.CharEnum;
+import ch.faetzminator.aocutil.CollectionsUtil;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
@@ -169,19 +168,6 @@ public class Day07b {
             return null;
         }
 
-        private static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(final Map<K, V> map) {
-            final List<Entry<K, V>> list = new ArrayList<>(map.entrySet());
-            list.sort(Entry.comparingByValue());
-            Collections.reverse(list);
-
-            final Map<K, V> result = new LinkedHashMap<>();
-            for (final Entry<K, V> entry : list) {
-                result.put(entry.getKey(), entry.getValue());
-            }
-
-            return result;
-        }
-
         @Override
         public Boolean apply(final String t) {
             Map<Character, Integer> chars = new HashMap<>();
@@ -192,7 +178,7 @@ public class Day07b {
                 chars.put(c, chars.get(c) + 1);
             }
             // sort for full house and two pairs
-            chars = sortByValue(chars);
+            chars = CollectionsUtil.sortByValue(chars, true);
             int jokersUsed = 0;
             for (final int count : countNeeded) {
                 final Map.Entry<Character, Integer> entry = findEntry(chars, count, jokersUsed);
