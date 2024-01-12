@@ -1,14 +1,11 @@
 package ch.faetzminator.aoc2023;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,55 +103,47 @@ public class Day25 {
         int lastSize;
         do {
             lastSize = ungrouped.size();
-            // for the neighbours of each group, check how many neighbours they have in the
-            // given group (let's call them friends ;) )
-            final List<Map<Node<String>, Integer>> friends = new ArrayList<>(groups.size());
-            for (int i = 0; i < groups.size(); i++) {
-                friends.add(new HashMap<>());
-                final NodeGroup<String> group = groups.get(i);
-                for (final Node<String> neighbour : group.getNeighbours()) {
-                    if (ungrouped.contains(neighbour)) {
-                        final int size = CollectionsUtil.intersectionCount(group.getNodes(), neighbour.getNeighbours());
-                        friends.get(i).put(neighbour, size);
-                    }
-                }
+
+            // create a set of all neighbours of all groups
+            final Set<Node<String>> neighbours = new HashSet<>();
+            for (final NodeGroup<String> group : groups) {
+                neighbours.addAll(group.getNeighbours());
             }
-            // find nodes which are equal across two groups
-            final Set<Node<String>> toClean = new HashSet<>();
-            for (int i = 0; i < friends.size(); i++) {
-                for (int j = i + 1; j < friends.size(); j++) {
-                    for (final Entry<Node<String>, Integer> entry : friends.get(i).entrySet()) {
-                        if (entry.getValue().equals(friends.get(j).get(entry.getKey()))) {
-                            toClean.add(entry.getKey());
+
+            // create a map of all neighbours to add
+            Map<Node<String>, NodeGroup<String>> nodesToAdd = new HashMap<>();
+            int maxConnections = -1;
+
+            for (final Node<String> neighbour : neighbours) {
+                if (ungrouped.contains(neighbour)) { // a neighbour could be in another group
+                    NodeGroup<String> targetGroup = null;
+                    int connections = 0;
+                    for (final NodeGroup<String> group : groups) {
+                        final int size = CollectionsUtil.intersectionCount(group.getNodes(), neighbour.getNeighbours());
+                        if (size > connections) {
+                            targetGroup = group;
+                            connections = size;
+                        } else if (size == connections) {
+                            // we cannot have two groups with same maximum of connections
+                            targetGroup = null;
                         }
                     }
+                    if (targetGroup != null && connections >= maxConnections) {
+                        if (connections > maxConnections) {
+                            maxConnections = connections;
+                            nodesToAdd = new HashMap<>();
+                        }
+                        nodesToAdd.put(neighbour, targetGroup);
+                    }
                 }
             }
-            int maxSize = 0;
-            // ... and clean those nodes
-            for (final Map<Node<String>, Integer> map : friends) {
-                for (final Node<String> key : toClean) {
-                    map.remove(key);
-                }
-                if (map.isEmpty()) {
-                    continue;
-                }
-                // then sort the maps and find "maximum friend"
-                CollectionsUtil.sortByValue(map);
-                final int size = map.entrySet().iterator().next().getValue();
-                if (size > maxSize) {
-                    maxSize = size;
-                }
+
+            // add all nodes to its target groups
+            for (final Node<String> node : nodesToAdd.keySet()) {
+                nodesToAdd.get(node).addNode(node);
+                ungrouped.remove(node);
             }
-            for (int i = 0; i < friends.size(); i++) {
-                final Iterator<Entry<Node<String>, Integer>> it = friends.get(i).entrySet().iterator();
-                Entry<Node<String>, Integer> entry;
-                // within each group, add friends with maxSize to the same
-                while (it.hasNext() && (entry = it.next()).getValue() == maxSize) {
-                    groups.get(i).addNode(entry.getKey());
-                    ungrouped.remove(entry.getKey());
-                }
-            }
+
         } while (lastSize > ungrouped.size()); // give up if no more nodes were moved into groups
 
         if (!ungrouped.isEmpty()) {
