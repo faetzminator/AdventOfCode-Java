@@ -15,6 +15,7 @@
 	<modules>
 		<module>util</module>
 		<module>aoc2023</module>
+		<module>aoc2024</module>
 	</modules>
 
 </project>
