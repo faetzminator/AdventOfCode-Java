@@ -10,10 +10,16 @@ import ch.faetzminator.aocutil.CharPrintable;
 public class PMap<T extends CharPrintable> {
 
     private final T[][] map;
+    private final T outOfRange;
 
     @SuppressWarnings("unchecked")
-    public PMap(final Class<T> clazz, final int xSize, final int ySize) {
+    public PMap(final Class<T> clazz, final int xSize, final int ySize, final T outOfRange) {
         map = (T[][]) Array.newInstance(clazz, ySize, xSize);
+        this.outOfRange = outOfRange;
+    }
+
+    public PMap(final Class<T> clazz, final int xSize, final int ySize) {
+        this(clazz, xSize, ySize, null);
     }
 
     public int getXSize() {
@@ -37,7 +43,7 @@ public class PMap<T extends CharPrintable> {
     }
 
     public T getElementAt(final int x, final int y) {
-        return isInBounds(x, y) ? map[y][x] : null;
+        return isInBounds(x, y) ? map[y][x] : outOfRange;
     }
 
     public boolean isInBounds(final Position position) {
