@@ -44,23 +44,12 @@ public class Day04b {
     }
 
     private boolean matches(final int x, final int y) {
-        if (map.getElementAt(x, y) != 'A') {
-            return false;
-        }
-        int mCount = 0;
-        for (int xMove = -1; xMove <= 1; xMove += 2) {
-            for (int yMove = -1; yMove <= 1; yMove += 2) {
-                switch (map.getElementAt(x + xMove, y + yMove)) {
-                case 'M':
-                    mCount++;
-                    break;
-                case 'S':
-                    break;
-                default:
-                    return false;
-                }
-            }
-        }
-        return mCount == 2 && map.getElementAt(x + 1, y + 1) != map.getElementAt(x - 1, y - 1);
+        return map.getElementAt(x, y) == 'A' && check(x, y, 1, 1) && check(x, y, 1, -1);
+    }
+
+    private boolean check(final int x, final int y, final int xMove, final int yMove) {
+        final char one = map.getElementAt(x + xMove, y + yMove);
+        final char other = map.getElementAt(x - xMove, y - yMove);
+        return (one == 'M' && other == 'S') || (other == 'M' && one == 'S');
     }
 }
