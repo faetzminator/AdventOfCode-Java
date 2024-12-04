@@ -48,7 +48,7 @@ public class Day02 {
                 return false;
             }
             final int diff = last - current;
-            if (diff == 0 || diff > MAX_DISTANCE || diff < -MAX_DISTANCE)  {
+            if (diff == 0 || diff > MAX_DISTANCE || diff < -MAX_DISTANCE) {
                 return false;
             }
             last = current;

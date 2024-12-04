@@ -27,7 +27,6 @@ public class Day01b {
     private final List<Long> left = new ArrayList<>();
     private final Map<Long, Integer> right = new HashMap<>();
 
-
     private final static Pattern LINE_PATTERN = Pattern.compile("(\\d+) +(\\d+)");
 
     public void addLine(final String line) {

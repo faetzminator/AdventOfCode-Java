@@ -36,7 +36,7 @@ public class Day03b {
         while (matcher.find()) {
             final long a = Long.parseLong(matcher.group(1));
             final long b = Long.parseLong(matcher.group(2));
-            productSum += a*b;
+            productSum += a * b;
         }
     }
 
