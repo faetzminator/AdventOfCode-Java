@@ -10,18 +10,26 @@ public enum Direction implements CharEnum {
         this.c = c;
     }
 
-    public Direction getOpposite() {
+    public Direction getClockwise() {
         switch (this) {
         case NORTH:
-            return SOUTH;
-        case EAST:
-            return WEST;
-        case SOUTH:
-            return NORTH;
-        case WEST:
             return EAST;
+        case EAST:
+            return SOUTH;
+        case SOUTH:
+            return WEST;
+        case WEST:
+            return NORTH;
         }
         throw new IllegalArgumentException();
+    }
+
+    public Direction getOpposite() {
+        return getClockwise().getClockwise();
+    }
+
+    public Direction getCounterclockwise() {
+        return getClockwise().getOpposite();
     }
 
     @Override
