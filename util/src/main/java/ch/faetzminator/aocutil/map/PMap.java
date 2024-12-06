@@ -1,6 +1,8 @@
 package ch.faetzminator.aocutil.map;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import ch.faetzminator.aocutil.CharPrintable;
 
@@ -65,5 +67,9 @@ public class PMap<T extends CharPrintable> {
         }
         builder.setLength(builder.length() - 1);
         return builder.toString();
+    }
+
+    public Stream<T> stream() {
+        return Arrays.stream(map).flatMap(Arrays::stream);
     }
 }
