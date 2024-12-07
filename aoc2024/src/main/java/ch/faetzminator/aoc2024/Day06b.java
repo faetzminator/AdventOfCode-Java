@@ -3,6 +3,7 @@ package ch.faetzminator.aoc2024;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import ch.faetzminator.aocutil.CharEnum;
 import ch.faetzminator.aocutil.Direction;
@@ -34,14 +35,20 @@ public class Day06b {
     }
 
     public long walkAllPossibilities() {
-        return map.stream().filter(element -> {
-            boolean keep = false;
-            if (element.getElement() == Block.PATH) {
-                map.setElementAt(element.getPosition(), new BlockAtPosition(element.getPosition(), Block.OBSTRUCTION));
-                keep = walk();
-                map.setElementAt(element.getPosition(), element);
-                map.stream().forEach(BlockAtPosition::reset);
-            }
+        // only loop trough elements which are walked trough - and reset
+        walk();
+        final Set<BlockAtPosition> elements = map.stream().filter(BlockAtPosition::isVisited)
+                .collect(Collectors.toSet());
+        map.stream().forEach(BlockAtPosition::reset);
+        // rather don't override the start element
+        elements.remove(map.getStartElement());
+
+        return elements.stream().filter(element -> {
+            map.setElementAt(element.getPosition(), new BlockAtPosition(element.getPosition(), Block.OBSTRUCTION));
+            final boolean keep = walk();
+            // reset original state
+            map.setElementAt(element.getPosition(), element);
+            map.stream().forEach(BlockAtPosition::reset);
             return keep;
         }).count();
     }
@@ -87,6 +94,10 @@ public class Day06b {
 
         public void setVisited(final Direction direction) {
             visitedDirections.add(direction);
+        }
+
+        public boolean isVisited() {
+            return !visitedDirections.isEmpty();
         }
 
         public boolean isVisited(final Direction direction) {
