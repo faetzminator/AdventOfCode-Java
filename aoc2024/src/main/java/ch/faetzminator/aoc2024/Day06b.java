@@ -86,7 +86,7 @@ public class Day06b {
 
     private static class BlockAtPosition extends ElementAtPosition<Block> {
 
-        private Set<Direction> visitedDirections = new HashSet<>();
+        private final Set<Direction> visitedDirections = new HashSet<>();
 
         public BlockAtPosition(final Position position, final Block block) {
             super(block, position);
@@ -105,7 +105,7 @@ public class Day06b {
         }
 
         public void reset() {
-            visitedDirections = new HashSet<>();
+            visitedDirections.clear();
         }
 
         @Override
