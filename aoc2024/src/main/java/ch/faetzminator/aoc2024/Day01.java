@@ -17,7 +17,7 @@ public class Day01 {
         final List<String> lines = ScannerUtil.readNonBlankLines();
         final Timer timer = PuzzleUtil.start();
         for (final String line : lines) {
-            puzzle.addLine(line);
+            puzzle.parseLine(line);
         }
         final long solution = puzzle.getSolution();
         PuzzleUtil.end(solution, timer);
@@ -28,7 +28,7 @@ public class Day01 {
     private final List<Long> left = new ArrayList<>();
     private final List<Long> right = new ArrayList<>();
 
-    public void addLine(final String line) {
+    public void parseLine(final String line) {
         final Matcher matcher = LINE_PATTERN.matcher(line);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("line: " + line);
