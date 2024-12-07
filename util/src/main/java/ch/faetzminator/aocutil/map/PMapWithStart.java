@@ -17,6 +17,9 @@ public class PMapWithStart<T extends CharPrintable> extends PMap<T> {
     @Override
     public void setElementAt(final int x, final int y, final T element) {
         super.setElementAt(x, y, element);
+        if (startPosition != null && startPosition.getX() == x && startPosition.getY() == y) {
+            startPosition = null;
+        }
         if (findStart.apply(element)) {
             if (startPosition != null) {
                 throw new IllegalArgumentException("duplicate start");
