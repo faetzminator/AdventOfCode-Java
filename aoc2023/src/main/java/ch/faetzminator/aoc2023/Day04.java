@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.faetzminator.aocutil.MathUtil;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
@@ -41,7 +42,7 @@ public class Day04 {
         winningNumbers.retainAll(numbers);
         final int hits = winningNumbers.size();
         if (hits > 0) {
-            winningSum += (int) Math.pow(2, hits - 1);
+            winningSum += MathUtil.pow2(hits - 1);
         }
     }
 

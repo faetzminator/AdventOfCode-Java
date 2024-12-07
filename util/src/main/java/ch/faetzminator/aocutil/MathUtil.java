@@ -68,4 +68,15 @@ public final class MathUtil {
         return x;
     }
 
+    public static long pow2(final int exponent) {
+        return (long) Math.pow(2, exponent);
+    }
+
+    public static long pow10(final int exponent) {
+        return (long) Math.pow(10, exponent);
+    }
+
+    public static int countDigits(final long number) {
+        return 1 + (int) Math.log10(number);
+    }
 }
