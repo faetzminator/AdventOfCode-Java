@@ -10,6 +10,7 @@ import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
 import ch.faetzminator.aocutil.map.ElementAtPosition;
+import ch.faetzminator.aocutil.map.PMapFactory;
 import ch.faetzminator.aocutil.map.PMapWithStart;
 import ch.faetzminator.aocutil.map.Position;
 
@@ -28,16 +29,9 @@ public class Day21b {
     private PMapWithStart<BlockAtPosition> map;
 
     public void parseLines(final List<String> input) {
-        map = new PMapWithStart<>(BlockAtPosition.class, input.get(0).length(), input.size(),
-                element -> element.getElement() == Block.START);
-
-        for (int y = 0; y < input.size(); y++) {
-            final String line = input.get(y);
-            for (int x = 0; x < line.length(); x++) {
-                final BlockAtPosition block = new BlockAtPosition(new Position(x, y), Block.byChar(line.charAt(x)));
-                map.setElementAt(block.getPosition(), block);
-            }
-        }
+        map = new PMapFactory<>(BlockAtPosition.class,
+                (character, position) -> new BlockAtPosition(Block.byChar(character), position))
+                .create(input, element -> element.getElement() == Block.START);
     }
 
     private static final int MAX_LENGTH = 26501365;
@@ -131,7 +125,7 @@ public class Day21b {
 
         private int distance = UNSET;
 
-        public BlockAtPosition(final Position position, final Block block) {
+        public BlockAtPosition(final Block block, final Position position) {
             super(block, position);
         }
 

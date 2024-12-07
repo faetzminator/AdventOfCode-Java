@@ -10,6 +10,7 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
+import ch.faetzminator.aocutil.map.PMapFactory;
 import ch.faetzminator.aocutil.map.PMapWithStart;
 import ch.faetzminator.aocutil.map.Position;
 
@@ -28,15 +29,8 @@ public class Day10 {
     private PMapWithStart<Pipe> pipeMap;
 
     public void parseLines(final List<String> input) {
-        pipeMap = new PMapWithStart<>(Pipe.class, input.get(0).length(), input.size(),
+        pipeMap = new PMapFactory<>(Pipe.class, (character, position) -> Pipe.byChar(character)).create(input,
                 element -> element == Pipe.START);
-
-        for (int y = 0; y < input.size(); y++) {
-            final String line = input.get(y);
-            for (int x = 0; x < line.length(); x++) {
-                pipeMap.setElementAt(new Position(x, y), Pipe.byChar(line.charAt(x)));
-            }
-        }
     }
 
     public int calculateLoopSteps() {

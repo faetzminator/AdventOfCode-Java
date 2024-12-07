@@ -17,6 +17,7 @@ import ch.faetzminator.aocutil.map.ElementAtPosition;
 import ch.faetzminator.aocutil.map.NodeUtil;
 import ch.faetzminator.aocutil.map.NodeUtil.NeighbourAware;
 import ch.faetzminator.aocutil.map.PMap;
+import ch.faetzminator.aocutil.map.PMapFactory;
 import ch.faetzminator.aocutil.map.PNode;
 import ch.faetzminator.aocutil.map.Position;
 
@@ -35,15 +36,8 @@ public class Day23b {
     private PMap<BlockAtPosition> map;
 
     public void parseLines(final List<String> input) {
-        map = new PMap<>(BlockAtPosition.class, input.get(0).length(), input.size());
-
-        for (int y = 0; y < input.size(); y++) {
-            final String line = input.get(y);
-            for (int x = 0; x < line.length(); x++) {
-                final BlockAtPosition block = new BlockAtPosition(new Position(x, y), Block.byChar(line.charAt(x)));
-                map.setElementAt(block.getPosition(), block);
-            }
-        }
+        map = new PMapFactory<>(BlockAtPosition.class,
+                (character, position) -> new BlockAtPosition(Block.byChar(character), position)).create(input);
     }
 
     public long findLongestPath() {
@@ -60,7 +54,7 @@ public class Day23b {
             public boolean canEnter(final Block block, final Direction direction) {
                 return block.canEnter(direction);
             }
-        }, position -> new Node(position), startPos, endPos);
+        }, Node::new, startPos, endPos);
         return findLongestPath(nodes, startPos, endPos);
     }
 
@@ -90,7 +84,7 @@ public class Day23b {
 
     private static class BlockAtPosition extends ElementAtPosition<Block> {
 
-        public BlockAtPosition(final Position position, final Block block) {
+        public BlockAtPosition(final Block block, final Position position) {
             super(block, position);
         }
     }

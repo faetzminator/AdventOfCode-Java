@@ -30,7 +30,7 @@ public class Day06b {
 
     public void parseLines(final List<String> input) {
         map = new PMapFactory<>(BlockAtPosition.class,
-                (character, position) -> new BlockAtPosition(position, Block.byChar(character)))
+                (character, position) -> new BlockAtPosition(Block.byChar(character), position))
                 .create(input, element -> element.getElement() == Block.START);
     }
 
@@ -44,7 +44,7 @@ public class Day06b {
         elements.remove(map.getStartElement());
 
         return elements.stream().filter(element -> {
-            map.setElementAt(element.getPosition(), new BlockAtPosition(element.getPosition(), Block.OBSTRUCTION));
+            map.setElementAt(element.getPosition(), new BlockAtPosition(Block.OBSTRUCTION, element.getPosition()));
             final boolean keep = walk();
             // reset original state
             map.setElementAt(element.getPosition(), element);
@@ -88,7 +88,7 @@ public class Day06b {
 
         private final Set<Direction> visitedDirections = new HashSet<>();
 
-        public BlockAtPosition(final Position position, final Block block) {
+        public BlockAtPosition(final Block block, final Position position) {
             super(block, position);
         }
 

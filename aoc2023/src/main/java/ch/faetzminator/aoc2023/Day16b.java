@@ -14,6 +14,7 @@ import ch.faetzminator.aocutil.Timer;
 import ch.faetzminator.aocutil.map.ElementAtPosition;
 import ch.faetzminator.aocutil.map.ElementAtPositionWithDirection;
 import ch.faetzminator.aocutil.map.PMap;
+import ch.faetzminator.aocutil.map.PMapFactory;
 import ch.faetzminator.aocutil.map.Position;
 
 public class Day16b {
@@ -33,15 +34,9 @@ public class Day16b {
     private long highestEnergizedSum;
 
     public void parseLines(final List<String> input) {
-        contraption = new PMap<>(PartAtPosition.class, input.get(0).length(), input.size());
+        contraption = new PMapFactory<>(PartAtPosition.class,
+                (character, position) -> new PartAtPosition(Part.byChar(character), position)).create(input);
 
-        for (int y = 0; y < input.size(); y++) {
-            final String line = input.get(y);
-            for (int x = 0; x < line.length(); x++) {
-                final PartAtPosition part = new PartAtPosition(Part.byChar(line.charAt(x)), new Position(x, y));
-                contraption.setElementAt(part.getPosition(), part);
-            }
-        }
     }
 
     public void beam() {

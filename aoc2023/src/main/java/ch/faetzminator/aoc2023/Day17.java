@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
@@ -15,6 +16,7 @@ import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
 import ch.faetzminator.aocutil.map.PMap;
+import ch.faetzminator.aocutil.map.PMapFactory;
 import ch.faetzminator.aocutil.map.Position;
 
 public class Day17 {
@@ -29,17 +31,10 @@ public class Day17 {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMap<BlockAtPosition> map;
+    private PMap<Block> map;
 
     public void parseLines(final List<String> input) {
-        map = new PMap<>(BlockAtPosition.class, input.get(0).length(), input.size());
-
-        for (int y = 0; y < input.size(); y++) {
-            final String line = input.get(y);
-            for (int x = 0; x < line.length(); x++) {
-                map.setElementAt(new Position(x, y), new BlockAtPosition(line.charAt(x) - '0'));
-            }
-        }
+        map = new PMapFactory<>(Block.class, (character, position) -> new Block(character - '0')).create(input);
     }
 
     private static final int MAX_LENGTH = 3;
@@ -61,7 +56,7 @@ public class Day17 {
             for (final Direction nextDirection : getPossibleDirections(direction, length < MAX_LENGTH)) {
                 final int nextLength = direction == nextDirection ? length + 1 : 1;
                 final Position nextPosition = current.move(nextDirection);
-                final BlockAtPosition nextBlock = map.getElementAt(nextPosition);
+                final Block nextBlock = map.getElementAt(nextPosition);
                 final CacheKey key = new CacheKey(nextDirection, nextLength);
                 if (nextBlock != null && nextBlock.setHeatLoss(key, heatLoss + nextBlock.getHeatLoss())) {
                     queue.add(new QueueItem(nextPosition, new CacheKey(nextDirection, nextLength)));
@@ -73,11 +68,11 @@ public class Day17 {
         return map.getElementAt(endPos).getLowestHeatLoss();
     }
 
-    private static class BlockAtPosition implements CharPrintable {
+    private static class Block implements CharPrintable {
         private final int heatLoss;
-        private final java.util.Map<CacheKey, Integer> heatLossCache = new HashMap<>();
+        private final Map<CacheKey, Integer> heatLossCache = new HashMap<>();
 
-        public BlockAtPosition(final int heatLoss) {
+        public Block(final int heatLoss) {
             this.heatLoss = heatLoss;
         }
 

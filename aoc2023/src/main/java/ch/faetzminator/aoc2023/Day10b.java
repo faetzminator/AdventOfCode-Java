@@ -13,6 +13,7 @@ import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
 import ch.faetzminator.aocutil.map.ElementAtPosition;
+import ch.faetzminator.aocutil.map.PMapFactory;
 import ch.faetzminator.aocutil.map.PMapWithStart;
 import ch.faetzminator.aocutil.map.Position;
 
@@ -31,16 +32,9 @@ public class Day10b {
     private PMapWithStart<PipeAtPosition> pipeMap;
 
     public void parseLines(final List<String> input) {
-        pipeMap = new PMapWithStart<>(PipeAtPosition.class, input.get(0).length(), input.size(),
-                element -> element.getElement() == Pipe.START);
-
-        for (int y = 0; y < input.size(); y++) {
-            final String line = input.get(y);
-            for (int x = 0; x < line.length(); x++) {
-                final PipeAtPosition pipe = new PipeAtPosition(Pipe.byChar(line.charAt(x)), new Position(x, y));
-                pipeMap.setElementAt(pipe.getPosition(), pipe);
-            }
-        }
+        pipeMap = new PMapFactory<>(PipeAtPosition.class,
+                (character, position) -> new PipeAtPosition(Pipe.byChar(character), position))
+                .create(input, element -> element.getElement() == Pipe.START);
     }
 
     public int calculateEnclosedTiles() {
