@@ -27,7 +27,7 @@ public class Day06 {
 
     public void parseLines(final List<String> input) {
         map = new PMapFactory<>(BlockAtPosition.class,
-                (position, character) -> new BlockAtPosition(position, Block.byChar(character)))
+                (character, position) -> new BlockAtPosition(position, Block.byChar(character)))
                 .create(input, element -> element.getElement() == Block.START);
     }
 

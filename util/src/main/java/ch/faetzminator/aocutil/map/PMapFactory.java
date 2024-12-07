@@ -20,7 +20,7 @@ public class PMapFactory<T extends CharPrintable> {
             final String line = input.get(y);
             for (int x = 0; x < line.length(); x++) {
                 final Position position = new Position(x, y);
-                map.setElementAt(position, factory.create(position, line.charAt(x)));
+                map.setElementAt(position, factory.create(line.charAt(x), position));
             }
         }
     }
@@ -38,6 +38,6 @@ public class PMapFactory<T extends CharPrintable> {
     }
 
     public static interface ElementFactory<T extends CharPrintable> {
-        public T create(Position position, char character);
+        public T create(char character, Position position);
     }
 }
