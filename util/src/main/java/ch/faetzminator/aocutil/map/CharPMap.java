@@ -1,15 +1,19 @@
 package ch.faetzminator.aocutil.map;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.stream.IntStream;
+
 /**
  * See {@link PMap}.
  */
-public class CharPMap {
+public class CharPMap implements Iterable<Integer> {
 
-    private final char[][] map;
+    private final int[][] map;
     private final char outOfRange;
 
     public CharPMap(final int xSize, final int ySize, final char outOfRange) {
-        map = new char[ySize][xSize];
+        map = new int[ySize][xSize];
         this.outOfRange = outOfRange;
     }
 
@@ -38,7 +42,7 @@ public class CharPMap {
     }
 
     public char getElementAt(final int x, final int y) {
-        return isInBounds(x, y) ? map[y][x] : outOfRange;
+        return isInBounds(x, y) ? (char) map[y][x] : outOfRange;
     }
 
     public boolean isInBounds(final Position position) {
@@ -52,13 +56,22 @@ public class CharPMap {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        for (final char[] row : map) {
-            for (final char element : row) {
-                builder.append(element);
+        for (final int[] row : map) {
+            for (final int element : row) {
+                builder.append((char) element);
             }
             builder.append('\n');
         }
         builder.setLength(builder.length() - 1);
         return builder.toString();
+    }
+
+    public IntStream stream() {
+        return Arrays.stream(map).flatMapToInt(Arrays::stream);
+    }
+
+    @Override
+    public Iterator<Integer> iterator() {
+        return stream().iterator();
     }
 }
