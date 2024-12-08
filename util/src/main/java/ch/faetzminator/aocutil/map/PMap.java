@@ -2,6 +2,7 @@ package ch.faetzminator.aocutil.map;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.stream.Stream;
 
 import ch.faetzminator.aocutil.CharPrintable;
@@ -9,7 +10,7 @@ import ch.faetzminator.aocutil.CharPrintable;
 /**
  * PMap = <i>Puzzle</i> Map to not conflict with java.util.Map.
  */
-public class PMap<T extends CharPrintable> {
+public class PMap<T extends CharPrintable> implements Iterable<T> {
 
     private final T[][] map;
     private final T outOfRange;
@@ -71,5 +72,10 @@ public class PMap<T extends CharPrintable> {
 
     public Stream<T> stream() {
         return Arrays.stream(map).flatMap(Arrays::stream);
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return stream().iterator();
     }
 }
