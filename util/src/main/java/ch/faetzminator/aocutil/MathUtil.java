@@ -8,6 +8,10 @@ public final class MathUtil {
 
     }
 
+    public static int gcd(final int one, final int another) {
+        return BigInteger.valueOf(one).gcd(BigInteger.valueOf(another)).intValueExact();
+    }
+
     public static long lcm(final long one, final long another) {
         return lcm(BigInteger.valueOf(one), BigInteger.valueOf(another)).longValueExact();
     }
