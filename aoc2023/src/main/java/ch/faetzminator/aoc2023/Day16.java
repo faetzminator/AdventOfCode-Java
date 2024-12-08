@@ -67,15 +67,7 @@ public class Day16 {
     }
 
     public long getEnergizedSum() {
-        long sum = 0;
-        for (int y = 0; y < contraption.getYSize(); y++) {
-            for (int x = 0; x < contraption.getXSize(); x++) {
-                if (contraption.getElementAt(new Position(x, y)).isEnergized()) {
-                    sum++;
-                }
-            }
-        }
-        return sum;
+        return contraption.stream().filter(PartAtPosition::isEnergized).count();
     }
 
     private static class PartAtPosition extends ElementAtPosition<Part> {

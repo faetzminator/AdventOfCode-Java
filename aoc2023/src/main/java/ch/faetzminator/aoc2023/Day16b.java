@@ -79,15 +79,12 @@ public class Day16b {
     }
 
     private void updateEnergizedSumAndReset() {
-        long sum = 0;
-        for (int y = 0; y < contraption.getYSize(); y++) {
-            for (int x = 0; x < contraption.getXSize(); x++) {
-                final PartAtPosition partAtPosition = contraption.getElementAt(new Position(x, y));
-                if (partAtPosition.isEnergized()) {
-                    sum++;
-                }
-                partAtPosition.reset();
+        long sum = 0L;
+        for (final PartAtPosition partAtPosition : contraption) {
+            if (partAtPosition.isEnergized()) {
+                sum++;
             }
+            partAtPosition.reset();
         }
         if (sum > highestEnergizedSum) {
             highestEnergizedSum = sum;

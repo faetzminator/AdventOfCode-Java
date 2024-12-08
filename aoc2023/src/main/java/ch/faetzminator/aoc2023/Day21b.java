@@ -112,11 +112,7 @@ public class Day21b {
     }
 
     private void reset() {
-        for (int x = 0; x < map.getXSize(); x++) {
-            for (int y = 0; y < map.getYSize(); y++) {
-                map.getElementAt(x, y).reset();
-            }
-        }
+        map.stream().forEach(BlockAtPosition::reset);
     }
 
     private static class BlockAtPosition extends ElementAtPosition<Block> {

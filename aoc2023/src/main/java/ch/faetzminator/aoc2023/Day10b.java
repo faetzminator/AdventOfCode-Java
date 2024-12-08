@@ -60,16 +60,12 @@ public class Day10b {
 
     private int getEnclosedTilesCount() {
         int in = 0, unknown = 0;
-
-        for (int y = 0; y < pipeMap.getYSize(); y++) {
-            for (int x = 0; x < pipeMap.getXSize(); x++) {
-                final PipeAtPosition pipe = pipeMap.getElementAt(new Position(x, y));
-                if (!pipe.isPartOfLoop()) {
-                    if (Boolean.TRUE.equals(pipe.getInLoop())) {
-                        in++;
-                    } else if (pipe.getInLoop() == null) {
-                        unknown++; // something wrong with the logic, unknown field
-                    }
+        for (final PipeAtPosition pipe : pipeMap) {
+            if (!pipe.isPartOfLoop()) {
+                if (Boolean.TRUE.equals(pipe.getInLoop())) {
+                    in++;
+                } else if (pipe.getInLoop() == null) {
+                    unknown++; // something wrong with the logic, unknown field
                 }
             }
         }
