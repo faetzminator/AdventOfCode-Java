@@ -19,17 +19,19 @@ public class Day11 {
         PuzzleUtil.end(solution, timer);
     }
 
+    private static final int ITERATIONS = 25;
+
     private List<Long> stones;
 
     public void parseLine(final String input) {
         stones = new ArrayList<>();
-        for (final String s : input.split(" ")) {
-            stones.add(Long.valueOf(s));
+        for (final String number : input.split(" ")) {
+            stones.add(Long.valueOf(number));
         }
     }
 
     private long blinkMultipleTimes() {
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < ITERATIONS; i++) {
             blink();
         }
         return stones.size();
