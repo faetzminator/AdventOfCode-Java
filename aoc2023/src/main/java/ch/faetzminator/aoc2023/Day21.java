@@ -106,7 +106,7 @@ public class Day21 {
         }
 
         @Override
-        public char getCharacter() {
+        public char charValue() {
             return character;
         }
 

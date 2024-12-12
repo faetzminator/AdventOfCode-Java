@@ -4,10 +4,10 @@ public enum Direction implements CharEnum {
 
     NORTH('N'), EAST('E'), SOUTH('S'), WEST('W');
 
-    private final char c;
+    private final char label;
 
     Direction(final char c) {
-        this.c = c;
+        this.label = c;
     }
 
     public Direction getClockwise() {
@@ -33,8 +33,8 @@ public enum Direction implements CharEnum {
     }
 
     @Override
-    public char getCharacter() {
-        return c;
+    public char charValue() {
+        return label;
     }
 
     public static Direction byChar(final char c) {

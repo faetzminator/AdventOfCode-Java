@@ -268,7 +268,7 @@ public class Day10b {
             if (Boolean.FALSE.equals(inLoop)) {
                 return 'O';
             }
-            return Pipe.GROUND.getCharacter();
+            return Pipe.GROUND.toPrintableChar();
         }
     }
 
@@ -288,7 +288,7 @@ public class Day10b {
         }
 
         @Override
-        public char getCharacter() {
+        public char charValue() {
             return character;
         }
 
