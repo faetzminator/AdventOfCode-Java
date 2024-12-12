@@ -9,18 +9,22 @@ public class Position extends Point {
         super(x, y);
     }
 
-    public Position move(final Direction direction) {
-        switch (direction) {
-        case NORTH:
-            return new Position(getX(), getY() - 1);
-        case EAST:
-            return new Position(getX() + 1, getY());
-        case SOUTH:
-            return new Position(getX(), getY() + 1);
-        case WEST:
-            return new Position(getX() - 1, getY());
+    public Position move(final Direction... directions) {
+        Position position = this;
+        for (final Direction direction : directions) {
+            switch (direction) {
+            case NORTH:
+                position = new Position(getX(), getY() - 1);
+            case EAST:
+                position = new Position(getX() + 1, getY());
+            case SOUTH:
+                position = new Position(getX(), getY() + 1);
+            case WEST:
+                position = new Position(getX() - 1, getY());
+            }
+            throw new IllegalArgumentException();
         }
-        throw new IllegalArgumentException();
+        return position;
     }
 
     @Override
