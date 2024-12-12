@@ -1,12 +1,7 @@
 package ch.faetzminator.aoc2024;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 import ch.faetzminator.aocutil.CharPrintable;
@@ -49,11 +44,7 @@ public class Day12b {
     }
 
     private long getPrice(final BlockAtPosition start) {
-        long area = 0L;
-        final Map<Direction, List<Position>> fences = new HashMap<>();
-        for (final Direction direction : Direction.values()) {
-            fences.put(direction, new ArrayList<>());
-        }
+        long area = 0L, corners = 0L;
         final Queue<BlockAtPosition> queue = new LinkedList<>();
         queue.add(start);
         start.setFenced();
@@ -61,93 +52,35 @@ public class Day12b {
             final BlockAtPosition current = queue.poll();
             area++;
             for (final Direction direction : Direction.values()) {
-                final Position nextPosition = current.getPosition().move(direction);
+                final Position position = current.getPosition();
+                final Position nextPosition = position.move(direction);
                 final BlockAtPosition next = map.getElementAt(nextPosition);
-                if (current.isFencable(next)) {
+                final boolean fencable = current.isFencable(next);
+                if (fencable) {
                     if (!next.isFenced()) {
                         queue.add(next);
                         // we need to set it fenced already so others in queue won't pick it up
                         next.setFenced();
                     }
-                } else {
-                    switch (direction) {
-                    case NORTH:
-                    case WEST:
-                        fences.get(direction).add(current.getPosition());
-                        break;
-                    case SOUTH:
-                    case EAST:
-                        fences.get(direction).add(nextPosition);
-                        break;
-                    default:
-                        throw new IllegalArgumentException();
+                }
+                // for a map, where N = next, C = current and A = corner element and B clockwise moved
+                // NA
+                // CB
+                final Direction clockwiseDirection = direction.getClockwise();
+                final BlockAtPosition corner = map.getElementAt(nextPosition.move(clockwiseDirection));
+                // first we need to check if N or A are not fencable, so outside
+                if (!current.isFencable(corner) || !fencable) {
+                    final BlockAtPosition clockwise = map.getElementAt(position.move(clockwiseDirection));
+                    // then both elements N and B need to match
+                    if (fencable == current.isFencable(clockwise)) {
+                        corners++;
                     }
                 }
             }
         } while (!queue.isEmpty());
-
-        return area * countSides(fences);
+        return area * corners;
     }
 
-    private final Comparator<? super Position> northComparator = (one, other) -> {
-        if (other.getY() != one.getY()) {
-            return one.getY() - other.getY();
-        }
-        return one.getX() - other.getX();
-    };
-    private final Comparator<? super Position> westComparator = (one, other) -> {
-        if (other.getX() != one.getX()) {
-            return one.getX() - other.getX();
-        }
-        return one.getY() - other.getY();
-    };
-
-    private long countSides(final Map<Direction, List<Position>> fences) {
-        long sides = 0L;
-        for (final Direction direction : Direction.values()) {
-            switch (direction) {
-            case NORTH:
-            case SOUTH:
-                Collections.sort(fences.get(direction), northComparator);
-                sides += countNorth(fences.get(direction));
-                break;
-            case WEST:
-            case EAST:
-                Collections.sort(fences.get(direction), westComparator);
-                sides += countWest(fences.get(direction));
-                break;
-            default:
-                throw new IllegalArgumentException();
-            }
-        }
-        return sides;
-    }
-
-    private long countNorth(final List<Position> fences) {
-        Position lastPos = fences.get(0);
-        long sides = 1;
-        for (final Position pos : fences) {
-            // we're a bit lazy here comparing index 0 against 0 with help of abs()
-            if (pos.getY() != lastPos.getY() || Math.abs(pos.getX() - lastPos.getX()) > 1) {
-                sides++;
-            }
-            lastPos = pos;
-        }
-        return sides;
-    }
-
-    private long countWest(final List<Position> fences) {
-        Position lastPos = fences.get(0);
-        long sides = 1;
-        for (final Position pos : fences) {
-            // we're a bit lazy here comparing index 0 against 0 with help of abs()
-            if (pos.getX() != lastPos.getX() || Math.abs(pos.getY() - lastPos.getY()) > 1) {
-                sides++;
-            }
-            lastPos = pos;
-        }
-        return sides;
-    }
 
     private static class BlockAtPosition extends ElementAtPosition<Block> {
 
