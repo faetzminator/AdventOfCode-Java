@@ -15,12 +15,16 @@ public class Position extends Point {
             switch (direction) {
             case NORTH:
                 position = new Position(getX(), getY() - 1);
+                continue;
             case EAST:
                 position = new Position(getX() + 1, getY());
+                continue;
             case SOUTH:
                 position = new Position(getX(), getY() + 1);
+                continue;
             case WEST:
                 position = new Position(getX() - 1, getY());
+                continue;
             }
             throw new IllegalArgumentException();
         }
