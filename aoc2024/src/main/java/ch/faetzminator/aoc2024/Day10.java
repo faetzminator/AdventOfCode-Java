@@ -7,12 +7,12 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import ch.faetzminator.aocutil.CharPrintable;
+import ch.faetzminator.aocutil.Char;
 import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.ElementAtPosition;
+import ch.faetzminator.aocutil.map.CharAtPosition;
 import ch.faetzminator.aocutil.map.PMap;
 import ch.faetzminator.aocutil.map.PMapFactory;
 import ch.faetzminator.aocutil.map.Position;
@@ -32,7 +32,7 @@ public class Day10 {
 
     public void parseLines(final List<String> input) {
         map = new PMapFactory<>(HeightAtPosition.class,
-                (character, position) -> new HeightAtPosition(new Height(character), position)).create(input);
+                (character, position) -> new HeightAtPosition(new Char(character), position)).create(input);
     }
 
     public long getTrailheadSum() {
@@ -66,40 +66,22 @@ public class Day10 {
         return ends.size();
     }
 
-    private static class HeightAtPosition extends ElementAtPosition<Height> {
+    private static class HeightAtPosition extends CharAtPosition<Char> {
 
-        public HeightAtPosition(final Height height, final Position position) {
+        public HeightAtPosition(final Char height, final Position position) {
             super(height, position);
         }
 
         public boolean isNextStep(final HeightAtPosition other) {
-            return other != null && other.getElement().getHeight() == getElement().getHeight() + 1;
+            return other != null && other.charValue() == charValue() + 1;
         }
 
         public boolean isStartPoint() {
-            return getElement().getHeight() == '0';
+            return charValue() == '0';
         }
 
         public boolean isEndPoint() {
-            return getElement().getHeight() == '9';
-        }
-    }
-
-    private static class Height implements CharPrintable {
-
-        private final char height;
-
-        public Height(final char height) {
-            this.height = height;
-        }
-
-        public char getHeight() {
-            return height;
-        }
-
-        @Override
-        public char toPrintableChar() {
-            return height;
+            return charValue() == '9';
         }
     }
 }

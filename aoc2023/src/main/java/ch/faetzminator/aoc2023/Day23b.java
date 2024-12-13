@@ -13,7 +13,7 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.ElementAtPosition;
+import ch.faetzminator.aocutil.map.CharEnumAtPosition;
 import ch.faetzminator.aocutil.map.NodeUtil;
 import ch.faetzminator.aocutil.map.NodeUtil.NeighbourAware;
 import ch.faetzminator.aocutil.map.PMap;
@@ -82,7 +82,7 @@ public class Day23b {
         return longestDistance;
     }
 
-    private static class BlockAtPosition extends ElementAtPosition<Block> {
+    private static class BlockAtPosition extends CharEnumAtPosition<Block> {
 
         public BlockAtPosition(final Block block, final Position position) {
             super(block, position);

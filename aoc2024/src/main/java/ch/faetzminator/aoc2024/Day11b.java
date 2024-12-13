@@ -75,7 +75,6 @@ public class Day11b {
         private final long stone;
 
         public CacheKey(final int level, final long stone) {
-            super();
             this.level = level;
             this.stone = stone;
         }
@@ -90,10 +89,7 @@ public class Day11b {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
             final CacheKey other = (CacheKey) obj;

@@ -24,11 +24,6 @@ public class ElementAtPosition<T extends CharPrintable> implements CharPrintable
     }
 
     @Override
-    public char charValue() {
-        return element.charValue();
-    }
-
-    @Override
     public char toPrintableChar() {
         return element.toPrintableChar();
     }

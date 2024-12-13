@@ -11,7 +11,7 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.ElementAtPosition;
+import ch.faetzminator.aocutil.map.CharEnumAtPosition;
 import ch.faetzminator.aocutil.map.ElementAtPositionWithDirection;
 import ch.faetzminator.aocutil.map.PMap;
 import ch.faetzminator.aocutil.map.PMapFactory;
@@ -70,7 +70,7 @@ public class Day16 {
         return contraption.stream().filter(PartAtPosition::isEnergized).count();
     }
 
-    private static class PartAtPosition extends ElementAtPosition<Part> {
+    private static class PartAtPosition extends CharEnumAtPosition<Part> {
 
         private boolean energized;
 

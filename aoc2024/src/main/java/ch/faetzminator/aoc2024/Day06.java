@@ -7,7 +7,7 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.ElementAtPosition;
+import ch.faetzminator.aocutil.map.CharEnumAtPosition;
 import ch.faetzminator.aocutil.map.PMapFactory;
 import ch.faetzminator.aocutil.map.PMapWithStart;
 import ch.faetzminator.aocutil.map.Position;
@@ -55,7 +55,7 @@ public class Day06 {
         }
     }
 
-    private static class BlockAtPosition extends ElementAtPosition<Block> {
+    private static class BlockAtPosition extends CharEnumAtPosition<Block> {
 
         private boolean visited;
 

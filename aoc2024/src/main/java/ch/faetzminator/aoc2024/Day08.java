@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import ch.faetzminator.aocutil.CharPrintable;
+import ch.faetzminator.aocutil.Char;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.ElementAtPosition;
+import ch.faetzminator.aocutil.map.CharAtPosition;
 import ch.faetzminator.aocutil.map.PMap;
 import ch.faetzminator.aocutil.map.PMapFactory;
 import ch.faetzminator.aocutil.map.Position;
@@ -28,7 +28,7 @@ public class Day08 {
 
     public void parseLines(final List<String> input) {
         map = new PMapFactory<>(BlockAtPosition.class,
-                (character, position) -> new BlockAtPosition(new Block(character), position)).create(input);
+                (character, position) -> new BlockAtPosition(new Char(character), position)).create(input);
     }
 
     public long getAntinodeSum() {
@@ -59,16 +59,17 @@ public class Day08 {
     private final static char PATH = '.';
     private final static char ANTINODE = '#';
 
-    private static class BlockAtPosition extends ElementAtPosition<Block> {
+    private static class BlockAtPosition extends CharAtPosition<Char> {
 
         private boolean antinode;
 
-        public BlockAtPosition(final Block block, final Position position) {
+        public BlockAtPosition(final Char block, final Position position) {
             super(block, position);
         }
 
         public boolean isAntenna() {
-            return getElement().isAntenna();
+            final char character = charValue();
+            return character != PATH && character != ANTINODE;
         }
 
         public boolean isAntinode() {
@@ -85,24 +86,6 @@ public class Day08 {
                 return ANTINODE;
             }
             return super.toPrintableChar();
-        }
-    }
-
-    private static class Block implements CharPrintable {
-
-        private final char character;
-
-        public Block(final char character) {
-            this.character = character;
-        }
-
-        public boolean isAntenna() {
-            return character != PATH && character != ANTINODE;
-        }
-
-        @Override
-        public char toPrintableChar() {
-            return character;
         }
     }
 }

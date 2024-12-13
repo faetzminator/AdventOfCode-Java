@@ -11,7 +11,7 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.ElementAtPosition;
+import ch.faetzminator.aocutil.map.CharEnumAtPosition;
 import ch.faetzminator.aocutil.map.ElementAtPositionWithDirection;
 import ch.faetzminator.aocutil.map.PMap;
 import ch.faetzminator.aocutil.map.PMapFactory;
@@ -61,7 +61,7 @@ public class Day23 {
         return map.getElementAt(endPos).getDistance();
     }
 
-    private static class BlockAtPosition extends ElementAtPosition<Block> {
+    private static class BlockAtPosition extends CharEnumAtPosition<Block> {
 
         private int distance = -1;
 

@@ -9,7 +9,7 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.ElementAtPosition;
+import ch.faetzminator.aocutil.map.CharAtPosition;
 import ch.faetzminator.aocutil.map.PMap;
 import ch.faetzminator.aocutil.map.PMapFactory;
 import ch.faetzminator.aocutil.map.Position;
@@ -69,7 +69,7 @@ public class Day12 {
     }
 
 
-    private static class BlockAtPosition extends ElementAtPosition<Char> {
+    private static class BlockAtPosition extends CharAtPosition<Char> {
 
         private boolean fenced;
 
