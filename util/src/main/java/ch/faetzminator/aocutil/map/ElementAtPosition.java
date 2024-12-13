@@ -3,6 +3,7 @@ package ch.faetzminator.aocutil.map;
 import java.util.Objects;
 
 import ch.faetzminator.aocutil.CharPrintable;
+import ch.faetzminator.aocutil.Direction;
 
 public class ElementAtPosition<T extends CharPrintable> implements CharPrintable {
 
@@ -38,6 +39,10 @@ public class ElementAtPosition<T extends CharPrintable> implements CharPrintable
 
     public int getY() {
         return position.getY();
+    }
+
+    public <X extends ElementAtPosition<T>> X move(final PMap<X> map, final Direction... directions) {
+        return map.getElementAt(position.move(directions));
     }
 
     /**
