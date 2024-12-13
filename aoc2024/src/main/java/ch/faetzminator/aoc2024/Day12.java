@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import ch.faetzminator.aocutil.CharPrintable;
+import ch.faetzminator.aocutil.Char;
 import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
@@ -29,7 +29,7 @@ public class Day12 {
 
     public void parseLines(final List<String> input) {
         map = new PMapFactory<>(BlockAtPosition.class,
-                (character, position) -> new BlockAtPosition(new Block(character), position)).create(input);
+                (character, position) -> new BlockAtPosition(new Char(character), position)).create(input);
     }
 
     public long getPriceSum() {
@@ -52,8 +52,9 @@ public class Day12 {
             final BlockAtPosition current = queue.poll();
             area++;
             for (final Direction direction : Direction.values()) {
-                final BlockAtPosition next = map.getElementAt(current.getPosition().move(direction));
-                if (current.isFencable(next)) {
+                final BlockAtPosition next = current.move(map, direction);
+                final boolean fencable = current.isFencable(next);
+                if (fencable) {
                     if (!next.isFenced()) {
                         queue.add(next);
                         // we need to set it fenced already so others in queue won't pick it up
@@ -68,16 +69,16 @@ public class Day12 {
     }
 
 
-    private static class BlockAtPosition extends ElementAtPosition<Block> {
+    private static class BlockAtPosition extends ElementAtPosition<Char> {
 
         private boolean fenced;
 
-        public BlockAtPosition(final Block block, final Position position) {
+        public BlockAtPosition(final Char block, final Position position) {
             super(block, position);
         }
 
         public boolean isFencable(final BlockAtPosition other) {
-            return other != null && other.getElement().getCharacter() == getElement().getCharacter();
+            return other != null && other.charValue() == charValue();
         }
 
         public void setFenced() {
@@ -86,24 +87,6 @@ public class Day12 {
 
         public boolean isFenced() {
             return fenced;
-        }
-    }
-
-    private static class Block implements CharPrintable {
-
-        private final char character;
-
-        private Block(final char character) {
-            this.character = character;
-        }
-
-        public char getCharacter() {
-            return character;
-        }
-
-        @Override
-        public char toPrintableChar() {
-            return character;
         }
     }
 }

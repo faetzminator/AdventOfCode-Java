@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import ch.faetzminator.aocutil.CharPrintable;
+import ch.faetzminator.aocutil.Char;
 import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
@@ -29,7 +29,7 @@ public class Day12b {
 
     public void parseLines(final List<String> input) {
         map = new PMapFactory<>(BlockAtPosition.class,
-                (character, position) -> new BlockAtPosition(new Block(character), position)).create(input);
+                (character, position) -> new BlockAtPosition(new Char(character), position)).create(input);
     }
 
     public long getPriceSum() {
@@ -52,9 +52,7 @@ public class Day12b {
             final BlockAtPosition current = queue.poll();
             area++;
             for (final Direction direction : Direction.values()) {
-                final Position position = current.getPosition();
-                final Position nextPosition = position.move(direction);
-                final BlockAtPosition next = map.getElementAt(nextPosition);
+                final BlockAtPosition next = current.move(map, direction);
                 final boolean fencable = current.isFencable(next);
                 if (fencable) {
                     if (!next.isFenced()) {
@@ -63,15 +61,15 @@ public class Day12b {
                         next.setFenced();
                     }
                 }
-                // for a map, where N = next, C = current and A = corner element and B clockwise moved
-                // NA
-                // CB
+                // for a map, where C = current, N = next and 1 is the corner element and 2 clockwise moved
+                // N1
+                // C2
                 final Direction clockwiseDirection = direction.getClockwise();
-                final BlockAtPosition corner = map.getElementAt(nextPosition.move(clockwiseDirection));
-                // first we need to check if N or A are not fencable, so outside
+                final BlockAtPosition corner = next != null ? next.move(map, clockwiseDirection) : null;
+                // first we need to check if N or 1 are not fencable, so outside
                 if (!current.isFencable(corner) || !fencable) {
-                    final BlockAtPosition clockwise = map.getElementAt(position.move(clockwiseDirection));
-                    // then both elements N and B need to match
+                    final BlockAtPosition clockwise = current.move(map, clockwiseDirection);
+                    // then both elements N and 2 need to match
                     if (fencable == current.isFencable(clockwise)) {
                         corners++;
                     }
@@ -82,16 +80,16 @@ public class Day12b {
     }
 
 
-    private static class BlockAtPosition extends ElementAtPosition<Block> {
+    private static class BlockAtPosition extends ElementAtPosition<Char> {
 
         private boolean fenced;
 
-        public BlockAtPosition(final Block block, final Position position) {
+        public BlockAtPosition(final Char block, final Position position) {
             super(block, position);
         }
 
         public boolean isFencable(final BlockAtPosition other) {
-            return other != null && other.getElement().getCharacter() == getElement().getCharacter();
+            return other != null && other.charValue() == charValue();
         }
 
         public void setFenced() {
@@ -100,24 +98,6 @@ public class Day12b {
 
         public boolean isFenced() {
             return fenced;
-        }
-    }
-
-    private static class Block implements CharPrintable {
-
-        private final char character;
-
-        private Block(final char character) {
-            this.character = character;
-        }
-
-        public char getCharacter() {
-            return character;
-        }
-
-        @Override
-        public char toPrintableChar() {
-            return character;
         }
     }
 }
