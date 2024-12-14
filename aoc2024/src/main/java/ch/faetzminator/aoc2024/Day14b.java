@@ -13,16 +13,17 @@ import ch.faetzminator.aocutil.Timer;
 import ch.faetzminator.aocutil.map.PMap;
 import ch.faetzminator.aocutil.map.Position;
 
-public class Day14 {
+public class Day14b {
 
     public static void main(final String[] args) {
-        final Day14 puzzle = new Day14();
+        final boolean print = args.length > 0 && Boolean.parseBoolean(args[0]);
+        final Day14b puzzle = new Day14b();
         final List<String> input = ScannerUtil.readNonBlankLines();
         final Timer timer = PuzzleUtil.start();
         for (final String lines : input) {
             puzzle.parseLine(lines);
         }
-        final long solution = puzzle.getSafetyFactor();
+        final long solution = puzzle.getXmasTreeTime(print);
         PuzzleUtil.end(solution, timer);
     }
 
@@ -44,56 +45,63 @@ public class Day14 {
 
     private final static int WIDTH = 101;
     private final static int HEIGHT = 103;
-    private final static int TEST_WIDTH = 11;
-    private final static int TEST_HEIGHT = 7;
-    private final static int STEPS = 100;
+    private final static int MAX_STEPS = WIDTH * HEIGHT;
 
-    public long getSafetyFactor() {
-        final boolean testData = robots.size() < 50;
-        final int w = testData ? TEST_WIDTH : WIDTH;
-        final int h = testData ? TEST_HEIGHT : HEIGHT;
+    public long getXmasTreeTime(final boolean print) {
 
-        final MovingHelper helper = new MovingHelper(w, h, STEPS);
+        final MovingHelper helper = new MovingHelper(WIDTH, HEIGHT);
 
-        final PMap<Block> map = new PMap<>(Block.class, w, h);
-        for (int y = 0; y < h; y++) {
-            for (int x = 0; x < w; x++) {
+        final PMap<Block> map = new PMap<>(Block.class, WIDTH, HEIGHT);
+        for (int y = 0; y < HEIGHT; y++) {
+            for (int x = 0; x < WIDTH; x++) {
                 map.setElementAt(x, y, new Block());
             }
         }
 
-        for (final MovingPosition robot : robots) {
-            map.getElementAt(helper.move(robot)).increment();
-        }
+        for (int steps = 0; steps < MAX_STEPS; steps++) {
+            map.forEach(Block::reset);
+            helper.setSteps(steps);
 
-        final int w1 = w / 2;
-        final int h1 = h / 2;
-        final long ul = countRobots(map, 0, w1, 0, h1);
-        final long ur = countRobots(map, w1 + 1, w, 0, h1);
-        final long ll = countRobots(map, 0, w1, h1 + 1, h);
-        final long lr = countRobots(map, w1 + 1, w, h1 + 1, h);
-        return ul * ur * ll * lr;
-    }
-
-    private long countRobots(final PMap<Block> map, final int xFrom, final int xTo, final int yFrom, final int yTo) {
-        long sum = 0L;
-        for (int y = yFrom; y < yTo; y++) {
-            for (int x = xFrom; x < xTo; x++) {
-                sum += map.getElementAt(x, y).getCount();
+            for (final MovingPosition robot : robots) {
+                map.getElementAt(helper.move(robot)).setOccupied();
+            }
+            if (containsHorizontalLine(map, 10)) {
+                if (print) {
+                    System.out.println(map);
+                }
+                return steps;
             }
         }
-        return sum;
+        return -1L;
+    }
+
+    private boolean containsHorizontalLine(final PMap<Block> map, final int limit) {
+        int count = 0;
+        // we simply ignore that we find lines in two rows
+        for (final Block element : map) {
+            if (element.isOccupied()) {
+                if (++count == limit) {
+                    return true;
+                }
+            } else {
+                count = 0;
+            }
+        }
+        return false;
     }
 
     private static class MovingHelper {
 
         private final int w;
         private final int h;
-        private final long steps;
+        private long steps;
 
-        public MovingHelper(final int w, final int h, final long steps) {
+        public MovingHelper(final int w, final int h) {
             this.w = w;
             this.h = h;
+        }
+
+        public void setSteps(final long steps) {
             this.steps = steps;
         }
 
@@ -107,19 +115,23 @@ public class Day14 {
 
     private static class Block implements CharPrintable {
 
-        private int count = 0;
+        private boolean occupied;
 
-        public int getCount() {
-            return count;
+        public boolean isOccupied() {
+            return occupied;
         }
 
-        public void increment() {
-            count++;
+        public void setOccupied() {
+            occupied = true;
+        }
+
+        public void reset() {
+            occupied = false;
         }
 
         @Override
         public char toPrintableChar() {
-            return count > 0 ? (char) ('0' + count) : '.';
+            return occupied ? '*' : '.';
         }
     }
 }
