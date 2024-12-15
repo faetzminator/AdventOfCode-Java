@@ -90,8 +90,11 @@ public class Day23 {
 
     private static enum Block implements CharEnum {
 
-        PATH('.', false, Direction.values()), ROCK('#', false), SLOPE_UP('^', true, Direction.NORTH),
-        SLOW_RIGHT('>', true, Direction.EAST), SLOPE_DOWN('v', true, Direction.SOUTH),
+        PATH('.', false, Direction.values()),
+        ROCK('#', false),
+        SLOPE_UP('^', true, Direction.NORTH),
+        SLOW_RIGHT('>', true, Direction.EAST),
+        SLOPE_DOWN('v', true, Direction.SOUTH),
         SLOPE_LEFT('<', true, Direction.WEST);
 
         private final char character;

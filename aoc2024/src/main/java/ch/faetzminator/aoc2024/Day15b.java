@@ -178,7 +178,10 @@ public class Day15b {
 
     private static enum Block implements CharEnum {
 
-        PATH('.', null), ROCK('#', null), BOX_LEFT('[', Direction.EAST), BOX_RIGHT(']', Direction.WEST),
+        PATH('.', null),
+        ROCK('#', null),
+        BOX_LEFT('[', Direction.EAST),
+        BOX_RIGHT(']', Direction.WEST),
         ROBOT('@', null);
 
         private final char character;
@@ -205,7 +208,9 @@ public class Day15b {
 
     private static enum Move implements CharEnum {
 
-        SLOPE_UP('^', Direction.NORTH), SLOW_RIGHT('>', Direction.EAST), SLOPE_DOWN('v', Direction.SOUTH),
+        SLOPE_UP('^', Direction.NORTH),
+        SLOW_RIGHT('>', Direction.EAST),
+        SLOPE_DOWN('v', Direction.SOUTH),
         SLOPE_LEFT('<', Direction.WEST);
 
         private final char character;

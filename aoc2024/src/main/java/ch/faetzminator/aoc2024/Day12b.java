@@ -79,7 +79,6 @@ public class Day12b {
         return area * corners;
     }
 
-
     private static class BlockAtPosition extends CharAtPosition<Char> {
 
         private boolean fenced;

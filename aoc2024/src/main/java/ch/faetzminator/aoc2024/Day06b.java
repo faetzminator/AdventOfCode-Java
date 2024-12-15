@@ -119,7 +119,9 @@ public class Day06b {
 
     private static enum Block implements CharEnum {
 
-        PATH('.'), OBSTRUCTION('#'), START('^');
+        PATH('.'),
+        OBSTRUCTION('#'),
+        START('^');
 
         private final char character;
 

@@ -91,7 +91,12 @@ public class Day23b {
 
     private static enum Block implements CharEnum {
 
-        PATH('.'), ROCK('#', false), SLOPE_UP('^'), SLOW_RIGHT('>'), SLOPE_DOWN('v'), SLOPE_LEFT('<');
+        PATH('.'),
+        ROCK('#', false),
+        SLOPE_UP('^'),
+        SLOW_RIGHT('>'),
+        SLOPE_DOWN('v'),
+        SLOPE_LEFT('<');
 
         private final char character;
         private final Set<Direction> entries;

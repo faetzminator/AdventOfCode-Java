@@ -152,7 +152,9 @@ public class Day21b {
 
     private static enum Block implements CharEnum {
 
-        START('S'), GARDEN_PLOT('.'), ROCK('#');
+        START('S'),
+        GARDEN_PLOT('.'),
+        ROCK('#');
 
         private final char character;
 

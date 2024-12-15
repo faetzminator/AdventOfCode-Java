@@ -274,9 +274,13 @@ public class Day10b {
 
     private static enum Pipe implements CharEnum {
 
-        VERTICAL('|', Direction.NORTH, Direction.SOUTH), HORIZONTAL('-', Direction.EAST, Direction.WEST),
-        BEND1('L', Direction.NORTH, Direction.EAST), BEND2('J', Direction.NORTH, Direction.WEST),
-        BEND3('7', Direction.SOUTH, Direction.WEST), BEND4('F', Direction.SOUTH, Direction.EAST), GROUND('.'),
+        VERTICAL('|', Direction.NORTH, Direction.SOUTH),
+        HORIZONTAL('-', Direction.EAST, Direction.WEST),
+        BEND1('L', Direction.NORTH, Direction.EAST),
+        BEND2('J', Direction.NORTH, Direction.WEST),
+        BEND3('7', Direction.SOUTH, Direction.WEST),
+        BEND4('F', Direction.SOUTH, Direction.EAST),
+        GROUND('.'),
         START('S', Direction.values());
 
         private final char character;

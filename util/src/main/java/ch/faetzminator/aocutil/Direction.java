@@ -2,7 +2,10 @@ package ch.faetzminator.aocutil;
 
 public enum Direction implements CharEnum {
 
-    NORTH('N'), EAST('E'), SOUTH('S'), WEST('W');
+    NORTH('N'),
+    EAST('E'),
+    SOUTH('S'),
+    WEST('W');
 
     private final char label;
 

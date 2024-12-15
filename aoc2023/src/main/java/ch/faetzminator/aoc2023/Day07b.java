@@ -99,7 +99,19 @@ public class Day07b {
 
     private static enum Strength implements CharEnum {
 
-        A, K, Q, T, N9, N8, N7, N6, N5, N4, N3, N2, J;
+        A,
+        K,
+        Q,
+        T,
+        N9,
+        N8,
+        N7,
+        N6,
+        N5,
+        N4,
+        N3,
+        N2,
+        J;
 
         private final char label;
 
@@ -119,8 +131,12 @@ public class Day07b {
 
     private static enum Type {
 
-        FIVE_OF_A_KIND(new CountMatcher(5)), FOUR_OF_A_KIND(new CountMatcher(4)), FULL_HOUSE(new CountMatcher(3, 2)),
-        THREE_OF_A_KIND(new CountMatcher(3)), TWO_PAIR(new CountMatcher(2, 2)), ONE_PAIR(new CountMatcher(2)),
+        FIVE_OF_A_KIND(new CountMatcher(5)),
+        FOUR_OF_A_KIND(new CountMatcher(4)),
+        FULL_HOUSE(new CountMatcher(3, 2)),
+        THREE_OF_A_KIND(new CountMatcher(3)),
+        TWO_PAIR(new CountMatcher(2, 2)),
+        ONE_PAIR(new CountMatcher(2)),
         HIGH_CARD(str -> true);
 
         private final Function<String, Boolean> matcher;
