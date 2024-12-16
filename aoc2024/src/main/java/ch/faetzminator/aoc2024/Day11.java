@@ -30,8 +30,12 @@ public class Day11 {
         }
     }
 
-    private long blinkMultipleTimes() {
-        for (int i = 0; i < ITERATIONS; i++) {
+    public long blinkMultipleTimes() {
+        return blinkMultipleTimes(ITERATIONS);
+    }
+
+    protected long blinkMultipleTimes(final int times) {
+        for (int i = 0; i < times; i++) {
             blink();
         }
         return stones.size();

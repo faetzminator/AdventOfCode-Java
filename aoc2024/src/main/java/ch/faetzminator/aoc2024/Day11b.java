@@ -32,7 +32,7 @@ public class Day11b {
         }
     }
 
-    private long blinkMultipleTimes() {
+    public long blinkMultipleTimes() {
         long sum = 0L;
         for (final long stone : stones) {
             sum += blink(0, stone);
