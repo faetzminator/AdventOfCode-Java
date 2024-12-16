@@ -1,10 +1,12 @@
 package ch.faetzminator.aoc2024;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 import ch.faetzminator.aocutil.CharEnum;
 import ch.faetzminator.aocutil.Direction;
@@ -17,10 +19,10 @@ import ch.faetzminator.aocutil.grid.GridFactory;
 import ch.faetzminator.aocutil.grid.GridWithStart;
 import ch.faetzminator.aocutil.grid.Position;
 
-public class Day16 {
+public class Day16b {
 
     public static void main(final String[] args) {
-        final Day16 puzzle = new Day16();
+        final Day16b puzzle = new Day16b();
         final List<String> lines = ScannerUtil.readNonBlankLines();
         final Timer timer = PuzzleUtil.start();
         puzzle.parseLines(lines);
@@ -58,7 +60,39 @@ public class Day16 {
                 }
             }
         }
-        return map.getEndElement().getLowestScore();
+
+        // same story again, just opposite starting at end element...
+        final Set<BlockAtPosition> result = new HashSet<>();
+
+        // add only directions with the lowest score for the start element
+        final BlockAtPosition endElement = map.getEndElement();
+        final long endScore = endElement.getLowestScore();
+        for (final Direction direction : Direction.values()) {
+            if (endElement.getScore(direction) == endScore) {
+                queue.add(new BlockAtPositionWithDirection(endElement, direction));
+            }
+        }
+        result.add(endElement);
+
+        while (!queue.isEmpty()) {
+            final BlockAtPositionWithDirection last = queue.poll();
+            final BlockAtPosition block = last.getElementAtPosition();
+            final Direction direction = last.getDirection();
+            final long expected = block.getScore(direction) - 1L;
+            final BlockAtPosition next = block.move(map, direction.getOpposite());
+
+            for (final Direction d : Direction.values()) {
+                final Direction opposite = d.getOpposite();
+                final long score = next.getScore(opposite);
+                // finding corners - some might call it buggy, but it's just ugly!
+                if (score == expected || (d != opposite && score == expected - 1000L)) {
+                    next.mark();
+                    queue.add(new BlockAtPositionWithDirection(next, opposite));
+                    result.add(next);
+                }
+            }
+        }
+        return result.size();
     }
 
     private static class BlockAtPositionWithDirection extends ElementAtPositionWithDirection<BlockAtPosition> {
@@ -71,6 +105,7 @@ public class Day16 {
     private static class BlockAtPosition extends CharEnumAtPosition<Block> {
 
         private final Map<Direction, Long> scores = new HashMap<>();
+        private boolean marked;
 
         public BlockAtPosition(final Block block, final Position position) {
             super(block, position);
@@ -98,13 +133,13 @@ public class Day16 {
             return lowest;
         }
 
+        public void mark() {
+            marked = true;
+        }
+
         @Override
         public char toPrintableChar() {
-            final long score = getLowestScore();
-            if (score != Long.MAX_VALUE) {
-                return (char) ('0' + (score / 1000) % 10);
-            }
-            return super.toPrintableChar();
+            return marked ? 'O' : super.toPrintableChar();
         }
     }
 
