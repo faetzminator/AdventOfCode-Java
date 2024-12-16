@@ -10,8 +10,8 @@ import ch.faetzminator.aocutil.MovingPosition;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.PMap;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.Grid;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day14b {
 
@@ -51,10 +51,10 @@ public class Day14b {
 
         final MovingHelper helper = new MovingHelper(WIDTH, HEIGHT);
 
-        final PMap<Block> map = new PMap<>(Block.class, WIDTH, HEIGHT);
+        final Grid<Block> map = new Grid<>(Block.class, WIDTH, HEIGHT);
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {
-                map.setElementAt(x, y, new Block());
+                map.setAt(x, y, new Block());
             }
         }
 
@@ -63,7 +63,7 @@ public class Day14b {
             helper.setSteps(steps);
 
             for (final MovingPosition robot : robots) {
-                map.getElementAt(helper.move(robot)).setOccupied();
+                map.getAt(helper.move(robot)).setOccupied();
             }
             if (containsHorizontalLine(map, 10)) {
                 if (print) {
@@ -75,7 +75,7 @@ public class Day14b {
         return -1L;
     }
 
-    private boolean containsHorizontalLine(final PMap<Block> map, final int limit) {
+    private boolean containsHorizontalLine(final Grid<Block> map, final int limit) {
         int count = 0;
         // we simply ignore that we find lines in two rows
         for (final Block element : map) {

@@ -8,10 +8,10 @@ import ch.faetzminator.aocutil.Char;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharAtPosition;
-import ch.faetzminator.aocutil.map.PMap;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.CharAtPosition;
+import ch.faetzminator.aocutil.grid.Grid;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day08b {
 
@@ -24,10 +24,10 @@ public class Day08b {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMap<BlockAtPosition> map;
+    private Grid<BlockAtPosition> map;
 
     public void parseLines(final List<String> input) {
-        map = new PMapFactory<>(BlockAtPosition.class,
+        map = new GridFactory<>(BlockAtPosition.class,
                 (character, position) -> new BlockAtPosition(new Char(character), position)).create(input);
     }
 
@@ -44,11 +44,11 @@ public class Day08b {
                     final int xDist = other.getX() - one.getX();
                     final int yDist = other.getY() - one.getY();
                     do {
-                        map.getElementAt(one).setAntinode();
+                        map.getAt(one).setAntinode();
                         one = new Position(one.getX() - xDist, one.getY() - yDist);
                     } while (map.isInBounds(one));
                     do {
-                        map.getElementAt(other).setAntinode();
+                        map.getAt(other).setAntinode();
                         other = new Position(other.getX() + xDist, other.getY() + yDist);
                     } while (map.isInBounds(other));
                 }

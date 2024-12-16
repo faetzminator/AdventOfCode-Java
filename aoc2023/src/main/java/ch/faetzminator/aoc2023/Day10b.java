@@ -12,10 +12,10 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharEnumAtPosition;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.PMapWithStart;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.CharEnumAtPosition;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.GridWithStart;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day10b {
 
@@ -29,10 +29,10 @@ public class Day10b {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMapWithStart<PipeAtPosition> pipeMap;
+    private GridWithStart<PipeAtPosition> pipeMap;
 
     public void parseLines(final List<String> input) {
-        pipeMap = new PMapFactory<>(PipeAtPosition.class,
+        pipeMap = new GridFactory<>(PipeAtPosition.class,
                 (character, position) -> new PipeAtPosition(Pipe.byChar(character), position))
                 .create(input, element -> element.getElement() == Pipe.START);
     }
@@ -40,7 +40,7 @@ public class Day10b {
     public int calculateEnclosedTiles() {
 
         final Position current = pipeMap.getStartPosition();
-        final PipeAtPosition startPipe = pipeMap.getElementAt(current);
+        final PipeAtPosition startPipe = pipeMap.getAt(current);
         for (final Direction direction : startPipe.getElement().getDirections()) {
             final int steps = calculateLoopSteps(startPipe, direction);
             // we should get twice -1 and twice the same number
@@ -82,7 +82,7 @@ public class Day10b {
             if (!pipeMap.isInBounds(nextPos)) {
                 return -1;
             }
-            final PipeAtPosition nextPipe = pipeMap.getElementAt(nextPos);
+            final PipeAtPosition nextPipe = pipeMap.getAt(nextPos);
             if (nextPipe.getElement() == Pipe.START) {
                 return steps + 1;
             }
@@ -110,7 +110,7 @@ public class Day10b {
             }
             final Position nextPos = currentPipe.getPosition().move(direction);
             if (pipeMap.isInBounds(nextPos)) {
-                final PipeAtPosition nextPipe = pipeMap.getElementAt(nextPos);
+                final PipeAtPosition nextPipe = pipeMap.getAt(nextPos);
                 if (outsideDirection != null) {
                     markLoopSide(currentPipe, outsideDirection);
                     if (nextPipe.getElement() != currentPipe.getElement()) {
@@ -170,7 +170,7 @@ public class Day10b {
             return null;
         }
         for (final Direction direction : Direction.values()) {
-            final PipeAtPosition neighbour = pipeMap.getElementAt(pipe.getPosition().move(direction));
+            final PipeAtPosition neighbour = pipeMap.getAt(pipe.getPosition().move(direction));
             if (neighbour != null && Boolean.FALSE.equals(neighbour.getInLoop())) {
                 return direction;
             }
@@ -180,12 +180,12 @@ public class Day10b {
 
     private void markOutsideLoop() {
         for (int x = 0; x < pipeMap.getXSize(); x++) {
-            markLoopSide(pipeMap.getElementAt(new Position(x, 0)), false);
-            markLoopSide(pipeMap.getElementAt(new Position(x, pipeMap.getYSize() - 1)), false);
+            markLoopSide(pipeMap.getAt(new Position(x, 0)), false);
+            markLoopSide(pipeMap.getAt(new Position(x, pipeMap.getYSize() - 1)), false);
         }
         for (int y = 0; y < pipeMap.getYSize(); y++) {
-            markLoopSide(pipeMap.getElementAt(new Position(0, y)), false);
-            markLoopSide(pipeMap.getElementAt(new Position(pipeMap.getXSize() - 1, y)), false);
+            markLoopSide(pipeMap.getAt(new Position(0, y)), false);
+            markLoopSide(pipeMap.getAt(new Position(pipeMap.getXSize() - 1, y)), false);
         }
     }
 
@@ -201,16 +201,16 @@ public class Day10b {
             for (final Direction direction : pipe.getElement().getDirections()) {
                 newPosition = newPosition.move(direction);
             }
-            markLoopSide(pipeMap.getElementAt(newPosition), !insideOut);
+            markLoopSide(pipeMap.getAt(newPosition), !insideOut);
 
             newPosition = position;
             final Set<Direction> opposite = new LinkedHashSet<>(Arrays.asList(Direction.values()));
             opposite.removeAll(pipe.getElement().getDirections());
             for (final Direction direction : opposite) {
-                markLoopSide(pipeMap.getElementAt(position.move(direction)), insideOut);
+                markLoopSide(pipeMap.getAt(position.move(direction)), insideOut);
                 newPosition = newPosition.move(direction);
             }
-            markLoopSide(pipeMap.getElementAt(newPosition), insideOut);
+            markLoopSide(pipeMap.getAt(newPosition), insideOut);
             break;
         default:
             // this can be improved for sure for non bend pipes
@@ -224,10 +224,10 @@ public class Day10b {
             pipe = queue.poll();
             if (pipe != null && !pipe.isPartOfLoop() && pipe.getInLoop() == null) {
                 pipe.setInLoop(inLoop);
-                queue.add(pipeMap.getElementAt(pipe.getPosition().move(Direction.NORTH)));
-                queue.add(pipeMap.getElementAt(pipe.getPosition().move(Direction.EAST)));
-                queue.add(pipeMap.getElementAt(pipe.getPosition().move(Direction.SOUTH)));
-                queue.add(pipeMap.getElementAt(pipe.getPosition().move(Direction.WEST)));
+                queue.add(pipeMap.getAt(pipe.getPosition().move(Direction.NORTH)));
+                queue.add(pipeMap.getAt(pipe.getPosition().move(Direction.EAST)));
+                queue.add(pipeMap.getAt(pipe.getPosition().move(Direction.SOUTH)));
+                queue.add(pipeMap.getAt(pipe.getPosition().move(Direction.WEST)));
             }
         }
     }

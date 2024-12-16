@@ -9,10 +9,10 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharEnumAtPosition;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.PMapWithStart;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.CharEnumAtPosition;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.GridWithStart;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day21b {
 
@@ -26,10 +26,10 @@ public class Day21b {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMapWithStart<BlockAtPosition> map;
+    private GridWithStart<BlockAtPosition> map;
 
     public void parseLines(final List<String> input) {
-        map = new PMapFactory<>(BlockAtPosition.class,
+        map = new GridFactory<>(BlockAtPosition.class,
                 (character, position) -> new BlockAtPosition(Block.byChar(character), position))
                 .create(input, element -> element.getElement() == Block.START);
     }
@@ -86,7 +86,7 @@ public class Day21b {
 
         final long[] sums = new long[2];
         final Queue<BlockAtPosition> queue = new LinkedList<>();
-        final BlockAtPosition startBlock = map.getElementAt(startPosition);
+        final BlockAtPosition startBlock = map.getAt(startPosition);
         startBlock.setDistance(0);
         queue.add(startBlock);
         sums[0]++;
@@ -97,7 +97,7 @@ public class Day21b {
             if (nextDistance < limit) {
                 for (final Direction direction : Direction.values()) {
                     final Position nextPos = current.getPosition().move(direction);
-                    final BlockAtPosition nextBlock = map.getElementAt(nextPos);
+                    final BlockAtPosition nextBlock = map.getAt(nextPos);
                     if (nextBlock != null && nextBlock.getElement() != Block.ROCK && !nextBlock.hasDistance()) {
                         nextBlock.setDistance(nextDistance);
                         queue.add(nextBlock);

@@ -1,4 +1,4 @@
-package ch.faetzminator.aocutil.map;
+package ch.faetzminator.aocutil.grid;
 
 import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.Point;

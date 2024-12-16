@@ -10,8 +10,8 @@ import ch.faetzminator.aocutil.MovingPosition;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.PMap;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.Grid;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day14 {
 
@@ -55,15 +55,15 @@ public class Day14 {
 
         final MovingHelper helper = new MovingHelper(w, h, STEPS);
 
-        final PMap<Block> map = new PMap<>(Block.class, w, h);
+        final Grid<Block> map = new Grid<>(Block.class, w, h);
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
-                map.setElementAt(x, y, new Block());
+                map.setAt(x, y, new Block());
             }
         }
 
         for (final MovingPosition robot : robots) {
-            map.getElementAt(helper.move(robot)).increment();
+            map.getAt(helper.move(robot)).increment();
         }
 
         final int w1 = w / 2;
@@ -75,11 +75,11 @@ public class Day14 {
         return ul * ur * ll * lr;
     }
 
-    private long countRobots(final PMap<Block> map, final int xFrom, final int xTo, final int yFrom, final int yTo) {
+    private long countRobots(final Grid<Block> map, final int xFrom, final int xTo, final int yFrom, final int yTo) {
         long sum = 0L;
         for (int y = yFrom; y < yTo; y++) {
             for (int x = xFrom; x < xTo; x++) {
-                sum += map.getElementAt(x, y).getCount();
+                sum += map.getAt(x, y).getCount();
             }
         }
         return sum;

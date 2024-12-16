@@ -14,10 +14,10 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharEnumAtPosition;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.PMapWithStart;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.CharEnumAtPosition;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.GridWithStart;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day15b {
 
@@ -37,7 +37,7 @@ public class Day15b {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMapWithStart<Block> map;
+    private GridWithStart<Block> map;
     private final List<Move> moves = new ArrayList<>();
 
     public void parseMap(final List<String> lines) {
@@ -45,7 +45,7 @@ public class Day15b {
         for (final String line : lines) {
             expandedLines.add(line.replace("#", "##").replace("O", "[]").replace(".", "..").replace("@", "@."));
         }
-        map = new PMapFactory<>(Block.class, (character, position) -> Block.byChar(character)).create(expandedLines,
+        map = new GridFactory<>(Block.class, (character, position) -> Block.byChar(character)).create(expandedLines,
                 block -> block == Block.ROBOT);
     }
 
@@ -71,10 +71,10 @@ public class Day15b {
         final MoveData data = getMovableBlocks(startPosition, direction);
         if (data.canMove()) {
             for (final Position position : data.getPositionsToUnset()) {
-                map.setElementAt(position, Block.PATH);
+                map.setAt(position, Block.PATH);
             }
             for (final BlockAtPosition blockAtPosition : data.getBlocksToMove()) {
-                map.setElementAt(blockAtPosition.getPosition().move(direction), blockAtPosition.getElement());
+                map.setAt(blockAtPosition.getPosition().move(direction), blockAtPosition.getElement());
             }
         }
         return data.canMove();
@@ -88,7 +88,7 @@ public class Day15b {
         final Direction oppositeDirection = direction.getOpposite();
 
         Collection<BlockAtPosition> lastBlocks = Arrays
-                .asList(new BlockAtPosition(map.getElementAt(startPosition), startPosition));
+                .asList(new BlockAtPosition(map.getAt(startPosition), startPosition));
 
         final Set<Block> seenBlocks = new HashSet<>();
         do {
@@ -99,7 +99,7 @@ public class Day15b {
             for (final BlockAtPosition lastBlock : lastBlocks) {
                 blocksToMove.add(lastBlock);
                 final Position position = lastBlock.getPosition().move(direction);
-                final Block block = map.getElementAt(position);
+                final Block block = map.getAt(position);
                 if (block == Block.ROCK) {
                     return new MoveData();
                 }
@@ -114,7 +114,7 @@ public class Day15b {
                         && neighbourDirection != oppositeDirection) {
 
                     final Position neighbourPosition = position.move(neighbourDirection);
-                    newBlocks.add(new BlockAtPosition(map.getElementAt(neighbourPosition), neighbourPosition));
+                    newBlocks.add(new BlockAtPosition(map.getAt(neighbourPosition), neighbourPosition));
                 }
             }
             newBlocks.removeAll(blocks);
@@ -134,7 +134,7 @@ public class Day15b {
         long sum = 0L;
         for (int y = 0; y < map.getYSize(); y++) {
             for (int x = 0; x < map.getXSize(); x++) {
-                if (map.getElementAt(x, y) == Block.BOX_LEFT) {
+                if (map.getAt(x, y) == Block.BOX_LEFT) {
                     sum += 100 * y + x;
                 }
             }

@@ -7,7 +7,7 @@ import java.util.Queue;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day11 {
 

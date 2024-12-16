@@ -11,11 +11,11 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharEnumAtPosition;
-import ch.faetzminator.aocutil.map.ElementAtPositionWithDirection;
-import ch.faetzminator.aocutil.map.PMap;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.CharEnumAtPosition;
+import ch.faetzminator.aocutil.grid.ElementAtPositionWithDirection;
+import ch.faetzminator.aocutil.grid.Grid;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day16 {
 
@@ -30,16 +30,16 @@ public class Day16 {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMap<PartAtPosition> contraption;
+    private Grid<PartAtPosition> contraption;
 
     public void parseLines(final List<String> input) {
-        contraption = new PMapFactory<>(PartAtPosition.class,
+        contraption = new GridFactory<>(PartAtPosition.class,
                 (character, position) -> new PartAtPosition(Part.byChar(character), position)).create(input);
 
     }
 
     public void beam() {
-        beam(contraption.getElementAt(new Position(0, 0)), Direction.EAST);
+        beam(contraption.getAt(new Position(0, 0)), Direction.EAST);
     }
 
     private void beam(PartAtPosition current, Direction direction) {
@@ -54,7 +54,7 @@ public class Day16 {
             direction = x.getDirection();
             current.setEnergized();
             for (final Direction newDirection : current.getElement().getDirections(direction)) {
-                final PartAtPosition next = contraption.getElementAt(current.getPosition().move(newDirection));
+                final PartAtPosition next = contraption.getAt(current.getPosition().move(newDirection));
                 if (next != null) {
                     final ElementAtPositionWithDirection<PartAtPosition> y = new ElementAtPositionWithDirection<>(next,
                             newDirection);

@@ -1,4 +1,4 @@
-package ch.faetzminator.aocutil.map;
+package ch.faetzminator.aocutil.grid;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -15,17 +15,17 @@ public final class NodeUtil {
     private NodeUtil() {
     }
 
-    public static <T extends ElementAtPosition<T>, N extends PNode<N>> Map<Position, N> mapToNodes(final PMap<T> map,
+    public static <T extends ElementAtPosition<T>, N extends PNode<N>> Map<Position, N> gridToNodes(final Grid<T> grid,
             final NeighbourAware<T> neighbourAware, final NodeFactory<N> nodeFactory, final Position startPosition) {
 
-        return new MapToNodesTransformer<>(map, nodeFactory, neighbourAware).transform(startPosition);
+        return new GridToNodesTransformer<>(grid, nodeFactory, neighbourAware).transform(startPosition);
     }
 
-    public static <E extends ElementAtPosition<T>, T extends CharPrintable, N extends PNode<N>> Map<Position, N> mapToNodes(
-            final PMap<E> map, final NeighbourAware<T> neighbourAware, final NodeFactory<N> nodeFactory,
+    public static <E extends ElementAtPosition<T>, T extends CharPrintable, N extends PNode<N>> Map<Position, N> gridToNodes(
+            final Grid<E> grid, final NeighbourAware<T> neighbourAware, final NodeFactory<N> nodeFactory,
             final Position startPosition, final Position endPosition) {
 
-        return new MapToNodesTransformer<>(map, nodeFactory, neighbourAware).transform(startPosition, endPosition);
+        return new GridToNodesTransformer<>(grid, nodeFactory, neighbourAware).transform(startPosition, endPosition);
     }
 
     public static interface NodeFactory<N extends PNode<N>> {
@@ -40,16 +40,16 @@ public final class NodeUtil {
         boolean canEnter(T element, Direction direction);
     }
 
-    private static class MapToNodesTransformer<E extends ElementAtPosition<T>, T extends CharPrintable, N extends PNode<N>> {
+    private static class GridToNodesTransformer<E extends ElementAtPosition<T>, T extends CharPrintable, N extends PNode<N>> {
 
-        private final PMap<E> map;
+        private final Grid<E> grid;
         private final NeighbourAware<T> neighbourAware;
         private final NodeFactory<N> nodeFactory;
         private Map<Position, N> nodes;
 
-        public MapToNodesTransformer(final PMap<E> map, final NodeFactory<N> nodeFactory,
+        public GridToNodesTransformer(final Grid<E> grid, final NodeFactory<N> nodeFactory,
                 final NeighbourAware<T> neighbourAware) {
-            this.map = map;
+            this.grid = grid;
             this.nodeFactory = nodeFactory;
             this.neighbourAware = neighbourAware;
         }
@@ -72,7 +72,7 @@ public final class NodeUtil {
             return create;
         }
 
-        private void createNodesFromMap(final Position startPosition, final Position endPosition) {
+        private void createNodesFromGrid(final Position startPosition, final Position endPosition) {
             nodes = new LinkedHashMap<>();
             if (endPosition != null) {
                 createNode(endPosition);
@@ -86,7 +86,7 @@ public final class NodeUtil {
             while (!nodeQueue.isEmpty()) {
                 final N lastNode = nodeQueue.poll();
                 final Queue<QueueElement<E>> queue = new LinkedList<>();
-                queue.add(new QueueElement<>(map.getElementAt(lastNode.getPosition()), null));
+                queue.add(new QueueElement<>(grid.getAt(lastNode.getPosition()), null));
                 while (!queue.isEmpty()) {
                     final QueueElement<E> lastMove = queue.poll();
                     final Position lastPosition = lastMove.getElementAtPosition().getPosition();
@@ -95,7 +95,7 @@ public final class NodeUtil {
                             .getExits(lastMove.getElementAtPosition().getElement());
                     for (final Direction direction : directions) {
                         if (lastMove.getDirection() == null || direction != lastMove.getDirection().getOpposite()) {
-                            final E nextBlock = map.getElementAt(lastPosition.move(direction));
+                            final E nextBlock = grid.getAt(lastPosition.move(direction));
                             if (nextBlock != null
                                     && neighbourAware.canEnter(nextBlock.getElement(), direction.getOpposite())) {
                                 tempQueue.add(new QueueElement<>(nextBlock, direction));
@@ -126,7 +126,7 @@ public final class NodeUtil {
         }
 
         public Map<Position, N> transform(final Position startPosition, final Position endPosition) {
-            createNodesFromMap(startPosition, endPosition);
+            createNodesFromGrid(startPosition, endPosition);
             return getNodes();
         }
 

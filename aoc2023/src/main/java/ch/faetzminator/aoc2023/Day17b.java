@@ -15,9 +15,9 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.PMap;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.Grid;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day17b {
 
@@ -31,10 +31,10 @@ public class Day17b {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMap<Block> map;
+    private Grid<Block> map;
 
     public void parseLines(final List<String> input) {
-        map = new PMapFactory<>(Block.class, (character, position) -> new Block(character - '0')).create(input);
+        map = new GridFactory<>(Block.class, (character, position) -> new Block(character - '0')).create(input);
     }
 
     private static final int MIN_LENGTH = 4;
@@ -52,13 +52,13 @@ public class Day17b {
             final Direction direction = queueItem.getCacheKey().getDirection();
             final int length = queueItem.getCacheKey().getLength();
 
-            final int heatLoss = map.getElementAt(current).getHeatLoss(new CacheKey(direction, length));
+            final int heatLoss = map.getAt(current).getHeatLoss(new CacheKey(direction, length));
 
             for (final Direction nextDirection : getPossibleDirections(direction, length >= MIN_LENGTH,
                     length < MAX_LENGTH)) {
                 final int nextLength = direction == nextDirection ? length + 1 : 1;
                 final Position nextPosition = current.move(nextDirection);
-                final Block nextBlock = map.getElementAt(nextPosition);
+                final Block nextBlock = map.getAt(nextPosition);
                 final CacheKey key = new CacheKey(nextDirection, nextLength);
                 if (nextBlock != null && nextBlock.setHeatLoss(key, heatLoss + nextBlock.getHeatLoss())) {
                     queue.add(new QueueItem(nextPosition, new CacheKey(nextDirection, nextLength)));
@@ -67,7 +67,7 @@ public class Day17b {
         }
 
         final Position endPos = new Position(map.getXSize() - 1, map.getYSize() - 1);
-        return map.getElementAt(endPos).getLowestHeatLoss();
+        return map.getAt(endPos).getLowestHeatLoss();
     }
 
     private static class Block implements CharPrintable {

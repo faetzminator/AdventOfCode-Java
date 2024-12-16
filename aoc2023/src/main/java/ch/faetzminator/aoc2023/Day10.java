@@ -10,9 +10,9 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.PMapWithStart;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.GridWithStart;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day10 {
 
@@ -26,17 +26,17 @@ public class Day10 {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMapWithStart<Pipe> pipeMap;
+    private GridWithStart<Pipe> pipeMap;
 
     public void parseLines(final List<String> input) {
-        pipeMap = new PMapFactory<>(Pipe.class, (character, position) -> Pipe.byChar(character)).create(input,
+        pipeMap = new GridFactory<>(Pipe.class, (character, position) -> Pipe.byChar(character)).create(input,
                 element -> element == Pipe.START);
     }
 
     public int calculateLoopSteps() {
 
         final Position current = pipeMap.getStartPosition();
-        final Pipe startPipe = pipeMap.getElementAt(current);
+        final Pipe startPipe = pipeMap.getAt(current);
         for (final Direction direction : startPipe.getDirections()) {
             final int steps = calculateLoopSteps(current, startPipe, direction);
             // we should get twice -1 and twice the same number
@@ -54,7 +54,7 @@ public class Day10 {
             if (!pipeMap.isInBounds(nextPos)) {
                 return -1;
             }
-            final Pipe nextPipe = pipeMap.getElementAt(nextPos);
+            final Pipe nextPipe = pipeMap.getAt(nextPos);
             if (nextPipe == Pipe.START) {
                 return steps + 1;
             }

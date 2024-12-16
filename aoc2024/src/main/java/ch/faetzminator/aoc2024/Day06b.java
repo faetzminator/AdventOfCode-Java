@@ -10,10 +10,10 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharEnumAtPosition;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.PMapWithStart;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.CharEnumAtPosition;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.GridWithStart;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day06b {
 
@@ -26,10 +26,10 @@ public class Day06b {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMapWithStart<BlockAtPosition> map;
+    private GridWithStart<BlockAtPosition> map;
 
     public void parseLines(final List<String> input) {
-        map = new PMapFactory<>(BlockAtPosition.class,
+        map = new GridFactory<>(BlockAtPosition.class,
                 (character, position) -> new BlockAtPosition(Block.byChar(character), position))
                 .create(input, element -> element.getElement() == Block.START);
     }
@@ -44,10 +44,10 @@ public class Day06b {
         elements.remove(map.getStartElement());
 
         return elements.stream().filter(element -> {
-            map.setElementAt(element.getPosition(), new BlockAtPosition(Block.OBSTRUCTION, element.getPosition()));
+            map.setAt(element.getPosition(), new BlockAtPosition(Block.OBSTRUCTION, element.getPosition()));
             final boolean keep = walk();
             // reset original state
-            map.setElementAt(element.getPosition(), element);
+            map.setAt(element.getPosition(), element);
             map.stream().forEach(BlockAtPosition::reset);
             return keep;
         }).count();
@@ -63,7 +63,7 @@ public class Day06b {
             Position nextPos;
             do {
                 nextPos = block.getPosition().move(direction);
-                nextBlock = map.getElementAt(nextPos);
+                nextBlock = map.getAt(nextPos);
                 if (nextBlock == null) {
                     // we're outside of the map - no loop
                     return false;

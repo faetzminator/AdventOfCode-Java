@@ -10,10 +10,10 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharAtPosition;
-import ch.faetzminator.aocutil.map.PMap;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.CharAtPosition;
+import ch.faetzminator.aocutil.grid.Grid;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day10b {
 
@@ -26,10 +26,10 @@ public class Day10b {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMap<HeightAtPosition> map;
+    private Grid<HeightAtPosition> map;
 
     public void parseLines(final List<String> input) {
-        map = new PMapFactory<>(HeightAtPosition.class,
+        map = new GridFactory<>(HeightAtPosition.class,
                 (character, position) -> new HeightAtPosition(new Char(character), position)).create(input);
     }
 
@@ -51,7 +51,7 @@ public class Day10b {
             final HeightAtPosition current = queue.poll();
             for (final Direction direction : Direction.values()) {
                 final Position nextPosition = current.getPosition().move(direction);
-                final HeightAtPosition next = map.getElementAt(nextPosition);
+                final HeightAtPosition next = map.getAt(nextPosition);
                 if (current.isNextStep(next)) {
                     if (next.isEndPoint()) {
                         sum++;

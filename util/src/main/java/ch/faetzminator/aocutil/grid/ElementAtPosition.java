@@ -1,4 +1,4 @@
-package ch.faetzminator.aocutil.map;
+package ch.faetzminator.aocutil.grid;
 
 import java.util.Objects;
 
@@ -36,8 +36,8 @@ public class ElementAtPosition<T extends CharPrintable> implements CharPrintable
         return position.getY();
     }
 
-    public <X extends ElementAtPosition<T>> X move(final PMap<X> map, final Direction... directions) {
-        return map.getElementAt(position.move(directions));
+    public <X extends ElementAtPosition<T>> X move(final Grid<X> grid, final Direction... directions) {
+        return grid.getAt(position.move(directions));
     }
 
     /**

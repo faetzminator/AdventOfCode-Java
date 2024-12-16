@@ -9,10 +9,10 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharEnumAtPosition;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.PMapWithStart;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.CharEnumAtPosition;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.GridWithStart;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day15 {
 
@@ -32,11 +32,11 @@ public class Day15 {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMapWithStart<Block> map;
+    private GridWithStart<Block> map;
     private final List<Move> moves = new ArrayList<>();
 
     public void parseMap(final List<String> lines) {
-        map = new PMapFactory<>(Block.class, (character, position) -> Block.byChar(character)).create(lines,
+        map = new GridFactory<>(Block.class, (character, position) -> Block.byChar(character)).create(lines,
                 block -> block == Block.ROBOT);
     }
 
@@ -61,9 +61,9 @@ public class Day15 {
     private boolean tryMove(final Position startPosition, final Direction direction) {
         final MoveData data = getMovableBlocks(startPosition, direction);
         if (data.canMove()) {
-            map.setElementAt(startPosition, Block.PATH);
+            map.setAt(startPosition, Block.PATH);
             for (final BlockAtPosition blockAtPosition : data.getBlocksToMove()) {
-                map.setElementAt(blockAtPosition.getPosition().move(direction), blockAtPosition.getElement());
+                map.setAt(blockAtPosition.getPosition().move(direction), blockAtPosition.getElement());
             }
         }
         return data.canMove();
@@ -73,11 +73,11 @@ public class Day15 {
         final List<BlockAtPosition> blocksToMove = new ArrayList<>();
 
         Position position = startPosition;
-        Block block = map.getElementAt(startPosition);
+        Block block = map.getAt(startPosition);
         do {
             blocksToMove.add(new BlockAtPosition(block, position));
             position = position.move(direction);
-            block = map.getElementAt(position);
+            block = map.getAt(position);
             if (block == Block.ROCK) {
                 return new MoveData();
             }
@@ -90,7 +90,7 @@ public class Day15 {
         long sum = 0L;
         for (int y = 0; y < map.getYSize(); y++) {
             for (int x = 0; x < map.getXSize(); x++) {
-                if (map.getElementAt(x, y) == Block.BOX) {
+                if (map.getAt(x, y) == Block.BOX) {
                     sum += 100 * y + x;
                 }
             }

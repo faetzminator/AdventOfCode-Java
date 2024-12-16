@@ -11,11 +11,11 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharEnumAtPosition;
-import ch.faetzminator.aocutil.map.ElementAtPositionWithDirection;
-import ch.faetzminator.aocutil.map.PMap;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.CharEnumAtPosition;
+import ch.faetzminator.aocutil.grid.ElementAtPositionWithDirection;
+import ch.faetzminator.aocutil.grid.Grid;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day23 {
 
@@ -29,15 +29,15 @@ public class Day23 {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMap<BlockAtPosition> map;
+    private Grid<BlockAtPosition> map;
 
     public void parseLines(final List<String> input) {
-        map = new PMapFactory<>(BlockAtPosition.class,
+        map = new GridFactory<>(BlockAtPosition.class,
                 (character, position) -> new BlockAtPosition(Block.byChar(character), position)).create(input);
     }
 
     public long findLongestPath() {
-        final BlockAtPosition startBlock = map.getElementAt(new Position(1, 0));
+        final BlockAtPosition startBlock = map.getAt(new Position(1, 0));
         final Position endPos = new Position(map.getXSize() - 2, map.getYSize() - 1);
 
         final Queue<ElementAtPositionWithDirection<BlockAtPosition>> queue = new LinkedList<>();
@@ -49,7 +49,7 @@ public class Day23 {
             for (final Direction direction : lastMove.getElementAtPosition().getElement().getExits()) {
                 if (direction != lastMove.getDirection().getOpposite()) {
                     final Position nextPos = lastMove.getElementAtPosition().getPosition().move(direction);
-                    final BlockAtPosition nextBlock = map.getElementAt(nextPos);
+                    final BlockAtPosition nextBlock = map.getAt(nextPos);
                     if (nextBlock != null && nextBlock.getElement().canEnter(direction.getOpposite())) {
                         nextBlock.setDistance(lastMove.getElementAtPosition().getDistance() + 1);
                         queue.add(new ElementAtPositionWithDirection<>(nextBlock, direction));
@@ -58,7 +58,7 @@ public class Day23 {
             }
         }
 
-        return map.getElementAt(endPos).getDistance();
+        return map.getAt(endPos).getDistance();
     }
 
     private static class BlockAtPosition extends CharEnumAtPosition<Block> {

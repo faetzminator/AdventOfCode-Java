@@ -13,13 +13,13 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharEnumAtPosition;
-import ch.faetzminator.aocutil.map.NodeUtil;
-import ch.faetzminator.aocutil.map.NodeUtil.NeighbourAware;
-import ch.faetzminator.aocutil.map.PMap;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.PNode;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.CharEnumAtPosition;
+import ch.faetzminator.aocutil.grid.Grid;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.NodeUtil;
+import ch.faetzminator.aocutil.grid.PNode;
+import ch.faetzminator.aocutil.grid.Position;
+import ch.faetzminator.aocutil.grid.NodeUtil.NeighbourAware;
 
 public class Day23b {
 
@@ -33,10 +33,10 @@ public class Day23b {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMap<BlockAtPosition> map;
+    private Grid<BlockAtPosition> map;
 
     public void parseLines(final List<String> input) {
-        map = new PMapFactory<>(BlockAtPosition.class,
+        map = new GridFactory<>(BlockAtPosition.class,
                 (character, position) -> new BlockAtPosition(Block.byChar(character), position)).create(input);
     }
 
@@ -44,7 +44,7 @@ public class Day23b {
         final Position startPos = new Position(1, 0);
         final Position endPos = new Position(map.getXSize() - 2, map.getYSize() - 1);
 
-        final Map<Position, Node> nodes = NodeUtil.mapToNodes(map, new NeighbourAware<Block>() {
+        final Map<Position, Node> nodes = NodeUtil.gridToNodes(map, new NeighbourAware<Block>() {
             @Override
             public Set<Direction> getExits(final Block block) {
                 return block.getExits();

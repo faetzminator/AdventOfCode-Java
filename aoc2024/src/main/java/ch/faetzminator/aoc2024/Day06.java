@@ -7,10 +7,10 @@ import ch.faetzminator.aocutil.Direction;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharEnumAtPosition;
-import ch.faetzminator.aocutil.map.PMapFactory;
-import ch.faetzminator.aocutil.map.PMapWithStart;
-import ch.faetzminator.aocutil.map.Position;
+import ch.faetzminator.aocutil.grid.CharEnumAtPosition;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.GridWithStart;
+import ch.faetzminator.aocutil.grid.Position;
 
 public class Day06 {
 
@@ -23,10 +23,10 @@ public class Day06 {
         PuzzleUtil.end(solution, timer);
     }
 
-    private PMapWithStart<BlockAtPosition> map;
+    private GridWithStart<BlockAtPosition> map;
 
     public void parseLines(final List<String> input) {
-        map = new PMapFactory<>(BlockAtPosition.class,
+        map = new GridFactory<>(BlockAtPosition.class,
                 (character, position) -> new BlockAtPosition(Block.byChar(character), position))
                 .create(input, element -> element.getElement() == Block.START);
     }
@@ -41,7 +41,7 @@ public class Day06 {
             Position nextPos;
             do {
                 nextPos = block.getPosition().move(direction);
-                nextBlock = map.getElementAt(nextPos);
+                nextBlock = map.getAt(nextPos);
                 if (nextBlock == null) {
                     // we're outside of the map, so let's count
                     return map.stream().filter(BlockAtPosition::isVisited).count();

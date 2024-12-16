@@ -5,7 +5,7 @@ import java.util.List;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
-import ch.faetzminator.aocutil.map.CharPMap;
+import ch.faetzminator.aocutil.grid.CharGrid;
 
 public class Day04b {
 
@@ -18,10 +18,10 @@ public class Day04b {
         PuzzleUtil.end(solution, timer);
     }
 
-    private CharPMap map;
+    private CharGrid map;
 
     public void parseLines(final List<String> input) {
-        map = new CharPMap(input.get(0).length(), input.size());
+        map = new CharGrid(input.get(0).length(), input.size());
 
         for (int y = 0; y < input.size(); y++) {
             final String line = input.get(y);
