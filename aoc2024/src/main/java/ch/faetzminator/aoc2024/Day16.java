@@ -1,0 +1,130 @@
+package ch.faetzminator.aoc2024;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+
+import ch.faetzminator.aocutil.CharEnum;
+import ch.faetzminator.aocutil.Direction;
+import ch.faetzminator.aocutil.PuzzleUtil;
+import ch.faetzminator.aocutil.ScannerUtil;
+import ch.faetzminator.aocutil.Timer;
+import ch.faetzminator.aocutil.grid.CharEnumAtPosition;
+import ch.faetzminator.aocutil.grid.ElementAtPositionWithDirection;
+import ch.faetzminator.aocutil.grid.GridFactory;
+import ch.faetzminator.aocutil.grid.GridWithStart;
+import ch.faetzminator.aocutil.grid.Position;
+
+public class Day16 {
+
+    public static void main(final String[] args) {
+        final Day16 puzzle = new Day16();
+        final List<String> lines = ScannerUtil.readNonBlankLines();
+        final Timer timer = PuzzleUtil.start();
+        puzzle.parseLines(lines);
+        final long solution = puzzle.calculateLowestScore();
+        PuzzleUtil.end(solution, timer);
+    }
+
+    private GridWithStart<BlockAtPosition> map;
+
+    public void parseLines(final List<String> lines) {
+        map = new GridFactory<>(BlockAtPosition.class,
+                (character, position) -> new BlockAtPosition(Block.byChar(character), position))
+                .create(lines, block -> block.getElement() == Block.START, block -> block.getElement() == Block.END);
+    }
+
+    public long calculateLowestScore() {
+        final Queue<BlockAtPositionWithDirection> queue = new LinkedList<>();
+        queue.add(new BlockAtPositionWithDirection(map.getStartElement(), Direction.EAST));
+        map.getStartElement().setScore(Direction.EAST, 0L);
+
+        while (!queue.isEmpty()) {
+            final ElementAtPositionWithDirection<BlockAtPosition> last = queue.poll();
+            final BlockAtPosition block = last.getElementAtPosition();
+            final Direction direction = last.getDirection();
+
+            final long score = block.getScore(direction);
+            final Direction opposite = direction.getOpposite();
+            for (final Direction d : Direction.values()) {
+                final BlockAtPosition next = block.move(map, d);
+                if (next.getElement() != Block.WALL && d != opposite) {
+                    final int turned = d == direction ? 0 : 1;
+                    if (next.setScore(d, score + 1L + 1000L * turned)) {
+                        queue.add(new BlockAtPositionWithDirection(next, d));
+                    }
+                }
+            }
+        }
+        return map.getEndElement().getScore();
+    }
+
+    private static class BlockAtPositionWithDirection extends ElementAtPositionWithDirection<BlockAtPosition> {
+
+        public BlockAtPositionWithDirection(final BlockAtPosition elementAtPosition, final Direction direction) {
+            super(elementAtPosition, direction);
+        }
+    }
+
+    private static class BlockAtPosition extends CharEnumAtPosition<Block> {
+
+        private final Map<Direction, Long> scores = new HashMap<>();
+        private long score = Long.MAX_VALUE;
+
+        public BlockAtPosition(final Block block, final Position position) {
+            super(block, position);
+        }
+
+        public boolean setScore(final Direction direction, final long score) {
+            if (!scores.containsKey(direction) || scores.get(direction) > score) {
+                scores.put(direction, score);
+                if (this.score > score) {
+                    this.score = score;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public long getScore(final Direction direction) {
+            return scores.containsKey(direction) ? scores.get(direction) : Long.MAX_VALUE;
+        }
+
+        public long getScore() {
+            return score;
+        }
+
+        @Override
+        public char toPrintableChar() {
+            if (score != Long.MAX_VALUE) {
+                return (char) ('0' + (score / 1000) % 10);
+            }
+            return super.toPrintableChar();
+        }
+    }
+
+    private static enum Block implements CharEnum {
+
+        PATH('.'),
+        WALL('#'),
+        START('S'),
+        END('E');
+
+        private final char character;
+
+        private Block(final char character) {
+            this.character = character;
+        }
+
+        @Override
+        public char charValue() {
+            return character;
+        }
+
+        public static Block byChar(final char c) {
+            return CharEnum.byChar(Block.class, c);
+        }
+    }
+}
