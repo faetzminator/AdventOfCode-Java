@@ -3,6 +3,8 @@ package ch.faetzminator.aoc2024;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import ch.faetzminator.aocutil.test.PuzzleTest;
+
 public class Day13bTest extends PuzzleTest {
 
     @Test
