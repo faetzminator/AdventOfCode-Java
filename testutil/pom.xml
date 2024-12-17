@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>aoc2023</artifactId>
+	<artifactId>testutil</artifactId>
 	<packaging>jar</packaging>
-	<name>AdventOfCode-Java-2023</name>
+	<name>AdventOfCode-Java-Test-Util</name>
 	<parent>
 		<groupId>ch.faetzminator.adventofcode</groupId>
 		<artifactId>master</artifactId>
@@ -14,15 +14,10 @@
 	</parent>
 	<dependencies>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>testutil</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>util</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.11.3</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

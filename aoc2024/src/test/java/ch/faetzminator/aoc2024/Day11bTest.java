@@ -3,7 +3,7 @@ package ch.faetzminator.aoc2024;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import ch.faetzminator.aocutil.test.PuzzleTest;
+import ch.faetzminator.aoctestutil.PuzzleTest;
 
 public class Day11bTest extends PuzzleTest {
 

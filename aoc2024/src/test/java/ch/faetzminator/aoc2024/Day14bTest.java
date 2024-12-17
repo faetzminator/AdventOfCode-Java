@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import ch.faetzminator.aocutil.test.PuzzleTest;
+import ch.faetzminator.aoctestutil.PuzzleTest;
 
 public class Day14bTest extends PuzzleTest {
 

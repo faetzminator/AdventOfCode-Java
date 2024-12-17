@@ -1,4 +1,4 @@
-package ch.faetzminator.aocutil.test;
+package ch.faetzminator.aoctestutil;
 
 import java.util.Arrays;
 import java.util.List;
