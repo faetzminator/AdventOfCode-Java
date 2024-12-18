@@ -54,14 +54,26 @@ public class Day18b {
         final Grid<BlockAtPosition> map = new GridFactory<>(BlockAtPosition.class,
                 (character, position) -> new BlockAtPosition(position)).create(size, size);
 
-        for (final Position position : positions) {
+
+        int workingIndex = -1;
+        int brokenIndex = positions.size();
+        int currentIndex = 0;
+
+        while (workingIndex != brokenIndex - 1) {
+            currentIndex = workingIndex + (brokenIndex - workingIndex) / 2;
             map.stream().forEach(BlockAtPosition::reset);
-            map.getAt(position).setCorrupted();
+            for (int i = 0; i <= currentIndex; i++) {
+                map.getAt(positions.get(i)).setCorrupted();
+            }
             if (!isExitReachable(map)) {
-                return new StringBuilder().append(position.getX()).append(',').append(position.getY()).toString();
+                brokenIndex = currentIndex;
+            } else {
+                workingIndex = currentIndex;
             }
         }
-        return "-1,-1";
+
+        final Position position = positions.get(currentIndex);
+        return new StringBuilder().append(position.getX()).append(',').append(position.getY()).toString();
     }
 
     private boolean isExitReachable(final Grid<BlockAtPosition> map) {
@@ -113,6 +125,7 @@ public class Day18b {
         }
 
         public void reset() {
+            corrupted = false;
             stepped = false;
         }
 
