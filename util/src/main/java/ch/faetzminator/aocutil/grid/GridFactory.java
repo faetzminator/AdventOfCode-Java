@@ -31,6 +31,17 @@ public class GridFactory<T extends CharPrintable> {
         return grid;
     }
 
+    public Grid<T> create(final int xSize, final int ySize) {
+        final Grid<T> grid = new Grid<>(clazz, xSize, ySize);
+        for (int y = 0; y < ySize; y++) {
+            for (int x = 0; x < xSize; x++) {
+                final Position position = new Position(x, y);
+                grid.setAt(position, factory.create((char) 0, position));
+            }
+        }
+        return grid;
+    }
+
     public GridWithStart<T> create(final List<String> input, final Function<T, Boolean> findStart) {
         return create(input, findStart, null);
     }
