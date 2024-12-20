@@ -84,7 +84,8 @@ public class Day20b {
     }
 
     private long getDistance(final BlockAtPosition one, final BlockAtPosition other) {
-        if (one == null || one.getDistance() == Long.MAX_VALUE || other == null || other.getDistance() == Long.MAX_VALUE) {
+        if (one == null || one.getDistance() == Long.MAX_VALUE || other == null
+                || other.getDistance() == Long.MAX_VALUE) {
             return 0L;
         }
         return other.getDistance() - one.getDistance();

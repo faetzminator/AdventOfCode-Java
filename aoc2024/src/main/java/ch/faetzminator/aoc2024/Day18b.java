@@ -54,7 +54,6 @@ public class Day18b {
         final Grid<BlockAtPosition> map = new GridFactory<>(BlockAtPosition.class,
                 (character, position) -> new BlockAtPosition(position)).create(size, size);
 
-
         int workingIndex = -1;
         int brokenIndex = positions.size();
         int currentIndex = 0;
