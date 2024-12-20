@@ -68,16 +68,15 @@ public class Day20b {
         }
         long sum = 0L;
         for (int yDiff = -20; yDiff <= 20; yDiff++) {
-            for (int xDiff = -20; xDiff <= 20; xDiff++) {
+            final int yAbs = Math.abs(yDiff);
+            for (int xDiff = -(20 - yAbs); xDiff <= (20 - yAbs); xDiff++) {
                 final int x = start.getX() + xDiff;
                 final int y = start.getY() + yDiff;
                 final BlockAtPosition next = map.getAt(x, y);
                 final int distance = Math.abs(xDiff) + Math.abs(yDiff);
-                if (distance <= 20) {
-                    final long cheatDistance = getDistance(start, next) - distance;
-                    if (cheatDistance >= limit) {
-                        sum++;
-                    }
+                final long cheatDistance = getDistance(start, next) - distance;
+                if (cheatDistance >= limit) {
+                    sum++;
                 }
             }
         }
