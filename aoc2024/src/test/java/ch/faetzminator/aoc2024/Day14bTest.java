@@ -1,7 +1,6 @@
 package ch.faetzminator.aoc2024;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ch.faetzminator.aoctestutil.PuzzleTest;
@@ -9,17 +8,16 @@ import ch.faetzminator.aoctestutil.PuzzleTest;
 public class Day14bTest extends PuzzleTest {
 
     @Test
-    @Disabled
     public void example() {
-        final String input = "p=0,4 v=3,-3\n" + "p=6,3 v=-1,-3\n" + "p=10,3 v=-1,2\n" + "p=2,0 v=2,-1\n"
-                + "p=0,0 v=1,3\n" + "p=3,0 v=-2,-2\n" + "p=7,6 v=-1,-3\n" + "p=3,0 v=-1,-2\n" + "p=9,3 v=2,3\n"
-                + "p=7,3 v=-1,2\n" + "p=2,4 v=2,-3\n" + "p=9,5 v=-3,-3";
+        final String input = "p=72,34 v=9,-12\n" + "p=74,24 v=8,-79\n" + "p=43,28 v=-37,92\n" + "p=69,34 v=25,-12\n"
+                + "p=30,99 v=99,-40\n" + "p=93,34 v=39,-12\n" + "p=97,100 v=88,-23\n" + "p=38,58 v=99,87\n"
+                + "p=55,41 v=-72,-99\n" + "p=35,25 v=-53,41\n" + "p=1,84 v=55,14\n" + "p=8,46 v=36,89\n"
+                + "p=44,44 v=-53,55";
 
         final Day14b puzzle = new Day14b();
         for (final String line : toList(input)) {
             puzzle.parseLine(line);
         }
-        // this is unfortunately not testable
-        Assertions.assertEquals(-1L, puzzle.getXmasTreeTime(false));
+        Assertions.assertEquals(6L, puzzle.getXmasTreeTime(false));
     }
 }
