@@ -13,10 +13,10 @@ import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
 import ch.faetzminator.aocutil.grid.Position;
 
-public class Day21 {
+public class Day21b {
 
     public static void main(final String[] args) {
-        final Day21 puzzle = new Day21();
+        final Day21b puzzle = new Day21b();
         final List<String> lines = ScannerUtil.readNonBlankLines();
         final Timer timer = PuzzleUtil.start();
         puzzle.initialize();
@@ -27,7 +27,7 @@ public class Day21 {
         PuzzleUtil.end(solution, timer);
     }
 
-    private static final int DIRECTIONAL_KEYPADS = 2;
+    private static final int DIRECTIONAL_KEYPADS = 25;
 
     private long complexitySum;
     private Keypad keypad;
