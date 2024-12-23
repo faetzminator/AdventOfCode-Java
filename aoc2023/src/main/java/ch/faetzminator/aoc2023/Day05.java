@@ -28,6 +28,7 @@ public class Day05 {
 
         final Timer timer = PuzzleUtil.start();
         puzzle.addSeeds(seeds);
+        // TODO refactor to puzzle class
         for (final List<String> lines : input) {
             // ignore line 0 (header string)
             for (int i = 1; i < lines.size(); i++) {
@@ -35,7 +36,7 @@ public class Day05 {
             }
             puzzle.clear();
         }
-        final long solution = puzzle.getSeedWithLowestLocation().getLocation();
+        final long solution = puzzle.getSeedWithLowestLocation();
         PuzzleUtil.end(solution, timer);
     }
 
@@ -52,14 +53,14 @@ public class Day05 {
         }
     }
 
-    public Seed getSeedWithLowestLocation() {
+    public long getSeedWithLowestLocation() {
         Seed lowest = seeds.iterator().next();
         for (final Seed seed : seeds) {
             if (seed.getLocation() < lowest.getLocation()) {
                 lowest = seed;
             }
         }
-        return lowest;
+        return lowest.getLocation();
     }
 
     public void clear() {
