@@ -46,7 +46,7 @@ public class Day25 {
         }
         final String key = matcher.group(1);
         final String[] values = WHITESPACES.split(matcher.group(2));
-        nodeFactory.addNode(key, Arrays.asList(values), true);
+        nodeFactory.addNode(key, values);
     }
 
     private static final int CONNECTIONS_TO_REMOVE = 3;
@@ -94,7 +94,7 @@ public class Day25 {
     private List<NodeGroup<String>> findGroups(final Collection<Node<String>> allNodes,
             final Collection<Node<String>> startNodes) {
 
-        final List<NodeGroup<String>> groups = startNodes.stream().map(node -> new NodeGroup<>(node))
+        final List<NodeGroup<String>> groups = startNodes.stream().map(NodeGroup::new)
                 .collect(Collectors.toList());
 
         final Set<Node<String>> ungrouped = new HashSet<>(allNodes);

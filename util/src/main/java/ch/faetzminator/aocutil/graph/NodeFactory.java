@@ -7,13 +7,23 @@ import java.util.Map;
 public class NodeFactory<T> {
 
     private final Map<T, Node<T>> nodes = new HashMap<>();
+    private final boolean directed;
 
-    public void addNode(final T key, final Collection<T> neighbourKeys, final boolean undirected) {
+    public NodeFactory() {
+        this(false);
+    }
+
+    public NodeFactory(final boolean directed) {
+        this.directed = directed;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void addNode(final T key, final T... neighbourKeys) {
         final Node<T> node = getOrCreateNode(key);
         for (final T neighbourKey : neighbourKeys) {
             final Node<T> neighbourNode = getOrCreateNode(neighbourKey);
             node.addNeighbour(neighbourNode);
-            if (undirected) {
+            if (!directed) {
                 neighbourNode.addNeighbour(node);
             }
         }
