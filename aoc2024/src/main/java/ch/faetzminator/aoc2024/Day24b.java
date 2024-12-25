@@ -1,5 +1,6 @@
 package ch.faetzminator.aoc2024;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -32,8 +33,13 @@ public class Day24b {
         for (final String gate : gates) {
             puzzle.parseGate(gate);
         }
-        final String solution = puzzle.getBruteForceSolution();
-        PuzzleUtil.end(solution, timer);
+        if (args.length > 0 && "print".equals(args[0])) {
+            System.out.println();
+            puzzle.printPlantUml(System.out);
+        } else {
+            final String solution = puzzle.getBruteForceSolution();
+            PuzzleUtil.end(solution, timer);
+        }
     }
 
     // for testing only - example is a different machine
@@ -86,6 +92,16 @@ public class Day24b {
         final Wire inB = get(matcher.group(3));
         final Wire out = get(matcher.group(4));
         gates.add(new WireGate(inA, inB, gate, out));
+    }
+
+    public void printPlantUml(final PrintStream stream) {
+        int number = 0;
+        for (final WireGate gate : gates) {
+            final String gateName = String.format("%s%03d", gate.getGate(), number++);
+            stream.println(String.format("[%s] --> [%s]", gate.getInA(), gateName));
+            stream.println(String.format("[%s] --> [%s]", gate.getInB(), gateName));
+            stream.println(String.format("[%s] --> [%s]", gateName, gate.getOut()));
+        }
     }
 
     public String getBruteForceSolution() {
@@ -222,6 +238,18 @@ public class Day24b {
 
         public boolean isSwapped() {
             return swapped != null;
+        }
+
+        public Wire getInA() {
+            return inA;
+        }
+
+        public Wire getInB() {
+            return inB;
+        }
+
+        public Gate getGate() {
+            return gate;
         }
 
         public Wire getOut() {
