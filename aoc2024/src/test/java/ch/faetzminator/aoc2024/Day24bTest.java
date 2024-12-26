@@ -9,7 +9,7 @@ import ch.faetzminator.aoctestutil.PuzzleTest;
 public class Day24bTest extends PuzzleTest {
 
     @Test
-    public void example() {
+    public void exampleWithBruteForce() {
         final String input = "x00: 0\n" + "x01: 1\n" + "x02: 0\n" + "x03: 1\n" + "x04: 0\n" + "x05: 1\n" + "y00: 0\n"
                 + "y01: 0\n" + "y02: 1\n" + "y03: 1\n" + "y04: 0\n" + "y05: 1\n" + "\n" + "x00 AND y00 -> z05\n"
                 + "x01 AND y01 -> z02\n" + "x02 AND y02 -> z01\n" + "x03 AND y03 -> z03\n" + "x04 AND y04 -> z04\n"
@@ -38,4 +38,6 @@ public class Day24bTest extends PuzzleTest {
         }
         Assertions.assertEquals("z00,z01,z02,z05", puzzle.getBruteForceSolution());
     }
+
+    // TODO add test for getFullAdderChecksSolution
 }

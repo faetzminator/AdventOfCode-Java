@@ -2,12 +2,17 @@ package ch.faetzminator.aoc2024;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -33,11 +38,15 @@ public class Day24b {
         for (final String gate : gates) {
             puzzle.parseGate(gate);
         }
-        if (args.length > 0 && "print".equals(args[0])) {
+        final String command = args.length > 0 ? args[0] : null;
+        if ("print".equals(command)) {
             System.out.println();
             puzzle.printPlantUml(System.out);
-        } else {
+        } else if ("bf".equals(command)) {
             final String solution = puzzle.getBruteForceSolution();
+            PuzzleUtil.end(solution, timer);
+        } else {
+            final String solution = puzzle.getFullAdderChecksSolution();
             PuzzleUtil.end(solution, timer);
         }
     }
@@ -104,6 +113,74 @@ public class Day24b {
         }
     }
 
+    private int getValue(final Wire wire, final String search) {
+        return search.indexOf(wire.getName().charAt(0)) >= 0 ? Integer.parseInt(wire.getName().substring(1)) : -1;
+    }
+
+    public String getFullAdderChecksSolution() {
+        final Set<WireGate> mismatches = new HashSet<>();
+
+        final Set<WireGate> inGates = new HashSet<>();
+        final Map<Wire, WireGate> outGates = new HashMap<>();
+
+        final int min = 0;
+        final int max = gates.stream().mapToInt(gate -> getValue(gate.getInA(), "xy")).max()
+                .orElseThrow(NoSuchElementException::new);
+
+        for (final WireGate gate : gates) {
+            final int inVal = getValue(gate.getInA(), "xy"), outVal = getValue(gate.getOut(), "z");
+            final boolean isIn = inVal >= 0, isOut = outVal >= 0;
+            switch (gate.getGate()) {
+            case XOR:
+                if (isIn) {
+                    final boolean first = inVal == min && outVal == min;
+                    if (!first) {
+                        inGates.add(gate);
+                        if (isOut) {
+                            mismatches.add(gate);
+                        }
+                    }
+                } else {
+                    if (!isOut) {
+                        mismatches.add(gate);
+                    }
+                    outGates.put(gate.getInA(), gate);
+                    outGates.put(gate.getInB(), gate);
+                }
+                break;
+            case OR:
+                if (isOut && outVal != max + 1) {
+                    mismatches.add(gate);
+                }
+                break;
+            case AND:
+                if (isOut) {
+                    mismatches.add(gate);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("gate: " + gate.getGate());
+            }
+        }
+        for (final WireGate gate : inGates) {
+            if (!mismatches.contains(gate) && !outGates.containsKey(gate.getOut())) {
+                mismatches.add(gate);
+                // find the one to switch with...
+                // not sure how correct this is (e.g. checking gate type?) but it works for my input
+                final Wire a = gate.getInA();
+                final String expected = "z" + a.getName().substring(1);
+                final Set<WireGate> filteredOut = outGates.values().stream()
+                        .filter(item -> expected.equals(item.getOut().getName())).collect(Collectors.toSet());
+                for (final WireGate out : filteredOut) {
+                    mismatches.addAll(gates.stream()
+                            .filter(item -> item.getOut() == out.getInA() || item.getOut() == out.getInB())
+                            .filter(item -> item.getInA() == a || item.getInB() == a).collect(Collectors.toSet()));
+                }
+            }
+        }
+        return toString(mismatches);
+    }
+
     public String getBruteForceSolution() {
         solver.init(getValue('x'), getValue('y'));
         return swap(1, 0);
@@ -123,8 +200,7 @@ public class Day24b {
                         } else {
                             final List<WireGate> solution = testAndReset();
                             if (solution != null) {
-                                return solution.stream().map(gate -> gate.getOut().getName()).sorted()
-                                        .collect(Collectors.joining(","));
+                                return toString(solution);
                             }
                         }
                         gates.get(i).reset();
@@ -134,6 +210,10 @@ public class Day24b {
             }
         }
         return null;
+    }
+
+    private String toString(final Collection<WireGate> solution) {
+        return solution.stream().map(gate -> gate.getOut().getName()).sorted().collect(Collectors.joining(","));
     }
 
     private List<WireGate> testAndReset() {

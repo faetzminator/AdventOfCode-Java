@@ -69,12 +69,12 @@ public class Day24 {
         final Wire out = get(matcher.group(4));
         gates.add(new WireGate(inA, inB, gate, out));
     }
- 
+
     public long getSolution() {
         run();
         return Long.parseLong(getValue('z'), 2);
     }
-    
+
     private void run() {
         final Queue<WireGate> queue = new LinkedList<>(gates);
         while (!queue.isEmpty()) {
