@@ -70,7 +70,7 @@ public class Day14b {
         return builder.toString();
     }
 
-    public void tiltNorth() {
+    private void tiltNorth() {
         for (int y = 1; y < platform.length; y++) {
             for (int x = 0; x < platform[y].length; x++) {
                 if (platform[y][x] == ROUNDED_ROCK) {
