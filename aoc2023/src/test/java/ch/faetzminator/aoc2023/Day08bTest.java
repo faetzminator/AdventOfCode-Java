@@ -9,10 +9,9 @@ public class Day08bTest extends PuzzleTest {
 
     @Test
     public void example() {
-        final String input = "LR\n" + "\n" + "11A = (11B, XXX)\n" + "11B = (XXX, 11Z)\n" + "11Z = (11B, XXX)\n"
-                + "22A = (22B, XXX)\n" + "22B = (22C, 22C)\n" + "22C = (22Z, 22Z)\n" + "22Z = (22B, 22B)\n"
-                + "XXX = (XXX, XXX)";
-        final String[] inputs = input.split("\\n\\n");
+        final String[] inputs = toBlocks("LR\n" + "\n" + "11A = (11B, XXX)\n" + "11B = (XXX, 11Z)\n"
+                + "11Z = (11B, XXX)\n" + "22A = (22B, XXX)\n" + "22B = (22C, 22C)\n" + "22C = (22Z, 22Z)\n"
+                + "22Z = (22B, 22B)\n" + "XXX = (XXX, XXX)");
 
         final Day08b puzzle = new Day08b();
         puzzle.parseInstructions(inputs[0]);

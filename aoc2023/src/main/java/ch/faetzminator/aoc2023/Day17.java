@@ -39,7 +39,7 @@ public class Day17 {
 
     private static final int MAX_LENGTH = 3;
 
-    private long calculateLeastHeatLoss() {
+    public long calculateLeastHeatLoss() {
         final Queue<QueueItem> queue = new LinkedList<>();
         final Position startPos = new Position(0, 0);
         queue.add(new QueueItem(startPos, new CacheKey(Direction.EAST, 0)));

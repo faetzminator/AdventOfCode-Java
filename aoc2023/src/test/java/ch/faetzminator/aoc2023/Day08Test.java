@@ -9,9 +9,9 @@ public class Day08Test extends PuzzleTest {
 
     @Test
     public void example() {
-        final String input = "RL\n" + "\n" + "AAA = (BBB, CCC)\n" + "BBB = (DDD, EEE)\n" + "CCC = (ZZZ, GGG)\n"
-                + "DDD = (DDD, DDD)\n" + "EEE = (EEE, EEE)\n" + "GGG = (GGG, GGG)\n" + "ZZZ = (ZZZ, ZZZ)";
-        final String[] inputs = input.split("\\n\\n");
+        final String[] inputs = toBlocks(
+                "RL\n" + "\n" + "AAA = (BBB, CCC)\n" + "BBB = (DDD, EEE)\n" + "CCC = (ZZZ, GGG)\n"
+                        + "DDD = (DDD, DDD)\n" + "EEE = (EEE, EEE)\n" + "GGG = (GGG, GGG)\n" + "ZZZ = (ZZZ, ZZZ)");
 
         final Day08 puzzle = new Day08();
         puzzle.parseInstructions(inputs[0]);
@@ -23,8 +23,8 @@ public class Day08Test extends PuzzleTest {
 
     @Test
     public void otherExample() {
-        final String input = "LLR\n" + "\n" + "AAA = (BBB, BBB)\n" + "BBB = (AAA, ZZZ)\n" + "ZZZ = (ZZZ, ZZZ)";
-        final String[] inputs = input.split("\\n\\n");
+        final String[] inputs = toBlocks(
+                "LLR\n" + "\n" + "AAA = (BBB, BBB)\n" + "BBB = (AAA, ZZZ)\n" + "ZZZ = (ZZZ, ZZZ)");
 
         final Day08 puzzle = new Day08();
         puzzle.parseInstructions(inputs[0]);

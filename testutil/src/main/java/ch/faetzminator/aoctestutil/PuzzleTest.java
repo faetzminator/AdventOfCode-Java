@@ -5,6 +5,10 @@ import java.util.List;
 
 public abstract class PuzzleTest {
 
+    public String[] toBlocks(final String input) {
+        return input.split("\\n\\n");
+    }
+
     public List<String> toList(final String input) {
         return Arrays.asList(input.split("\\n"));
     }

@@ -20,7 +20,7 @@ public class Day24 {
         for (final String line : lines) {
             puzzle.parseHailstone(line);
         }
-        final long solution = puzzle.calculateIntersections();
+        final long solution = puzzle.calculateIntersections(MIN, MAX);
         PuzzleUtil.end(solution, timer);
     }
 
@@ -45,7 +45,7 @@ public class Day24 {
     private static final double MIN = 200000000000000.0;
     private static final double MAX = 400000000000000.0;
 
-    public long calculateIntersections() {
+    public long calculateIntersections(final double min, final double max) {
         long sum = 0;
 
         for (int i = 0; i < hailstones.size(); i++) {
@@ -55,7 +55,7 @@ public class Day24 {
                 if (one.getM() != another.getM()) {
                     final double x = one.getCollisionX(another);
                     final double y = one.getY(x);
-                    if (!one.inPast(x) && !another.inPast(x) && x >= MIN && x <= MAX && y >= MIN && y <= MAX) {
+                    if (!one.inPast(x) && !another.inPast(x) && x >= min && x <= max && y >= min && y <= max) {
                         sum++;
                     }
                 }

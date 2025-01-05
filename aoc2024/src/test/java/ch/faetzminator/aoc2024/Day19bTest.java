@@ -9,10 +9,8 @@ public class Day19bTest extends PuzzleTest {
 
     @Test
     public void example() {
-        final String input = "r, wr, b, g, bwu, rb, gb, br\n" + "\n" + "brwrr\n" + "bggr\n" + "gbbr\n" + "rrbgbr\n"
-                + "ubwu\n" + "bwurrg\n" + "brgr\n" + "bbrgwb";
-
-        final String[] inputs = input.split("\\n\\n");
+        final String[] inputs = toBlocks("r, wr, b, g, bwu, rb, gb, br\n" + "\n" + "brwrr\n" + "bggr\n" + "gbbr\n"
+                + "rrbgbr\n" + "ubwu\n" + "bwurrg\n" + "brgr\n" + "bbrgwb");
 
         final Day19b puzzle = new Day19b();
         puzzle.parsePatterns(inputs[0]);

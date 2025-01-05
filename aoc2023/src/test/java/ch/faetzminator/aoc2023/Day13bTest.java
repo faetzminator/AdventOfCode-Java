@@ -14,7 +14,7 @@ public class Day13bTest extends PuzzleTest {
                 + "#####.##.\n" + "..##..###\n" + "#....#..#";
 
         final Day13b puzzle = new Day13b();
-        for (final String lines : input.split("\\n\\n")) {
+        for (final String lines : toBlocks(input)) {
             puzzle.parsePattern(toList(lines));
         }
         Assertions.assertEquals(400L, puzzle.getSummary());

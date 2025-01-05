@@ -9,9 +9,8 @@ public class Day17Test extends PuzzleTest {
 
     @Test
     public void example() {
-        final String input = "Register A: 729\n" + "Register B: 0\n" + "Register C: 0\n" + "\n"
-                + "Program: 0,1,5,4,3,0";
-        final String inputs[] = input.split("\\n\\n");
+        final String[] inputs = toBlocks(
+                "Register A: 729\n" + "Register B: 0\n" + "Register C: 0\n" + "\n" + "Program: 0,1,5,4,3,0");
 
         final Day17 puzzle = new Day17();
         for (final String line : toList(inputs[0])) {

@@ -51,7 +51,7 @@ public class Day25 {
 
     private static final int CONNECTIONS_TO_REMOVE = 3;
 
-    private long calculateGroups() {
+    public long calculateGroups() {
         final Collection<Node<String>> nodes = nodeFactory.build();
 
         // the findGroups() works under the assumption the connections between the

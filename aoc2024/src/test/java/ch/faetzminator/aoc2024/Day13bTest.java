@@ -15,7 +15,7 @@ public class Day13bTest extends PuzzleTest {
                 + "Button A: X+69, Y+23\n" + "Button B: X+27, Y+71\n" + "Prize: X=18641, Y=10279";
 
         final Day13b puzzle = new Day13b();
-        for (final String lines : input.split("\\n\\n")) {
+        for (final String lines : toBlocks(input)) {
             puzzle.parseLines(toList(lines));
         }
         Assertions.assertEquals(875318608908L, puzzle.getTokenSum());

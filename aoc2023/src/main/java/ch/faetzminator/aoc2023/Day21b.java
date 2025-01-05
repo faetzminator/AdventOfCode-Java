@@ -22,7 +22,7 @@ public class Day21b {
         final List<String> lines = ScannerUtil.readNonBlankLines();
         final Timer timer = PuzzleUtil.start();
         puzzle.parseLines(lines);
-        final long solution = puzzle.countReachableGardenPlots();
+        final long solution = puzzle.countReachableGardenPlots(MAX_LENGTH);
         PuzzleUtil.end(solution, timer);
     }
 
@@ -36,7 +36,7 @@ public class Day21b {
 
     private static final int MAX_LENGTH = 26501365;
 
-    public long countReachableGardenPlots() {
+    public long countReachableGardenPlots(final int maxLength) {
 
         // any EVEN field (e.g. the middle containing start position) needs the odd sum
         // since MAX_LENGTH is odd - vice versa for any ODD field (e.g. 0/1, -1/0 etc)
@@ -47,8 +47,8 @@ public class Day21b {
         if (length != map.getYSize()) {
             throw new IllegalArgumentException("needs same x and y length");
         }
-        final long multiplier = MAX_LENGTH / length;
-        if (MAX_LENGTH % length - length / 2 != 0) {
+        final long multiplier = maxLength / length;
+        if (maxLength % length - length / 2 != 0) {
             throw new IllegalArgumentException("remainer 0 needed");
         }
 

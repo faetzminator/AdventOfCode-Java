@@ -22,7 +22,7 @@ public class Day21 {
         final List<String> lines = ScannerUtil.readNonBlankLines();
         final Timer timer = PuzzleUtil.start();
         puzzle.parseLines(lines);
-        final long solution = puzzle.countReachableGardenPlots();
+        final long solution = puzzle.countReachableGardenPlots(MAX_LENGTH);
         PuzzleUtil.end(solution, timer);
     }
 
@@ -36,7 +36,7 @@ public class Day21 {
 
     private static final int MAX_LENGTH = 64;
 
-    public long countReachableGardenPlots() {
+    public long countReachableGardenPlots(final int maxLength) {
         long sum = 1L;
         final Queue<BlockAtPosition> queue = new LinkedList<>();
         final BlockAtPosition startBlock = map.getAt(map.getStartPosition());
@@ -46,7 +46,7 @@ public class Day21 {
         while (!queue.isEmpty()) {
             final BlockAtPosition current = queue.poll();
             final int nextDistance = current.getDistance() + 1;
-            if (nextDistance <= MAX_LENGTH) {
+            if (nextDistance <= maxLength) {
                 for (final Direction direction : Direction.values()) {
                     final Position nextPos = current.getPosition().move(direction);
                     final BlockAtPosition nextBlock = map.getAt(nextPos);

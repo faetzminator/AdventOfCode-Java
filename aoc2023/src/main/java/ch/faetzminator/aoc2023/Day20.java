@@ -94,7 +94,7 @@ public class Day20 {
         }
     }
 
-    private long getPulseProduct() {
+    public long getPulseProduct() {
         return lowPulsesSent * highPulsesSent;
     }
 
