@@ -5,13 +5,20 @@ import java.util.function.Function;
 
 import ch.faetzminator.aocutil.CharPrintable;
 
-public class GridFactory<T extends CharPrintable> {
+public class GridFactory<G extends Grid<T>, T extends CharPrintable> {
 
     private final Class<T> clazz;
+    private final GridFactory_<G, T> gridFactory;
     private final ElementFactory<T> factory;
 
+    @SuppressWarnings("unchecked")
     public GridFactory(final Class<T> clazz, final ElementFactory<T> factory) {
+        this(clazz, (xSize, ySize) -> (G) new Grid<T>(clazz, xSize, ySize), factory);
+    }
+
+    public GridFactory(final Class<T> clazz, final GridFactory_<G, T> gridFactory, final ElementFactory<T> factory) {
         this.clazz = clazz;
+        this.gridFactory = gridFactory;
         this.factory = factory;
     }
 
@@ -25,14 +32,14 @@ public class GridFactory<T extends CharPrintable> {
         }
     }
 
-    public Grid<T> create(final List<String> input) {
-        final Grid<T> grid = new Grid<>(clazz, input.get(0).length(), input.size());
+    public G create(final List<String> input) {
+        final G grid = gridFactory.create(input.get(0).length(), input.size());
         fill(grid, input);
         return grid;
     }
 
-    public Grid<T> create(final int xSize, final int ySize) {
-        final Grid<T> grid = new Grid<>(clazz, xSize, ySize);
+    public G create(final int xSize, final int ySize) {
+        final G grid = gridFactory.create(xSize, ySize);
         for (int y = 0; y < ySize; y++) {
             for (int x = 0; x < xSize; x++) {
                 final Position position = new Position(x, y);
@@ -56,5 +63,9 @@ public class GridFactory<T extends CharPrintable> {
 
     public static interface ElementFactory<T extends CharPrintable> {
         public T create(char character, Position position);
+    }
+
+    public static interface GridFactory_<G extends Grid<T>, T extends CharPrintable> {
+        public G create(final int xSize, final int ySize);
     }
 }
