@@ -52,6 +52,20 @@ public class Range {
         return new Range(start, end);
     }
 
+    public boolean intersects(final Range other) {
+        return Math.max(start, other.start) <= Math.min(end, other.end);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode(); // mutable object!
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return super.equals(obj); // mutable object!
+    }
+
     @Override
     public String toString() {
         return "Range [start=" + start + ", end=" + end + "]";
