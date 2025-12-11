@@ -21,7 +21,6 @@ public class Node<T> {
 
     public void addNeighbour(final Node<T> neighbour) {
         neighbours.add(neighbour);
-        neighbour.neighbours.add(this);
     }
 
     public Set<Node<T>> getNeighbours() {
@@ -48,6 +47,6 @@ public class Node<T> {
     @Override
     public String toString() {
         return "Node [key=" + key + ", neighbours="
-                + neighbours.stream().map(n -> n.getKey()).collect(Collectors.toList()) + "]";
+                + neighbours.stream().map(Node::getKey).collect(Collectors.toList()) + "]";
     }
 }
