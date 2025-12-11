@@ -36,6 +36,13 @@ public class NodeFactory<T> {
         return nodes.get(key);
     }
 
+    public Node<T> get(final T key) {
+        if (!nodes.containsKey(key)) {
+            throw new NullPointerException();
+        }
+        return nodes.get(key);
+    }
+
     public Collection<Node<T>> build() {
         return nodes.values();
     }
