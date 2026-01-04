@@ -2,9 +2,13 @@ package ch.faetzminator.aoc2025;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
@@ -16,172 +20,294 @@ public class Day10b {
         final Day10b puzzle = new Day10b();
         final List<String> lines = ScannerUtil.readNonBlankLines();
         final Timer timer = PuzzleUtil.start();
-        /*
-         * for (final String line : lines) { puzzle.parseLine(line, timer); }
-         */
         puzzle.parseLines(lines, timer);
         final long solution = puzzle.getSolution();
         PuzzleUtil.end(solution, timer);
     }
 
-    private final static Pattern LINE_PATTERN = Pattern.compile("(.)(\\d+)");
+    private static final int INVALID_SOLUTION = Integer.MAX_VALUE;
+
+    private int total;
+    private int processed;
 
     private long solution;
-    private int processed = 0;
 
-    public void parseLines(final List<String> input, final Timer timer) {
-        input.parallelStream().forEach(line -> parseLine(line, timer));
+    public void parseLines(final List<String> lines, final Timer timer) {
+        total = lines.size();
+        lines.parallelStream().forEach(line -> parseLine(line, timer));
     }
 
-    public void parseLine(final String input) {
-        parseLine(input, null);
+    public void parseLine(final String line) {
+        parseLine(line, null);
     }
 
-    private void parseLine(final String input, final Timer timer) {
-        final String[] inputs = input.split(" ");
-        final int[][] buttons = new int[inputs.length - 2][];
-        for (int i = 1; i < inputs.length - 1; i++) {
-            final String[] str = inputs[i].substring(1, inputs[i].length() - 1).split(",");
-            buttons[i - 1] = new int[str.length];
-            for (int j = 0; j < str.length; j++) {
-                buttons[i - 1][j] = Integer.parseInt(str[j]);
-            }
-        }
-
-        final String[] expectedStr = inputs[inputs.length - 1].substring(1, inputs[inputs.length - 1].length() - 1)
-                .split(",");
-        final int[] expected = new int[expectedStr.length];
-        for (int i = 0; i < expectedStr.length; i++) {
-            expected[i] = Integer.parseInt(expectedStr[i]);
-        }
-
-        final int s = play(expected, buttons);
+    private void parseLine(final String line, final Timer timer) {
+        final Input input = new Input(line);
+        final int s = play(input.getJoltages(), input.getButtons());
         if (timer != null) {
-            System.out.println("Result " + (++processed) + ": " + s + " (" + timer.getElapsedFormatted() + ")");
+            System.out.println(
+                    "Result " + (++processed) + "/" + total + ": " + s + " (" + timer.getElapsedFormatted() + ") ");
         }
         solution += s;
     }
 
-    private int play(final int[] expected, final int[][] buttons) {
-        final int[] pos = new int[expected.length];
-        for (int i = 0; i < pos.length; i++) {
-            pos[i] = i;
-        }
-        return play(expected, buttons, new int[expected.length], pos);
+    private int play(final Joltages joltages, final Buttons buttons) {
+        return play(joltages, buttons, IntStream.range(0, joltages.length()).toArray());
     }
 
-    private String toString(final int[][] buttons) {
-        return Arrays.stream(buttons).map(Arrays::toString).collect(Collectors.joining());
+    private int[] filterAndSort(final Joltages state, final Buttons buttons, final int[] relevantJoltageIndexes) {
+        final int[] joltageIndexByButtonRefCount = new int[state.length()];
+        for (final Button button : buttons) {
+            IntStream.of(button.getAffectedIndexes()).forEach(index -> joltageIndexByButtonRefCount[index]++);
+        }
+        // filter out joltage indexes referenced by left-over buttons and sort by lowest references
+        return Arrays.stream(relevantJoltageIndexes).filter(o -> joltageIndexByButtonRefCount[o] > 0).boxed()
+                .sorted(Comparator.comparingInt(o -> joltageIndexByButtonRefCount[o])).mapToInt(v -> v).toArray();
     }
 
     // 155, 145, 40, 45, ...
-    private int play(final int[] expected, final int[][] buttons, final int[] state, final int[] pos) {
-        final int[] expectedByButtons = new int[expected.length];
-        for (final int[] button : buttons) {
-            for (final int index : button) {
-                expectedByButtons[index]++;
-            }
+    private int play(final Joltages state, final Buttons buttons, int[] relevantJoltageIndexes) {
+        relevantJoltageIndexes = filterAndSort(state, buttons, relevantJoltageIndexes);
+        if (relevantJoltageIndexes.length == 0) {
+            return INVALID_SOLUTION;
         }
 
-        final int[] newPos = Arrays.stream(pos).boxed().filter(o -> expectedByButtons[o] > 0)
-                .sorted(Comparator.comparingInt(o -> expectedByButtons[o])).mapToInt(v -> v).toArray();
-        if (newPos.length == 0) {
-            return Integer.MAX_VALUE;
-        }
-
-        final int[][][] splitButtons = splitRelevantButtons(buttons, newPos[0]);
-        if (splitButtons[0].length == 0) {
-            throw new IllegalArgumentException();
-        }
-
-        Arrays.sort(splitButtons[0], Comparator.comparingInt(o -> o.length));
-
-        return play(expected, splitButtons[0], splitButtons[1], state, newPos, splitButtons[0].length - 1);
+        final PartiallyRelevantButtons splitButtons = splitRelevantButtons(buttons, relevantJoltageIndexes[0]);
+        return play(state, splitButtons, relevantJoltageIndexes, splitButtons.length() - 1);
     }
 
-    private int play(final int[] expected, final int[][] relevantButtons, final int[][] irrelevantButtons,
-            final int[] ___state, final int[] pos, final int lookingAt) {
-        final int[] newState = Arrays.copyOf(___state, ___state.length);
-        if (lookingAt == 0) {
+    private int play(final Joltages lastState, final PartiallyRelevantButtons buttons,
+            final int[] relevantJoltageIndexes, final int lookingAtButton) {
+
+        if (lookingAtButton == 0) {
             // last button, we have to increment until we hit expected count
-            final int myTries = expected[pos[0]] - newState[pos[0]];
-            for (int i = 0; i < myTries; i++) {
-                if (!increment(expected, newState, relevantButtons[lookingAt])) {
-                    return Integer.MAX_VALUE;
-                }
+            final int pressesNeeded = lastState.getDiff(relevantJoltageIndexes[0]);
+            if (buttons.get(lookingAtButton).maxPresses(lastState) < pressesNeeded) {
+                return INVALID_SOLUTION;
             }
-            if (Arrays.equals(expected, newState)) {
-                return myTries;
+            final Joltages state = lastState.copy();
+            if (buttons.get(lookingAtButton).press(state, pressesNeeded)) {
+                return pressesNeeded;
             }
-            if (pos.length == 1) {
-                return Integer.MAX_VALUE;
+            if (relevantJoltageIndexes.length == 1) {
+                return INVALID_SOLUTION;
             }
-            final int[] newPos = new int[pos.length - 1];
-            System.arraycopy(pos, 1, newPos, 0, newPos.length);
-            final int sol = play(expected, irrelevantButtons, newState, newPos);
-            if (sol == Integer.MAX_VALUE) {
+            final int[] newJoltageIndexes = Arrays.copyOfRange(relevantJoltageIndexes, 1,
+                    relevantJoltageIndexes.length);
+            final int sol = play(state, buttons.getIrrelevantButtons(), newJoltageIndexes);
+            if (sol == INVALID_SOLUTION) {
                 return sol;
             }
-            return sol + myTries;
+            return sol + pressesNeeded;
         }
-        if (lookingAt < 0) {
-            throw new IllegalArgumentException();
+        // for all other buttons, we do recursion for 0 to maxPresses, proceeding with button n-1
+        final int maxPresses = buttons.get(lookingAtButton).maxPresses(lastState);
+        if (lastState.getDiff(relevantJoltageIndexes[0]) < maxPresses) {
+            return INVALID_SOLUTION;
         }
-        int min = play(expected, relevantButtons, irrelevantButtons, newState, pos, lookingAt - 1);
-        final int maxTries = expected[pos[0]] - newState[pos[0]];
-        for (int myTries = 1; myTries <= maxTries; myTries++) {
-            if (!increment(expected, newState, relevantButtons[lookingAt])) {
-                return min;
-            }
-            final int sol = play(expected, relevantButtons, irrelevantButtons, newState, pos, lookingAt - 1);
+        final Joltages state = lastState.copy();
+        int min = play(state, buttons, relevantJoltageIndexes, lookingAtButton - 1);
+        for (int presses = 1; presses <= maxPresses; presses++) {
+            buttons.get(lookingAtButton).press(state);
+            final int sol = play(state, buttons, relevantJoltageIndexes, lookingAtButton - 1);
             if (sol < min) {
-                min = Math.min(min, sol + myTries);
+                min = Math.min(min, sol + presses);
             }
         }
         return min;
     }
 
-    private int[][][] splitRelevantButtons(final int[][] buttons, final int value) {
+    private PartiallyRelevantButtons splitRelevantButtons(final Buttons buttons, final int lookingAtJoltage) {
         int relevantSize = 0;
         int irrelevantSize = 0;
-        final int[][] relevantButtons = new int[buttons.length][];
-        final int[][] irrelevantButtons = new int[buttons.length][];
-        for (final int[] button : buttons) {
-            if (contains(button, value)) {
+        final Button[] relevantButtons = new Button[buttons.length()];
+        final Button[] irrelevantButtons = new Button[buttons.length()];
+        for (final Button button : buttons) {
+            if (IntStream.of(button.getAffectedIndexes()).anyMatch(index -> index == lookingAtJoltage)) {
                 relevantButtons[relevantSize++] = button;
             } else {
                 irrelevantButtons[irrelevantSize++] = button;
             }
         }
-        final int[][][] solution = new int[][][] { new int[relevantSize][], new int[irrelevantSize][] };
-        System.arraycopy(relevantButtons, 0, solution[0], 0, relevantSize);
-        System.arraycopy(irrelevantButtons, 0, solution[1], 0, irrelevantSize);
-        return solution;
-    }
-
-    private boolean contains(final int[] array, final int value) {
-        for (final int val : array) {
-            if (val == value) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean increment(final int[] expected, final int[] state, final int[] positions) {
-        for (final int position : positions) {
-            if (expected[position] == state[position]) {
-                return false;
-            }
-            if (expected[position] < state[position]) {
-                throw new IllegalArgumentException();
-            }
-            state[position]++;
-        }
-        return true;
+        // sort by button "influence" - reduces the tries a bit
+        final Button[] relevantButtonsSorted = Arrays.copyOf(relevantButtons, relevantSize);
+        Arrays.sort(relevantButtonsSorted, Comparator.comparingInt(o -> o.getAffectedIndexes().length));
+        return new PartiallyRelevantButtons(relevantButtonsSorted, Arrays.copyOf(irrelevantButtons, irrelevantSize));
     }
 
     public long getSolution() {
         return solution;
+    }
+
+    public static class Joltages {
+
+        private final int[] state;
+        private final int[] targetState;
+
+        public Joltages(final String definition) {
+            targetState = Arrays.stream(definition.split(",")).mapToInt(Integer::parseInt).toArray();
+            state = new int[targetState.length];
+        }
+
+        private Joltages(final int[] state, final int[] targetState) {
+            this.state = state;
+            this.targetState = targetState;
+        }
+
+        public int getDiff(final int index) {
+            return targetState[index] - state[index];
+        }
+
+        public void increment(final int index, final int by) {
+            state[index] += by;
+        }
+
+        public int length() {
+            return state.length;
+        }
+
+        public boolean isTargetState() {
+            return Arrays.equals(state, targetState);
+        }
+
+        public Joltages copy() {
+            return new Joltages(Arrays.copyOf(state, state.length), targetState);
+        }
+
+        @Override
+        public String toString() {
+            final Stream<String> stream = Arrays.stream(targetState).mapToObj(String::valueOf);
+            return "{" + stream.collect(Collectors.joining(",")) + "}";
+        }
+    }
+
+    public static class Button {
+
+        private final int[] affectedIndexes;
+
+        public Button(final String definition) {
+            this(definition.substring(1, definition.length() - 1).split(","));
+        }
+
+        private Button(final String[] definitions) {
+            this(Arrays.stream(definitions).mapToInt(Integer::valueOf).toArray());
+        }
+
+        private Button(final int[] affectedIndexes) {
+            this.affectedIndexes = affectedIndexes;
+        }
+
+        public void press(final Joltages joltages) {
+            for (final int index : affectedIndexes) {
+                joltages.increment(index, 1);
+            }
+        }
+
+        public boolean press(final Joltages joltages, final int times) {
+            for (final int index : affectedIndexes) {
+                joltages.increment(index, times);
+            }
+            return joltages.isTargetState();
+        }
+
+        public int maxPresses(final Joltages joltages) {
+            int min = Integer.MAX_VALUE;
+            for (final int index : affectedIndexes) {
+                min = Math.min(min, joltages.getDiff(index));
+            }
+            return min;
+        }
+
+        public int[] getAffectedIndexes() {
+            return affectedIndexes;
+        }
+
+        @Override
+        public String toString() {
+            final Stream<String> stream = Arrays.stream(affectedIndexes).mapToObj(String::valueOf);
+            return "(" + stream.collect(Collectors.joining(",")) + ")";
+        }
+    }
+
+    public static class Buttons implements Iterable<Button> {
+
+        private final Button[] buttons;
+
+        public Buttons(final String definition) {
+            this(Arrays.stream(definition.split(" ")).map(Button::new).toArray(Button[]::new));
+        }
+
+        public Buttons(final Button[] buttons) {
+            this.buttons = buttons;
+        }
+
+        @Override
+        public Iterator<Button> iterator() {
+            return Arrays.stream(buttons).iterator();
+        }
+
+        public Stream<Button> stream() {
+            return Arrays.stream(buttons);
+        }
+
+        public Button get(final int index) {
+            return buttons[index];
+        }
+
+        public int length() {
+            return buttons.length;
+        }
+
+        @Override
+        public String toString() {
+            return Arrays.stream(buttons).map(Button::toString).collect(Collectors.joining(" "));
+        }
+    }
+
+    public static class PartiallyRelevantButtons extends Buttons {
+
+        private final Button[] irrelevantButtons;
+
+        public PartiallyRelevantButtons(final Button[] buttons, final Button[] irrelevantButtons) {
+            super(buttons);
+            this.irrelevantButtons = irrelevantButtons;
+        }
+
+        public Buttons getIrrelevantButtons() {
+            return new Buttons(irrelevantButtons);
+        }
+    }
+
+    public static class Input {
+
+        private static final Pattern LINE_PATTERN = Pattern
+                .compile("\\[(.*?)\\] (\\(\\d+(?:,\\d+)*\\)(?: \\(\\d+(?:,\\d+)*\\))*) \\{(\\d+(?:,\\d+)*)\\}");
+
+        private final String indicatorLights;
+        private final Buttons buttons;
+        private final Joltages joltages;
+
+        public Input(final String input) {
+            final Matcher matcher = LINE_PATTERN.matcher(input);
+            if (!matcher.matches()) {
+                throw new IllegalArgumentException("line: " + input);
+            }
+            indicatorLights = "[" + matcher.group(1) + "]";
+            buttons = new Buttons(matcher.group(2));
+            joltages = new Joltages(matcher.group(3));
+        }
+
+        public Joltages getJoltages() {
+            return joltages;
+        }
+
+        public Buttons getButtons() {
+            return buttons;
+        }
+
+        @Override
+        public String toString() {
+            return indicatorLights + " " + buttons + " " + joltages;
+        }
     }
 }

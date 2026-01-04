@@ -8,6 +8,14 @@ public final class MathUtil {
 
     }
 
+    public static int gcd(final int one, final int... others) {
+        int result = one;
+        for (final int another : others) {
+            result = gcd(result, another);
+        }
+        return result;
+    }
+
     public static int gcd(final int one, final int another) {
         return BigInteger.valueOf(one).gcd(BigInteger.valueOf(another)).intValueExact();
     }
