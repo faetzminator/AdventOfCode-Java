@@ -11,14 +11,20 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import ch.faetzminator.aocutil.CharEnum;
 import ch.faetzminator.aocutil.PuzzleUtil;
 import ch.faetzminator.aocutil.ScannerUtil;
 import ch.faetzminator.aocutil.Timer;
 
-public class Day10b {
+public class Day10bImproved {
 
+    /**
+     * Improved version of brute-forcing as per tenthmascot.
+     *
+     * @see https://www.reddit.com/r/adventofcode/comments/1pk87hl/2025_day_10_part_2_bifurcate_your_way_to_victory/
+     */
     public static void main(final String[] args) {
-        final Day10b puzzle = new Day10b();
+        final Day10bImproved puzzle = new Day10bImproved();
         final List<String> lines = ScannerUtil.readNonBlankLines();
         final Timer timer = PuzzleUtil.start();
         puzzle.parseLines(lines);
@@ -36,7 +42,36 @@ public class Day10b {
 
     public void parseLine(final String line) {
         final Input input = new Input(line);
-        solution.getAndAdd(play(input.getJoltages(), input.getButtons()));
+        solution.getAndAdd(play(input.getIndicatorLights(), input.getJoltages(), input.getButtons()));
+    }
+
+    private int play(final IndicatorLights lights, final Joltages joltages, final Buttons buttons) {
+        if (lights.isTargetState()) { // pitfall - target state got even joltages only
+            // continue to part 2, no part 1 needed
+            return play(joltages, buttons);
+        }
+        return play(lights, joltages, buttons, 0) + 1;
+    }
+
+    private int play(final IndicatorLights lastState, final Joltages lastJoltages, final Buttons buttons,
+            final int startAtButton) {
+        int min = INVALID_SOLUTION;
+        for (int i = startAtButton; i < buttons.length(); i++) {
+            final IndicatorLights state = lastState.copy();
+            final Joltages joltages = lastJoltages.copy();
+
+            // pitfall - target state might have low values, pressing could overshoot
+            final int press = Math.min(1, buttons.get(i).maxPresses(joltages));
+            if (press == 1 && buttons.press(i, state, joltages)) {
+                // continue to part 2
+                min = Math.min(min, play(joltages, buttons));
+            }
+            final int solution = play(state, joltages, buttons, i + 1);
+            if (solution != INVALID_SOLUTION) {
+                min = Math.min(min, solution + press);
+            }
+        }
+        return min;
     }
 
     private int play(final Joltages joltages, final Buttons buttons) {
@@ -94,8 +129,8 @@ public class Day10b {
         }
         final Joltages state = lastState.copy();
         int min = play(state, buttons, relevantJoltageIndexes, lookingAtButton - 1);
-        for (int presses = 1; presses <= maxPresses; presses++) {
-            buttons.get(lookingAtButton).press(state);
+        for (int presses = 2; presses <= maxPresses; presses += 2) {
+            buttons.get(lookingAtButton).press(state, 2);
             final int sol = play(state, buttons, relevantJoltageIndexes, lookingAtButton - 1);
             if (sol != INVALID_SOLUTION) {
                 min = Math.min(min, sol + presses);
@@ -124,6 +159,71 @@ public class Day10b {
 
     public long getSolution() {
         return solution.get();
+    }
+
+    public static enum IndicatorLight implements CharEnum {
+
+        OFF('.'),
+        ON('#');
+
+        private final char character;
+
+        private IndicatorLight(final char character) {
+            this.character = character;
+        }
+
+        public IndicatorLight toggle() {
+            return this == ON ? OFF : ON;
+        }
+
+        @Override
+        public char charValue() {
+            return character;
+        }
+
+        public static IndicatorLight byChar(final char c) {
+            return CharEnum.byChar(IndicatorLight.class, c);
+        }
+    }
+
+    public static class IndicatorLights {
+
+        private final IndicatorLight[] state;
+        private final IndicatorLight[] targetState;
+
+        public IndicatorLights(final Joltages joltages) {
+            state = new IndicatorLight[joltages.length()];
+            targetState = new IndicatorLight[state.length];
+            for (int i = 0; i < state.length; i++) {
+                state[i] = IndicatorLight.OFF;
+                targetState[i] = joltages.getDiff(i) % 2 == 0 ? IndicatorLight.OFF : IndicatorLight.ON;
+            }
+        }
+
+        private IndicatorLights(final IndicatorLight[] state, final IndicatorLight[] targetState) {
+            this.state = state;
+            this.targetState = targetState;
+        }
+
+        public void toggle(final int index) {
+            state[index] = state[index].toggle();
+        }
+
+        public boolean isTargetState() {
+            return Arrays.equals(state, targetState);
+        }
+
+        public IndicatorLights copy() {
+            return new IndicatorLights(Arrays.copyOf(state, state.length), targetState);
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder builder = new StringBuilder(targetState.length + 2);
+            builder.append('[');
+            Arrays.stream(targetState).forEach(light -> builder.append(light.charValue()));
+            return builder.append(']').toString();
+        }
     }
 
     public static class Joltages {
@@ -184,8 +284,9 @@ public class Day10b {
             this.affectedIndexes = affectedIndexes;
         }
 
-        public void press(final Joltages joltages) {
+        public void press(final IndicatorLights lights, final Joltages joltages) {
             for (final int index : affectedIndexes) {
+                lights.toggle(index);
                 joltages.increment(index, 1);
             }
         }
@@ -241,6 +342,11 @@ public class Day10b {
             return buttons[index];
         }
 
+        public boolean press(final int index, final IndicatorLights lights, final Joltages joltages) {
+            buttons[index].press(lights, joltages);
+            return lights.isTargetState();
+        }
+
         public int length() {
             return buttons.length;
         }
@@ -270,7 +376,7 @@ public class Day10b {
         private static final Pattern LINE_PATTERN = Pattern
                 .compile("\\[(.*?)\\] (\\(\\d+(?:,\\d+)*\\)(?: \\(\\d+(?:,\\d+)*\\))*) \\{(\\d+(?:,\\d+)*)\\}");
 
-        private final String indicatorLights;
+        private final IndicatorLights indicatorLights;
         private final Buttons buttons;
         private final Joltages joltages;
 
@@ -279,9 +385,13 @@ public class Day10b {
             if (!matcher.matches()) {
                 throw new IllegalArgumentException("line: " + input);
             }
-            indicatorLights = "[" + matcher.group(1) + "]";
             buttons = new Buttons(matcher.group(2));
             joltages = new Joltages(matcher.group(3));
+            indicatorLights = new IndicatorLights(joltages);
+        }
+
+        public IndicatorLights getIndicatorLights() {
+            return indicatorLights;
         }
 
         public Joltages getJoltages() {
